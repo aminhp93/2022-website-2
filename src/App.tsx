@@ -5,7 +5,7 @@ import {
   Link
 } from "react-router-dom";
 
-import Stock from './pages/Stock/Stock'
+import ReactGridRoot from './pages/ReactGridRoot/ReactGridRoot'
 import './App.css';
 
 function App() {
@@ -14,17 +14,14 @@ function App() {
       <Router>
         <div>
           <Switch>
-            <Route path="/stock">
-              <Stock />
+            <Route path="/">
+              <ReactGridRoot />
             </Route>
             <Route path="/">
               <nav>
                 <ul>
                   <li>
                     <Link to="/">Home</Link>
-                  </li>
-                  <li>
-                    <Link to="/stock">Stock</Link>
                   </li>
                 </ul>
               </nav>

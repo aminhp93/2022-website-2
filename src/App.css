@@ -92,5 +92,5 @@
 }
 
 .react-grid-item:not(.react-grid-placeholder) {
-    background: grey;
+    background: lightgrey;
 }
