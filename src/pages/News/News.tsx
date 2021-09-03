@@ -30,5 +30,6 @@ export default function News() {
         {quote &&
             <div>{quote.content} - {quote.author} </div>
         }
+        <div>Saved quote: {`Một người chưa từng trải qua hôn nhân và con cái thì chưa trải qua hạnh phúc.`}</div>
     </div>
 }

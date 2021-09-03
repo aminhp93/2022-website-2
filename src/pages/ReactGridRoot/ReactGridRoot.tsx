@@ -8,6 +8,9 @@ import '../../../node_modules/react-grid-layout/css/styles.css'
 import '../../../node_modules/react-resizable/css/styles.css'
 import News from '../News/News'
 import Stock from '../Stock/Stock'
+import Todos from '../Todos/Todos'
+import { useEffect } from 'react';
+import HistoryTrade from "../HistoryTrade/HistoryTrade";
 
 const ResponsiveReactGridLayout = ReactGridLayout.WidthProvider(ReactGridLayout.Responsive);
 
@@ -15,7 +18,7 @@ export default function ReactGridRoot() {
     // layout is an array of objects, see the demo for more complete usage
     const gridItems: any = [
         { id: 1, name: "Item One", component: "Stock" },
-        { id: 2, name: "Item Two" },
+        { id: 2, name: "Item Two", component: "Todos" },
         // { id: 3, name: "Item Three" },
         { id: 4, name: "Item Four" },
         { id: 5, name: "Item Five", component: "News" },
@@ -25,11 +28,11 @@ export default function ReactGridRoot() {
         // { id: 9, name: "Item Nine" }
     ];
     const layout = [
-        { i: '1', x: 0, y: 0, w: 5, h: 5 },
-        { i: '2', x: 5, y: 0, w: 5, h: 5 },
+        { i: '1', x: 0, y: 0, w: 6, h: 6 },
+        { i: '2', x: 6, y: 0, w: 6, h: 6 },
         // { i: '3', x: 8, y: 0, w: 3, h: 2 },
-        { i: '4', x: 0, y: 3, w: 5, h: 5 },
-        { i: '5', x: 5, y: 3, w: 5, h: 5 },
+        { i: '4', x: 0, y: 6, w: 6, h: 6 },
+        { i: '5', x: 6, y: 6, w: 6, h: 6 },
         // { i: '6', x: 8, y: 3, w: 3, h: 2 },
         // { i: '7', x: 0, y: 6, w: 5, h: 2 },
         // { i: '8', x: 5, y: 6, w: 3, h: 2 },
@@ -83,12 +86,18 @@ export default function ReactGridRoot() {
             return <News />
         } else if (data.component === "Stock") {
             return <Stock />
+        } else if (data.component === "Todos") {
+            return <Todos />
         } else {
             return <div>
                 <Table dataSource={dataSource} columns={columns} pagination={false} />
             </div>
         }
     }
+
+    useEffect(() => {
+
+    }, [])
 
     return <div>
         <ResponsiveReactGridLayout
@@ -101,7 +110,7 @@ export default function ReactGridRoot() {
             // onDrag={this.onDragging}
             // onDragStop={this.onMoveCard}
             // onResizeStop={this.onResizeCard}
-            margin={[20, 20]}
+            margin={[0, 0]}
         >
             {gridItems.map((item: any, i: any) => {
                 return (
