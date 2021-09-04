@@ -1,4 +1,4 @@
-
+import { useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import ReactGridLayout from 'react-grid-layout';
 import remarkGfm from 'remark-gfm'
@@ -9,8 +9,7 @@ import '../../../node_modules/react-resizable/css/styles.css'
 import News from '../News/News'
 import Stock from '../Stock/Stock'
 import Todos from '../Todos/Todos'
-import { useEffect } from 'react';
-import HistoryTrade from "../HistoryTrade/HistoryTrade";
+import Utility from '../Utility/Utility'
 
 const ResponsiveReactGridLayout = ReactGridLayout.WidthProvider(ReactGridLayout.Responsive);
 
@@ -20,7 +19,7 @@ export default function ReactGridRoot() {
         { id: 1, name: "Item One", component: "Stock" },
         { id: 2, name: "Item Two", component: "Todos" },
         // { id: 3, name: "Item Three" },
-        { id: 4, name: "Item Four" },
+        { id: 4, name: "Item Four", component: "Utility" },
         { id: 5, name: "Item Five", component: "News" },
         // { id: 6, name: "Item Six" },
         // { id: 7, name: "Item Seven" },
@@ -88,6 +87,8 @@ export default function ReactGridRoot() {
             return <Stock />
         } else if (data.component === "Todos") {
             return <Todos />
+        } else if (data.component === "Utility") {
+            return <Utility />
         } else {
             return <div>
                 <Table dataSource={dataSource} columns={columns} pagination={false} />
@@ -106,7 +107,9 @@ export default function ReactGridRoot() {
             className="layout"
             // rowHeight={this.props.rowHeight}
             // isDragable={true}
-            isResizable={true}
+            // isResizable={false}
+            // isDroppable={false}
+            // preventCollision={false}
             // onDrag={this.onDragging}
             // onDragStop={this.onMoveCard}
             // onResizeStop={this.onResizeCard}

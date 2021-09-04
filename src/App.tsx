@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 
 import ReactGridRoot from './pages/ReactGridRoot/ReactGridRoot'
-import './App.css';
 
 function App() {
   return (
