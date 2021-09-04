@@ -26,7 +26,6 @@ function HistoryTrade(props: TProps) {
     }
 
     const [listOrdersHistory, setListOrdersHistory] = useState([])
-
     const defaultColumns: any = [
         {
             title: 'So hieu lenh',
@@ -240,6 +239,8 @@ function HistoryTrade(props: TProps) {
     useEffect(() => {
         getHistoryTrade();
     }, [])
+
+
 
     return (
         <Modal title="HistoryTrade" visible={true} onOk={handleOk} onCancel={handleCancel} className="custom-modal">
