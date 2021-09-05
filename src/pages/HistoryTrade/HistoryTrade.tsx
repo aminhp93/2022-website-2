@@ -1,4 +1,4 @@
-import { Modal, Table, Button } from "antd";
+import { Table, Button } from "antd";
 import { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import moment from "moment";
@@ -217,9 +217,9 @@ function HistoryTrade(props: TProps) {
                     const end = sum(listSell.map((i: any) => Number(i.matchQuantity) * Number(i.matchAveragePrice)))
                     i.finalChange = ((end - start) / start * 100).toFixed(2)
                     i.initialAmount = start
-                    if (i.symbol === "BSR") {
-                        console.log(i.transactionDate, i, listBuy, listSell, i.finalChange, start, end, stop)
-                    }
+                    // if (i.symbol === "BSR") {
+                    //     console.log(i.transactionDate, i, listBuy, listSell, i.finalChange, start, end, stop)
+                    // }
 
                 }
                 return i
@@ -228,22 +228,12 @@ function HistoryTrade(props: TProps) {
         }
     }
 
-    const handleOk = () => {
-
-    }
-
-    const handleCancel = () => {
-        onClose()
-    }
-
     useEffect(() => {
         getHistoryTrade();
     }, [])
 
-
-
     return (
-        <Modal title="HistoryTrade" visible={true} onOk={handleOk} onCancel={handleCancel} className="custom-modal">
+        <div>
             <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <div>
                     Start Date: {filterObj.startDate}
@@ -263,7 +253,7 @@ function HistoryTrade(props: TProps) {
                 columns={columns}
                 pagination={false}
                 scroll={{ y: 1200 }} />
-        </Modal>
+        </div>
     )
 }
 

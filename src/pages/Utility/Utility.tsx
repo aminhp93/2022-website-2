@@ -11,6 +11,7 @@ export default function Utility() {
         <Button onClick={() => setModal("Game")}>Game</Button>
         <br />
         <Button onClick={() => setModal("Music")}>Music</Button>
+        <Button onClick={() => setModal("Music")}>Sport</Button>
         {
             modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>
                 {modal === "Game" && <Game />}

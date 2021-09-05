@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { cloneDeep, groupBy } from "lodash";
-import { Button } from "antd";
+import { Button, Modal } from "antd";
 
 import HistoryTrade from "../HistoryTrade/HistoryTrade";
+import StockTools from "./StockTools/StockTools";
 import { LIST_SYMBOLS } from "./Stock.constants";
 
 export default function Stock() {
@@ -89,7 +90,7 @@ export default function Stock() {
         getData();
     }, [])
 
-    return <div style={{ background: "lightblue", height: "100%" }}>
+    return <div style={{ background: "lightblue", height: "100%" }} onMouseDown={e => e.stopPropagation()}>
         <div style={{ textAlign: "start" }}>
             <ReactMarkdown children={mdChildren} />
         </div>
@@ -123,6 +124,14 @@ export default function Stock() {
         <div>
             <Button onClick={() => setModal("HistoryTrade")}>History Trade</Button>
         </div>
-        {modal === "HistoryTrade" && <HistoryTrade onClose={() => setModal(null)} />}
+        <div>
+            <Button onClick={() => setModal("StockTools")}>Stock Tools</Button>
+        </div>
+        {
+            modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>
+                {modal === "HistoryTrade" && <HistoryTrade />}
+                {modal === "StockTools" && <StockTools />}
+            </Modal>
+        }
     </div>
 }
