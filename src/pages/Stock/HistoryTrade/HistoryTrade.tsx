@@ -7,7 +7,7 @@ import { sum, uniqBy } from "lodash";
 import {
     postAuthToken,
     fetchOrdersHistory
-} from "../../reducers/account"
+} from "../../../reducers/account"
 import './HistoryTrade.css';
 
 interface TProps {

@@ -5,8 +5,9 @@ import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Resp
 import { cloneDeep, groupBy } from "lodash";
 import { Button, Modal } from "antd";
 
-import HistoryTrade from "../HistoryTrade/HistoryTrade";
+import HistoryTrade from "./HistoryTrade/HistoryTrade";
 import StockTools from "./StockTools/StockTools";
+import IndustryAndMarket from "./IndustryAndMarket/IndustryAndMarket";
 import { LIST_SYMBOLS } from "./Stock.constants";
 
 export default function Stock() {
@@ -127,10 +128,14 @@ export default function Stock() {
         <div>
             <Button onClick={() => setModal("StockTools")}>Stock Tools</Button>
         </div>
+        <div>
+            <Button onClick={() => setModal("IndustryAndMarket")}>IndustryAndMarket</Button>
+        </div>
         {
             modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>
                 {modal === "HistoryTrade" && <HistoryTrade />}
                 {modal === "StockTools" && <StockTools />}
+                {modal === "IndustryAndMarket" && <IndustryAndMarket />}
             </Modal>
         }
     </div>
