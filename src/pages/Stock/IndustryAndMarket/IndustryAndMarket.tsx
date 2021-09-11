@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { notification } from "antd";
 import axios from "axios";
-import { random, keyBy, meanBy } from "lodash";
+import { keyBy, meanBy } from "lodash";
 import moment from "moment";
-import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 import {
     DATE_FORMAT,
@@ -116,6 +116,13 @@ export default function IndustryAndMarket() {
     }, [])
 
     return <div>
+
+        <div>
+            <div>Nhom nganh</div>
+            <div>Cang bien</div>
+            <div>Thep</div>
+
+        </div>
         <ResponsiveContainer width='100%' aspect={4.0 / 3.0}>
             <BarChart data={listWatchlists} layout="vertical">
                 <XAxis type="number" />

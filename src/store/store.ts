@@ -1,7 +1,7 @@
 import { createStore, applyMiddleware, compose } from "redux"
 import thunk, { ThunkAction } from "redux-thunk"
 import rootReducer from "../reducers"
-import { Action, configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { Action } from '@reduxjs/toolkit';
 
 const composeEnhancers =
     typeof window === "object" &&

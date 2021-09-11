@@ -17,11 +17,9 @@ interface TProps {
 }
 
 function HistoryTrade(props: TProps) {
-    const { onClose } = props;
-
     const filterObj = {
         startDate: "2020-07-01",
-        endDate: "2021-09-03",
+        endDate: moment().format("YYYY-MM-DD"),
         orderStatus: "4",
     }
 

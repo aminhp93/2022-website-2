@@ -3,6 +3,10 @@ import { Button, Modal } from 'antd';
 
 import Game from './Game/Game';
 import Music from './Music/Music';
+import Sport from './Sport/Sport';
+import HistorialEvents from './HistorialEvents/HistorialEvents';
+import MemorialSpeech from './MemorialSpeech/MemorialSpeech';
+import Funny from './Funny/Funny';
 
 export default function Utility() {
     const [modal, setModal] = useState(null)
@@ -11,11 +15,23 @@ export default function Utility() {
         <Button onClick={() => setModal("Game")}>Game</Button>
         <br />
         <Button onClick={() => setModal("Music")}>Music</Button>
-        <Button onClick={() => setModal("Music")}>Sport</Button>
+        <br />
+        <Button onClick={() => setModal("Sport")}>Sport</Button>
+        <br />
+        <Button onClick={() => setModal("HistorialEvents")}>Historical Events</Button>
+        <br />
+        <Button onClick={() => setModal("MemorialSpeech")}>Memorial Speech</Button>
+        <br />
+        <Button onClick={() => setModal("Funny")}>Funny</Button>
+
         {
             modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>
                 {modal === "Game" && <Game />}
                 {modal === "Music" && <Music />}
+                {modal === "Sport" && <Sport />}
+                {modal === "HistorialEvents" && <HistorialEvents />}
+                {modal === "MemorialSpeech" && <MemorialSpeech />}
+                {modal === "Funny" && <Funny />}
             </Modal>
         }
     </div>
