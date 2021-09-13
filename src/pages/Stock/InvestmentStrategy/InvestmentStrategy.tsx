@@ -2,7 +2,7 @@ import ReactMarkdown from "react-markdown"
 
 export default function InvestmentStrategy() {
     return <div>
-        <div>InvestmentStrategy2</div>
+        <div>InvestmentStrategy3</div>
         <div>
             <ReactMarkdown>
                 {`
