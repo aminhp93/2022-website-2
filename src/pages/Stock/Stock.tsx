@@ -1,13 +1,14 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 // import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import {
     cloneDeep,
     groupBy,
-    keyBy
+    keyBy,
+    debounce
 } from "lodash";
-import { Button, Modal, Table } from "antd";
+import { Button, Modal, Table, Input, notification } from "antd";
 
 import HistoryTrade from "./HistoryTrade/HistoryTrade";
 import StockTools from "./StockTools/StockTools";
@@ -17,13 +18,14 @@ import StockEvent from "./StockEvent/StockEvent";
 
 // import { LIST_SYMBOLS } from "./Stock.constants";
 
+const { TextArea } = Input
+
 export default function Stock() {
     const [modal, setModal] = useState(null);
-    // const [listSymbols, setListSymbol] = useState(LIST_SYMBOLS)
+    const [note, setNote] = useState(`\n # Write something here for note`);
+    const [editNote, setEditNote] = useState(false);
 
-    const mdChildren = `
-        \n # Write something here for note
-    `
+    // const [listSymbols, setListSymbol] = useState(LIST_SYMBOLS)
 
     // const getHistoricalQuotes = async (symbol: string, startDate: string, endDate: string) => {
     //     if (!startDate || !endDate) return
@@ -104,6 +106,24 @@ export default function Stock() {
 
     // }
 
+    const getStockNote = async () => {
+        const res: any = await axios({
+            url: "https://testapi.io/api/aminhp93/resource/note/1",
+            data: {
+                title: "stock",
+                content: note
+            },
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+            method: "GET"
+        })
+        if (res && res.data && res.data.content) {
+            setNote(res.data.content)
+        }
+        console.log(res)
+    }
+
     const [listWatchlists, setListWatchlists] = useState([])
 
     const getWatchlist = async () => {
@@ -126,6 +146,7 @@ export default function Stock() {
     useEffect(() => {
         // getData();
         // test();
+        getStockNote();
     }, [])
 
     const objWatchlists = keyBy(listWatchlists, "name")
@@ -147,9 +168,45 @@ export default function Stock() {
         }
     ]
 
+    const handleChangeNote = (e: any) => {
+        console.log(e.target.value)
+        debounnceHandleChangeNote(e.target.value)
+
+    }
+
+    const debounnceHandleChangeNote = useCallback(debounce((value) => {
+        if (value) {
+            axios({
+                url: "https://testapi.io/api/aminhp93/resource/note/1",
+                data: {
+                    title: "stock",
+                    content: value
+                },
+                headers: {
+                    'Content-type': 'application/json; charset=UTF-8',
+                },
+                method: "PUT"
+            }).then(res => {
+                console.log(res)
+            }).catch(error => {
+                notification.error({ message: "Error Update Note" })
+            })
+        }
+        setNote(value)
+
+    }, 1000), [])
+
     return <div style={{ background: "lightblue", height: "100%", overflow: "auto" }} onMouseDown={e => e.stopPropagation()}>
         <div style={{ textAlign: "start" }}>
-            <ReactMarkdown children={mdChildren} />
+            <Button onClick={() => setEditNote(!editNote)}>
+                {editNote ? 'Edit' : 'Not edit'}
+            </Button>
+            {editNote
+                ? <TextArea
+                    // onPressEnter={() => setEditNote(false)}
+                    defaultValue={note} onChange={handleChangeNote} />
+                : <ReactMarkdown children={note} />
+            }
         </div>
         {/* <div>{`% tang tu day 19/7/2021`}</div> */}
 
