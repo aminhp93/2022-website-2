@@ -1,14 +1,19 @@
-// import axios from "axios";
+import axios from "axios";
 import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 // import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
-// import { cloneDeep, groupBy } from "lodash";
-import { Button, Modal } from "antd";
+import {
+    cloneDeep,
+    groupBy,
+    keyBy
+} from "lodash";
+import { Button, Modal, Table } from "antd";
 
 import HistoryTrade from "./HistoryTrade/HistoryTrade";
 import StockTools from "./StockTools/StockTools";
 import IndustryAndMarket from "./IndustryAndMarket/IndustryAndMarket";
 import InvestmentStrategy from "./InvestmentStrategy/InvestmentStrategy";
+import StockEvent from "./StockEvent/StockEvent";
 
 // import { LIST_SYMBOLS } from "./Stock.constants";
 
@@ -17,14 +22,7 @@ export default function Stock() {
     // const [listSymbols, setListSymbol] = useState(LIST_SYMBOLS)
 
     const mdChildren = `
-        \n - Chứng khoán: SSI, VCI, VND, SHS
-        \n - Công nghệ: FPT, ELC, CMG
-        \n - Đầu tư công: HT1, BCC, KSB, PLC, FCN, LCG, C4G, HHV, G36
-        \n - Cảng biển: HAH, GMD, PHP
-        \n - Bán lẻ: MWG, FPT, DGW, VNM, MSN
-        \n - Thép: HPG, HSG, NKG, SMC
-        \n - Năng lượng: REE, PPC
-        \n - Bank, BDS: chỉ mua thi giảm thật sâu
+        \n # Write something here for note
     `
 
     // const getHistoricalQuotes = async (symbol: string, startDate: string, endDate: string) => {
@@ -106,16 +104,59 @@ export default function Stock() {
 
     // }
 
+    const [listWatchlists, setListWatchlists] = useState([])
+
+    const getWatchlist = async () => {
+        const res = await axios({
+            method: "GET",
+            url: "https://restv2.fireant.vn/me/watchlists",
+            headers: {
+                "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTEzNjIzMDMyLCJuYmYiOjE2MTM2MjMwMzIsImNsaWVudF9pZCI6ImZpcmVhbnQudHJhZGVzdGF0aW9uIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiIxZmI5NjI3Yy1lZDZjLTQwNGUtYjE2NS0xZjgzZTkwM2M1MmQiLCJhdXRoX3RpbWUiOjE2MTM2MjMwMzIsImlkcCI6IkZhY2Vib29rIiwibmFtZSI6Im1pbmhwbi5vcmcuZWMxQGdtYWlsLmNvbSIsInNlY3VyaXR5X3N0YW1wIjoiODIzMzcwOGUtYjFjOS00ZmQ3LTkwYmYtMzI2NTYzYmU4N2JkIiwianRpIjoiZmIyZWJkNzAzNTBiMDBjMGJhMWE5ZDA5NGUwNDMxMjYiLCJhbXIiOlsiZXh0ZXJuYWwiXX0.OhgGCRCsL8HVXSueC31wVLUhwWWPkOu-yKTZkt3jhdrK3MMA1yJroj0Y73odY9XSLZ3dA4hUTierF0LxcHgQ-pf3UXR5KYU8E7ieThAXnIPibWR8ESFtB0X3l8XYyWSYZNoqoUiV9NGgvG2yg0tQ7lvjM8UYbiI-3vUfWFsMX7XU3TQnhxW8jYS_bEXEz7Fvd_wQbjmnUhQZuIVJmyO0tFd7TGaVipqDbRdry3iJRDKETIAMNIQx9miHLHGvEqVD5BsadOP4l8M8zgVX_SEZJuYq6zWOtVhlq3uink7VvnbZ7tFahZ4Ty4z8ev5QbUU846OZPQyMlEnu_TpQNpI1hg"
+            }
+        })
+        if (res && res.data) {
+            setListWatchlists(res.data)
+        }
+    }
+
+    useEffect(() => {
+        getWatchlist()
+    }, [])
+
     useEffect(() => {
         // getData();
         // test();
     }, [])
 
-    return <div style={{ background: "lightblue", height: "100%" }} onMouseDown={e => e.stopPropagation()}>
+    const objWatchlists = keyBy(listWatchlists, "name")
+    const aimToBuyWatchlist = objWatchlists['aim_to_buy']
+    console.log(aimToBuyWatchlist)
+
+    const aimToBuyDataSource = aimToBuyWatchlist && aimToBuyWatchlist.symbols && aimToBuyWatchlist.symbols.map((i: any) => {
+        return {
+            symbol: i
+        }
+    })
+
+    const aimToBuyColumns = [
+        {
+            title: 'Symbol',
+            render: (data: any) => {
+                return data.symbol
+            }
+        }
+    ]
+
+    return <div style={{ background: "lightblue", height: "100%", overflow: "auto" }} onMouseDown={e => e.stopPropagation()}>
         <div style={{ textAlign: "start" }}>
             <ReactMarkdown children={mdChildren} />
         </div>
-        <div>{`% tang tu day 19/7/2021`}</div>
+        {/* <div>{`% tang tu day 19/7/2021`}</div> */}
+
+        <div style={{ height: "400px", overflow: "auto" }}>
+            {aimToBuyWatchlist && <Table size="small" dataSource={aimToBuyDataSource} columns={aimToBuyColumns} pagination={false} />}
+
+        </div>
         {/* <div style={{ display: "flex", overflow: "auto" }} >
             {
                 listSymbols.map((i: any) => {
@@ -150,12 +191,15 @@ export default function Stock() {
         <br />
         <Button onClick={() => setModal("InvestmentStrategy")}>InvestmentStrategy</Button>
         <br />
+        <Button onClick={() => setModal("StockEvent")}>StockEvent</Button>
+        <br />
         {
             modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>
                 {modal === "HistoryTrade" && <HistoryTrade />}
                 {modal === "StockTools" && <StockTools />}
                 {modal === "IndustryAndMarket" && <IndustryAndMarket />}
                 {modal === "InvestmentStrategy" && <InvestmentStrategy />}
+                {modal === "StockEvent" && <StockEvent />}
             </Modal>
         }
     </div>
