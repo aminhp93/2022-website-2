@@ -2,7 +2,8 @@ import ReactMarkdown from "react-markdown";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
-import { Input } from "antd";
+import { Input, Table } from "antd";
+import { mean, maxBy, minBy } from "lodash";
 
 export default function StockTestBreak() {
     const [data, setData] = useState([]);
@@ -28,7 +29,7 @@ export default function StockTestBreak() {
     }
 
     const getData = async () => {
-        const res = await getHistoricalQuotes(symbol, "2020-01-01", "2021-12-31")
+        const res = await getHistoricalQuotes(symbol, "2020-01-01", "2021-08-31")
         const xxx = res.data.map((i: any, index: number) => {
             if (index < res.data.length - 1) {
                 const todayClose = i.priceClose
@@ -36,6 +37,7 @@ export default function StockTestBreak() {
                 i.priceChange = Number(((todayClose - yesterdayClose) / yesterdayClose * 100).toFixed(2))
             }
 
+            // Condition 1
             let max = 0
             for (let j = 0; j < 20; j++) {
                 if (res.data[index + j] && res.data[index + j].priceClose > max) {
@@ -43,16 +45,54 @@ export default function StockTestBreak() {
                 }
             }
 
-            i.diffInMonth = Number(((max - i.priceClose) / i.priceClose * 100).toFixed(2))
-            if (i.priceChange && i.priceChange > 4) {
-                // console.log(diffInMonth, max, i.priceClose, i.date)
+            // Condition 2
+            let arrVolume = []
+            for (let j = 0; j < 15; j++) {
+                if (res.data[index + j]) {
+                    arrVolume.push(res.data[index + j].totalVolume)
+                }
             }
+            i.volume15dayChange = Number(((i.totalVolume - mean(arrVolume)) / mean(arrVolume) * 100).toFixed(2))
+            i.arrVolume = arrVolume
+
+            // Condition 3
+            let arr20day = []
+            for (let j = 0; j < 20; j++) {
+                if (res.data[index - j]) {
+                    arr20day.push(res.data[index - j])
+                }
+            }
+
+            i.highestPriceClose = maxBy(arr20day, "priceClose").priceClose
+            i.highestPriceCloseDate = maxBy(arr20day, "priceClose").date
+            i.highestChangePrice20day = Number(((i.highestPriceClose - i.priceClose) / i.priceClose * 100).toFixed(2))
+
+            i.lowestPriceCloseDate = minBy(arr20day, "priceClose").date
+            i.lowestPriceClose = minBy(arr20day, "priceClose").priceClose
+            i.lowestChangePrice20day = Number(((i.lowestPriceClose - i.priceClose) / i.priceClose * 100).toFixed(2))
+
+
+            i.diffInMonth = Number(((max - i.priceClose) / i.priceClose * 100).toFixed(2))
+            const t3Price = res.data[index - 3]
+            if (t3Price) {
+                i.t3PriceClose = t3Price.priceClose
+                i.t3Change = Number(((t3Price.priceClose - i.priceClose) / i.priceClose * 100).toFixed(2))
+            }
+
+            // if (i.priceChange && i.priceChange > 4) {
+            // console.log(diffInMonth, max, i.priceClose, i.date)
+            // }
+
+
 
             return i
         }).filter((i: any, index: number) => {
-            return i.priceChange && i.priceChange > 4
+            return i.priceChange
+                && i.priceChange > 4
+                && i.volume15dayChange > 50
+            // && i.t3Change > -3
         })
-        console.log(xxx, xxx.map((i: any) => i.priceChange))
+        // console.log(xxx, xxx.map((i: any) => i.priceChange))
         setData(xxx)
 
     }
@@ -69,26 +109,93 @@ export default function StockTestBreak() {
         getData();
     }, [])
 
+    const columns = [
+        {
+            title: 'Date',
+            render: (data: any) => {
+                return moment(data.date).format('YYYY-MM-DD')
+            }
+        },
+        {
+            title: 'priceChange',
+            align: 'right' as 'right',
+            render: (data: any) => {
+                return data.priceChange
+            }
+        },
+        {
+            title: 'diffInMonth',
+            align: 'right' as 'right',
+            render: (data: any) => {
+                return <div style={{
+                    background: data.diffInMonth > 10 ? "red" : "white",
+                    color: data.diffInMonth > 10 ? "white" : "black"
+                }}>{data.diffInMonth}</div>
+            }
+        },
+        {
+            title: 'volume15dayChange',
+            align: 'right' as 'right',
+            render: (data: any) => {
+                return <div style={{
+                    background: data.volume15dayChange < 50 ? "red" : "white",
+                    color: data.volume15dayChange < 50 ? "white" : "black"
+                }}>{data.volume15dayChange} </div>
+            }
+        },
+        {
+            title: 't3Change',
+            align: 'right' as 'right',
+            render: (data: any) => {
+                return <div style={{
+                    background: data.t3Change < -3 ? "red" : "white",
+                    color: data.t3Change < -3 ? "white" : "black"
+                }}>{data.t3Change}</div>
+            }
+        },
+        {
+            title: 'highestChangePrice20day',
+            align: 'right' as 'right',
+            render: (data: any) => {
+                return <div>{data.highestChangePrice20day} | {moment(data.highestPriceCloseDate).format("MM-DD")} </div>
+            }
+        },
+        {
+            title: 'lowestChangePrice20day',
+            align: 'right' as 'right',
+            render: (data: any) => {
+                return <div style={{
+                    background: data.lowestChangePrice20day < -5 ? "red" : "white",
+                    color: data.lowestChangePrice20day < -5 ? "white" : "black"
+                }}>{data.lowestChangePrice20day} | {moment(data.lowestPriceCloseDate).format("MM-DD")}</div>
+            }
+        }
+    ]
+
     return <div>
         <ReactMarkdown>
             {`
                 \n - Test break
                 \n - Symbol: KDH
                 \n - Time: 1/1/2020 - 31/12/2020
-                \n - Test sample: All date with % change > 4%
+                \n - Condition test: 
+                \n   - priceChange > 4%
+                \n   - diffInMonth > 10%
+                \n   - t3Change > -3%
+                \n   - volume15dayChange > 50%
+
             `}
         </ReactMarkdown>
         <div>
             <Input onChange={handleChangeInput} onPressEnter={handlePressEnter} />Count: {data.length}
         </div>
         <div>
-            {data.map((i: any) => {
-                return <div>
-                    <span style={{ marginRight: "20px" }}>{moment(i.date).format('YYYY-MM-DD')}</span>
-                    <span style={{ marginRight: "20px" }}>{i.priceChange}</span>
-                    <span style={{ color: i.diffInMonth < 10 ? "black" : "red" }}>{i.diffInMonth}</span>
-                </div>
-            })}
+            <Table
+                dataSource={data}
+                columns={columns}
+                pagination={false}
+                scroll={{ y: 800 }} />
+
         </div>
     </div >
 }
