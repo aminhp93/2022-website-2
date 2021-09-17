@@ -15,6 +15,7 @@ import StockTools from "./StockTools/StockTools";
 import IndustryAndMarket from "./IndustryAndMarket/IndustryAndMarket";
 import InvestmentStrategy from "./InvestmentStrategy/InvestmentStrategy";
 import StockEvent from "./StockEvent/StockEvent";
+import StockTestBreak from "./StockTestBreak/StockTestBreak";
 
 // import { LIST_SYMBOLS } from "./Stock.constants";
 
@@ -210,10 +211,9 @@ export default function Stock() {
         </div>
         {/* <div>{`% tang tu day 19/7/2021`}</div> */}
 
-        <div style={{ height: "400px", overflow: "auto" }}>
+        {/* <div style={{ height: "400px", overflow: "auto" }}>
             {aimToBuyWatchlist && <Table size="small" dataSource={aimToBuyDataSource} columns={aimToBuyColumns} pagination={false} />}
-
-        </div>
+        </div> */}
         {/* <div style={{ display: "flex", overflow: "auto" }} >
             {
                 listSymbols.map((i: any) => {
@@ -250,6 +250,8 @@ export default function Stock() {
         <br />
         <Button onClick={() => setModal("StockEvent")}>StockEvent</Button>
         <br />
+        <Button onClick={() => setModal("StockTestBreak")}>StockTestBreak</Button>
+        <br />
         {
             modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>
                 {modal === "HistoryTrade" && <HistoryTrade />}
@@ -257,6 +259,7 @@ export default function Stock() {
                 {modal === "IndustryAndMarket" && <IndustryAndMarket />}
                 {modal === "InvestmentStrategy" && <InvestmentStrategy />}
                 {modal === "StockEvent" && <StockEvent />}
+                {modal === "StockTestBreak" && <StockTestBreak />}
             </Modal>
         }
     </div>
