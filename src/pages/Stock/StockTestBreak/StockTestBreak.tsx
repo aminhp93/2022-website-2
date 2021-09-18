@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
 import { Input, Table } from "antd";
-import { mean, maxBy, minBy } from "lodash";
+import { mean, maxBy, minBy, meanBy } from "lodash";
 
 export default function StockTestBreak() {
     const [data, setData] = useState([]);
@@ -12,71 +12,83 @@ export default function StockTestBreak() {
 
     const getHistoricalQuotes = async (symbol: string, startDate: string, endDate: string) => {
         if (!startDate || !endDate) return
+        // const res = await axios({
+        //     url: `https://restv2.fireant.vn/symbols/${symbol}/historical-quotes`,
+        //     method: 'GET',
+        //     headers: {
+        //         Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxODg5NjIyNTMwLCJuYmYiOjE1ODk2MjI1MzAsImNsaWVudF9pZCI6ImZpcmVhbnQudHJhZGVzdGF0aW9uIiwic2NvcGUiOlsiYWNhZGVteS1yZWFkIiwiYWNhZGVteS13cml0ZSIsImFjY291bnRzLXJlYWQiLCJhY2NvdW50cy13cml0ZSIsImJsb2ctcmVhZCIsImNvbXBhbmllcy1yZWFkIiwiZmluYW5jZS1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImludmVzdG9wZWRpYS1yZWFkIiwib3JkZXJzLXJlYWQiLCJvcmRlcnMtd3JpdGUiLCJwb3N0cy1yZWFkIiwicG9zdHMtd3JpdGUiLCJzZWFyY2giLCJzeW1ib2xzLXJlYWQiLCJ1c2VyLWRhdGEtcmVhZCIsInVzZXItZGF0YS13cml0ZSIsInVzZXJzLXJlYWQiXSwianRpIjoiMjYxYTZhYWQ2MTQ5Njk1ZmJiYzcwODM5MjM0Njc1NWQifQ.dA5-HVzWv-BRfEiAd24uNBiBxASO-PAyWeWESovZm_hj4aXMAZA1-bWNZeXt88dqogo18AwpDQ-h6gefLPdZSFrG5umC1dVWaeYvUnGm62g4XS29fj6p01dhKNNqrsu5KrhnhdnKYVv9VdmbmqDfWR8wDgglk5cJFqalzq6dJWJInFQEPmUs9BW_Zs8tQDn-i5r4tYq2U8vCdqptXoM7YgPllXaPVDeccC9QNu2Xlp9WUvoROzoQXg25lFub1IYkTrM66gJ6t9fJRZToewCt495WNEOQFa_rwLCZ1QwzvL0iYkONHS_jZ0BOhBCdW9dWSawD6iF1SIQaFROvMDH1rg'
+        //     },
+        //     params: {
+        //         startDate,
+        //         endDate,
+        //         offset: "0",
+        //         limit: "1000",
+        //     }
+        // })
+
         const res = await axios({
-            url: `https://restv2.fireant.vn/symbols/${symbol}/historical-quotes`,
-            method: 'GET',
-            headers: {
-                Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxODg5NjIyNTMwLCJuYmYiOjE1ODk2MjI1MzAsImNsaWVudF9pZCI6ImZpcmVhbnQudHJhZGVzdGF0aW9uIiwic2NvcGUiOlsiYWNhZGVteS1yZWFkIiwiYWNhZGVteS13cml0ZSIsImFjY291bnRzLXJlYWQiLCJhY2NvdW50cy13cml0ZSIsImJsb2ctcmVhZCIsImNvbXBhbmllcy1yZWFkIiwiZmluYW5jZS1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImludmVzdG9wZWRpYS1yZWFkIiwib3JkZXJzLXJlYWQiLCJvcmRlcnMtd3JpdGUiLCJwb3N0cy1yZWFkIiwicG9zdHMtd3JpdGUiLCJzZWFyY2giLCJzeW1ib2xzLXJlYWQiLCJ1c2VyLWRhdGEtcmVhZCIsInVzZXItZGF0YS13cml0ZSIsInVzZXJzLXJlYWQiXSwianRpIjoiMjYxYTZhYWQ2MTQ5Njk1ZmJiYzcwODM5MjM0Njc1NWQifQ.dA5-HVzWv-BRfEiAd24uNBiBxASO-PAyWeWESovZm_hj4aXMAZA1-bWNZeXt88dqogo18AwpDQ-h6gefLPdZSFrG5umC1dVWaeYvUnGm62g4XS29fj6p01dhKNNqrsu5KrhnhdnKYVv9VdmbmqDfWR8wDgglk5cJFqalzq6dJWJInFQEPmUs9BW_Zs8tQDn-i5r4tYq2U8vCdqptXoM7YgPllXaPVDeccC9QNu2Xlp9WUvoROzoQXg25lFub1IYkTrM66gJ6t9fJRZToewCt495WNEOQFa_rwLCZ1QwzvL0iYkONHS_jZ0BOhBCdW9dWSawD6iF1SIQaFROvMDH1rg'
-            },
+            url: "https://fwtapi1.fialda.com/api/services/app/StockInfo/GetHistoricalData",
+            method: "GET",
             params: {
-                startDate,
-                endDate,
-                offset: "0",
-                limit: "1000",
+                symbol,
+                fromDate: "2020-01-01T00:00:00.094",
+                toDate: "2021-08-31T15:09:14.095",
+                pageNumber: 1,
+                pageSize: 1000
             }
         })
-        return res
+        return res.data.result.items
     }
 
     const getData = async () => {
         const res = await getHistoricalQuotes(symbol, "2020-01-01", "2021-08-31")
-        const xxx = res.data.map((i: any, index: number) => {
-            if (index < res.data.length - 1) {
-                const todayClose = i.priceClose
-                const yesterdayClose = res.data[index + 1].priceClose
+        const xxx = res.map((i: any, index: number) => {
+            if (index < res.length - 1) {
+                const todayClose = i.adjClose
+                const yesterdayClose = res[index + 1].adjClose
                 i.priceChange = Number(((todayClose - yesterdayClose) / yesterdayClose * 100).toFixed(2))
             }
 
             // Condition 1
             let max = 0
             for (let j = 0; j < 20; j++) {
-                if (res.data[index + j] && res.data[index + j].priceClose > max) {
-                    max = res.data[index + j].priceClose
+                if (res[index + j] && res[index + j].adjClose > max) {
+                    max = res[index + j].adjClose
                 }
             }
 
             // Condition 2
             let arrVolume = []
             for (let j = 0; j < 15; j++) {
-                if (res.data[index + j]) {
-                    arrVolume.push(res.data[index + j].totalVolume)
+                if (res[index + j]) {
+                    arrVolume.push(res[index + j].totalDealVolume)
                 }
             }
-            i.volume15dayChange = Number(((i.totalVolume - mean(arrVolume)) / mean(arrVolume) * 100).toFixed(2))
+            i.volume15dayChange = Number(((i.totalDealVolume - mean(arrVolume)) / mean(arrVolume) * 100).toFixed(2))
             i.arrVolume = arrVolume
 
             // Condition 3
             let arr20day = []
             for (let j = 0; j < 20; j++) {
-                if (res.data[index - j]) {
-                    arr20day.push(res.data[index - j])
+                if (res[index - j]) {
+                    arr20day.push(res[index - j])
                 }
             }
 
-            i.highestPriceClose = maxBy(arr20day, "priceClose").priceClose
-            i.highestPriceCloseDate = maxBy(arr20day, "priceClose").date
-            i.highestChangePrice20day = Number(((i.highestPriceClose - i.priceClose) / i.priceClose * 100).toFixed(2))
+            i.highestPriceClose = maxBy(arr20day, "adjClose").adjClose
+            i.highestPriceCloseDate = maxBy(arr20day, "adjClose").tradingTime
+            i.highestChangePrice20day = Number(((i.highestPriceClose - i.adjClose) / i.adjClose * 100).toFixed(2))
 
-            i.lowestPriceCloseDate = minBy(arr20day, "priceClose").date
-            i.lowestPriceClose = minBy(arr20day, "priceClose").priceClose
-            i.lowestChangePrice20day = Number(((i.lowestPriceClose - i.priceClose) / i.priceClose * 100).toFixed(2))
+            i.lowestPriceCloseDate = minBy(arr20day, "adjClose").tradingTime
+            i.lowestPriceClose = minBy(arr20day, "adjClose").adjClose
+            i.lowestChangePrice20day = Number(((i.lowestPriceClose - i.adjClose) / i.adjClose * 100).toFixed(2))
 
 
-            i.diffInMonth = Number(((max - i.priceClose) / i.priceClose * 100).toFixed(2))
-            const t3Price = res.data[index - 3]
+            i.diffInMonth = Number(((max - i.adjClose) / i.adjClose * 100).toFixed(2))
+            const t3Price = res[index - 3]
             if (t3Price) {
-                i.t3PriceClose = t3Price.priceClose
-                i.t3Change = Number(((t3Price.priceClose - i.priceClose) / i.priceClose * 100).toFixed(2))
+                i.t3PriceClose = t3Price.adjClose
+                i.t3Change = Number(((t3Price.adjClose - i.adjClose) / i.adjClose * 100).toFixed(2))
             }
 
             // if (i.priceChange && i.priceChange > 4) {
@@ -93,6 +105,12 @@ export default function StockTestBreak() {
             // && i.t3Change > -3
         })
         // console.log(xxx, xxx.map((i: any) => i.priceChange))
+        const average = {
+            date: "averageDate",
+            highestChangePrice20day: Number(meanBy(xxx, 'highestChangePrice20day').toFixed(2))
+        }
+        console.log(average)
+        xxx.push(average)
         setData(xxx)
 
     }
@@ -113,7 +131,7 @@ export default function StockTestBreak() {
         {
             title: 'Date',
             render: (data: any) => {
-                return moment(data.date).format('YYYY-MM-DD')
+                return moment(data.tradingTime).format('YYYY-MM-DD')
             }
         },
         {
@@ -140,7 +158,9 @@ export default function StockTestBreak() {
                 return <div style={{
                     background: data.volume15dayChange < 50 ? "red" : "white",
                     color: data.volume15dayChange < 50 ? "white" : "black"
-                }}>{data.volume15dayChange} </div>
+                }}>{data.volume15dayChange}
+                    {/* | {data.arrVolume.join(", ")} */}
+                </div>
             }
         },
         {
@@ -155,6 +175,9 @@ export default function StockTestBreak() {
         },
         {
             title: 'highestChangePrice20day',
+            sorter: (a: any, b: any) => {
+                return a.highestChangePrice20day - b.highestChangePrice20day
+            },
             align: 'right' as 'right',
             render: (data: any) => {
                 return <div>{data.highestChangePrice20day} | {moment(data.highestPriceCloseDate).format("MM-DD")} </div>
@@ -195,7 +218,6 @@ export default function StockTestBreak() {
                 columns={columns}
                 pagination={false}
                 scroll={{ y: 800 }} />
-
         </div>
     </div >
 }
