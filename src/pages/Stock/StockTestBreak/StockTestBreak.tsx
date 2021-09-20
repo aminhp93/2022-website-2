@@ -30,7 +30,7 @@ export default function StockTestBreak() {
             url: "https://fwtapi1.fialda.com/api/services/app/StockInfo/GetHistoricalData",
             method: "GET",
             params: {
-                symbol,
+                symbol: symbol.toUpperCase(),
                 fromDate: "2020-01-01T00:00:00.094",
                 toDate: "2021-08-31T15:09:14.095",
                 pageNumber: 1,
@@ -55,6 +55,12 @@ export default function StockTestBreak() {
                 if (res[index + j] && res[index + j].adjClose > max) {
                     max = res[index + j].adjClose
                 }
+            }
+            i.diffInMonth = Number(((max - i.adjClose) / i.adjClose * 100).toFixed(2))
+            const t3Price = res[index - 3]
+            if (t3Price) {
+                i.t3PriceClose = t3Price.adjClose
+                i.t3Change = Number(((t3Price.adjClose - i.adjClose) / i.adjClose * 100).toFixed(2))
             }
 
             // Condition 2
@@ -83,25 +89,20 @@ export default function StockTestBreak() {
             i.lowestPriceClose = minBy(arr20day, "adjClose").adjClose
             i.lowestChangePrice20day = Number(((i.lowestPriceClose - i.adjClose) / i.adjClose * 100).toFixed(2))
 
-
-            i.diffInMonth = Number(((max - i.adjClose) / i.adjClose * 100).toFixed(2))
-            const t3Price = res[index - 3]
-            if (t3Price) {
-                i.t3PriceClose = t3Price.adjClose
-                i.t3Change = Number(((t3Price.adjClose - i.adjClose) / i.adjClose * 100).toFixed(2))
+            // Condition 4
+            if (res[index + 1]) {
+                const previousDayChange = res[index + 1].changePercent
+                i.previousDayChange = Number((previousDayChange * 100).toFixed(2))
             }
-
-            // if (i.priceChange && i.priceChange > 4) {
-            // console.log(diffInMonth, max, i.priceClose, i.date)
-            // }
-
-
 
             return i
         }).filter((i: any, index: number) => {
             return i.priceChange
                 && i.priceChange > 4
                 && i.volume15dayChange > 50
+                && i.previousDayChange < 4
+                && i.open !== i.high
+                && i.diffInMonth < 10
             // && i.t3Change > -3
         })
         // console.log(xxx, xxx.map((i: any) => i.priceChange))
@@ -109,7 +110,7 @@ export default function StockTestBreak() {
             date: "averageDate",
             highestChangePrice20day: Number(meanBy(xxx, 'highestChangePrice20day').toFixed(2))
         }
-        console.log(average)
+        // console.log(average)
         xxx.push(average)
         setData(xxx)
 
@@ -141,23 +142,30 @@ export default function StockTestBreak() {
                 return data.priceChange
             }
         },
-        {
-            title: 'diffInMonth',
-            align: 'right' as 'right',
-            render: (data: any) => {
-                return <div style={{
-                    background: data.diffInMonth > 10 ? "red" : "white",
-                    color: data.diffInMonth > 10 ? "white" : "black"
-                }}>{data.diffInMonth}</div>
-            }
-        },
+        // {
+        //     title: 'previousDayChange',
+        //     align: 'right' as 'right',
+        //     render: (data: any) => {
+        //         return data.previousDayChange
+        //     }
+        // },
+        // {
+        //     title: 'diffInMonth',
+        //     align: 'right' as 'right',
+        //     render: (data: any) => {
+        //         return <div style={{
+        //             background: data.diffInMonth > 10 ? "red" : "white",
+        //             color: data.diffInMonth > 10 ? "white" : "black"
+        //         }}>{data.diffInMonth}</div>
+        //     }
+        // },
         {
             title: 'volume15dayChange',
             align: 'right' as 'right',
             render: (data: any) => {
                 return <div style={{
-                    background: data.volume15dayChange < 50 ? "red" : "white",
-                    color: data.volume15dayChange < 50 ? "white" : "black"
+                    // background: data.volume15dayChange < 50 ? "red" : "white",
+                    color: data.volume15dayChange < 50 ? "red" : "black"
                 }}>{data.volume15dayChange}
                     {/* | {data.arrVolume.join(", ")} */}
                 </div>
@@ -168,8 +176,8 @@ export default function StockTestBreak() {
             align: 'right' as 'right',
             render: (data: any) => {
                 return <div style={{
-                    background: data.t3Change < -3 ? "red" : "white",
-                    color: data.t3Change < -3 ? "white" : "black"
+                    // background: data.t3Change < -3 ? "red" : "white",
+                    color: data.t3Change < -3 ? "red" : "black"
                 }}>{data.t3Change}</div>
             }
         },
@@ -188,16 +196,19 @@ export default function StockTestBreak() {
             align: 'right' as 'right',
             render: (data: any) => {
                 return <div style={{
-                    background: data.lowestChangePrice20day < -5 ? "red" : "white",
-                    color: data.lowestChangePrice20day < -5 ? "white" : "black"
+                    // background: data.lowestChangePrice20day < -5 ? "red" : "white",
+                    color: data.lowestChangePrice20day < -5 ? "red" : "black"
                 }}>{data.lowestChangePrice20day} | {moment(data.lowestPriceCloseDate).format("MM-DD")}</div>
             }
         }
     ]
+    console.log(data)
 
     return <div>
-        <ReactMarkdown>
-            {`
+        <div style={{ display: "flex" }}>
+            <div style={{ width: "50%" }}>
+                <ReactMarkdown>
+                    {`
                 \n - Test break
                 \n - Symbol: KDH
                 \n - Time: 1/1/2020 - 31/12/2020
@@ -206,9 +217,23 @@ export default function StockTestBreak() {
                 \n   - diffInMonth > 10%
                 \n   - t3Change > -3%
                 \n   - volume15dayChange > 50%
-
+                \n   - previousDayChange < 4%
+                \n   - open !== high
             `}
-        </ReactMarkdown>
+                </ReactMarkdown>
+            </div>
+            <div style={{ width: "50%" }}>
+                <ReactMarkdown>
+                    {`
+                \n - Note:
+                \n   - HDG: 06-01
+                \n   - NKG: 01-25
+                \n   - SCR: 02-18, 03-04, 04-27
+                \n   - DBC: 12-18, 12-29, 11-20, 09-11, 07-16, 03-30, 
+            `}
+                </ReactMarkdown>
+            </div>
+        </div>
         <div>
             <Input onChange={handleChangeInput} onPressEnter={handlePressEnter} />Count: {data.length}
         </div>
