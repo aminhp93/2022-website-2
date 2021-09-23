@@ -16,6 +16,7 @@ import IndustryAndMarket from "./IndustryAndMarket/IndustryAndMarket";
 import InvestmentStrategy from "./InvestmentStrategy/InvestmentStrategy";
 import StockEvent from "./StockEvent/StockEvent";
 import StockTestBreak from "./StockTestBreak/StockTestBreak";
+import StockPattern from "./StockPattern/StockPattern";
 
 // import { LIST_SYMBOLS } from "./Stock.constants";
 
@@ -248,9 +249,11 @@ export default function Stock() {
         <br />
         <Button onClick={() => setModal("InvestmentStrategy")}>InvestmentStrategy</Button>
         <br />
-        <Button onClick={() => setModal("StockEvent")}>StockEvent</Button>
+        <Button onClick={() => setModal("StockEvent")}>Stock Event</Button>
         <br />
-        <Button onClick={() => setModal("StockTestBreak")}>StockTestBreak</Button>
+        <Button onClick={() => setModal("StockTestBreak")}>Test Break</Button>
+        <br />
+        <Button onClick={() => setModal("StockPattern")}>Stock Pattern</Button>
         <br />
         {
             modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>
@@ -260,6 +263,7 @@ export default function Stock() {
                 {modal === "InvestmentStrategy" && <InvestmentStrategy />}
                 {modal === "StockEvent" && <StockEvent />}
                 {modal === "StockTestBreak" && <StockTestBreak />}
+                {modal === "StockPattern" && <StockPattern />}
             </Modal>
         }
     </div>

@@ -5,6 +5,14 @@ import { Timeline, Modal } from 'antd';
 export default function StockEvent() {
     const listEvents = [
         {
+            time: "21-09-2021",
+            name: "Evergrande Khung hoang no",
+            note: `
+             \n - [Link docs](https://www.youtube.com/watch?v=Fw33gICwH1M)
+             \n - Thi truong giam diem mo gap
+            `
+        },
+        {
             time: "07-09-2021",
             name: "Thong tu 14/2021",
             note: `
@@ -27,7 +35,9 @@ export default function StockEvent() {
              \n - [Link docs](http://www.chinhphu.vn/portal/page/portal/chinhphu/hethongvanban?class_id=1&mode=detail&document_id=99777)
              \n - 
             `
-        }
+        },
+
+
     ]
 
     return <div>

@@ -2,12 +2,16 @@ import ReactMarkdown from "react-markdown";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
-import { Input, Table } from "antd";
-import { mean, maxBy, minBy, meanBy } from "lodash";
+import { Input, Table, Button, Tabs } from "antd";
+import { mean, maxBy, minBy, meanBy, keyBy, sortBy } from "lodash";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
+const { TabPane } = Tabs;
 
 export default function StockTestBreak() {
     const [data, setData] = useState([]);
-    const [symbol, setSymbol] = useState('KDH');
+
+    const [tab, setTab] = useState("overview");
 
 
     const getHistoricalQuotes = async (symbol: string, startDate: string, endDate: string) => {
@@ -40,7 +44,7 @@ export default function StockTestBreak() {
         return res.data.result.items
     }
 
-    const getData = async () => {
+    const getData = async (symbol: string) => {
         const res = await getHistoricalQuotes(symbol, "2020-01-01", "2021-08-31")
         const xxx = res.map((i: any, index: number) => {
             if (index < res.length - 1) {
@@ -94,6 +98,7 @@ export default function StockTestBreak() {
                 const previousDayChange = res[index + 1].changePercent
                 i.previousDayChange = Number((previousDayChange * 100).toFixed(2))
             }
+            i.tradingTime = moment(i.tradingTime).format("YYYY-MM-DD")
 
             return i
         }).filter((i: any, index: number) => {
@@ -116,17 +121,150 @@ export default function StockTestBreak() {
 
     }
 
-    const handleChangeInput = (e: any) => {
-        setSymbol(e.target.value)
-    }
 
-    const handlePressEnter = () => {
-        getData()
+    useEffect(() => {
+        // getData();
+    }, [])
+
+
+    console.log(data)
+
+    return <div>
+        <div>
+            <Tabs defaultActiveKey="overview" onChange={(key) => setTab(key)}>
+                <TabPane tab="Overview" key="overview" />
+                <TabPane tab="Scoreboard" key="scoreboard" />
+                <TabPane tab="Graphs" key="graphs" />
+                <TabPane tab="Test" key="test" />
+            </Tabs>
+        </div>
+        {tab === "overview" && <OverviewTab cb={getData} data={data} />}
+        {tab === "scoreboard" && <ScoreboardTab cb={getData} data={data} />}
+        {tab === "graphs" && <GraphsTab />}
+        {tab === "test" && <TestTab />}
+    </div >
+}
+
+function OverviewTab({ data, cb }: any) {
+
+    const analyseData = (arrayData: any) => {
+        const sortedData = sortBy(data, "tradingTime")
+        const dataObj = keyBy(sortedData, "tradingTime")
+        const result = [];
+        var end = new Date(2021, 8, 31);
+        for (var d = new Date(2020, 0, 1); d <= end; d.setDate(d.getDate() + 1)) {
+            const date = moment(d).format('YYYY-MM-DD')
+
+            if (dataObj[date]) {
+                result.push(dataObj[date])
+            }
+        }
+        console.log(result)
     }
 
     useEffect(() => {
-        getData();
+        cb("NKG");
     }, [])
+
+
+    const analysedData = analyseData(data)
+    // console.log(data)
+
+    return <div>
+        <div>
+            <ReactMarkdown>
+                {`
+                    \n - dau tu 1 ma theo chien thuat nay       
+                    \n - List ma: NKG
+                    \n - Thoi gian: 2020-01-01" -> "2021-08-31
+                    \n - So tien ban dau: 100
+                    \n - So tien them hang thang: 30
+                `}
+            </ReactMarkdown>
+
+        </div>
+    </div>
+}
+
+function GraphsTab() {
+    const [tab, setTab] = useState("1")
+    const data2 = [
+        {
+            symbol: 'lan 1',
+            HPG: 100,
+            NKG: 100,
+            HSG: 100,
+            TLH: 100
+        },
+        {
+            symbol: 'lan 2',
+            HPG: 105,
+            NKG: 104,
+            HSG: 103,
+            TLH: 107
+        },
+        {
+            symbol: 'lan 2',
+            HPG: 105,
+            NKG: 104,
+            HSG: 103,
+            TLH: 107
+        },
+        {
+            symbol: 'lan 3',
+            HPG: 107,
+            NKG: 109,
+            HSG: 110,
+            TLH: 102
+        },
+        {
+            symbol: 'lan 4',
+            HPG: 109,
+            NKG: 103,
+            HSG: 111,
+            TLH: 107
+        },
+
+    ];
+    return <div>
+        {`So sanh cung nganh. Hieu qua dau tu 1 co phieu so vs vnindex`}
+        <Tabs defaultActiveKey="1" onChange={(key) => setTab(key)}>
+            <TabPane tab="Theo nganh" key="1">
+                <div>Dropdown watchlist</div>
+            </TabPane>
+            <TabPane tab="Custome" key="2">
+                <Input placeholder="HPG, HSG, TLH" />
+            </TabPane>
+        </Tabs>
+
+        <div>
+            <LineChart
+                width={1000}
+                height={500}
+                data={data2}
+                margin={{
+                    top: 5,
+                    right: 30,
+                    left: 20,
+                    bottom: 5,
+                }}
+            >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="symbol" />
+                <YAxis domain={[100, 130]} />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="HPG" stroke="#8884d8" activeDot={{ r: 8 }} />
+                <Line type="monotone" dataKey="NKG" stroke="#82ca9d" />
+                <Line type="monotone" dataKey="HSG" stroke="red" />
+                <Line type="monotone" dataKey="TLH" stroke="green" />
+            </LineChart>
+        </div>
+    </div >
+}
+
+function ScoreboardTab({ cb, data }: any) {
+    const [symbol, setSymbol] = useState('NKG');
 
     const columns = [
         {
@@ -202,35 +340,47 @@ export default function StockTestBreak() {
             }
         }
     ]
-    console.log(data)
 
-    return <div>
+    const handleChangeInput = (e: any) => {
+        setSymbol(e.target.value)
+    }
+
+    const handlePressEnter = () => {
+        cb()
+    }
+
+
+    useEffect(() => {
+        cb(symbol)
+    }, [])
+
+    return <>
         <div style={{ display: "flex" }}>
             <div style={{ width: "50%" }}>
                 <ReactMarkdown>
                     {`
-                \n - Test break
-                \n - Symbol: KDH
-                \n - Time: 1/1/2020 - 31/12/2020
-                \n - Condition test: 
-                \n   - priceChange > 4%
-                \n   - diffInMonth > 10%
-                \n   - t3Change > -3%
-                \n   - volume15dayChange > 50%
-                \n   - previousDayChange < 4%
-                \n   - open !== high
-            `}
+                        \n - Test break
+                        \n - Symbol: NKG
+                        \n - Time: 1/1/2020 - 31/12/2020
+                        \n - Condition test: 
+                        \n   - priceChange > 4%
+                        \n   - diffInMonth > 10%
+                        \n   - t3Change > -3%
+                        \n   - volume15dayChange > 50%
+                        \n   - previousDayChange < 4%
+                        \n   - open !== high
+                    `}
                 </ReactMarkdown>
             </div>
             <div style={{ width: "50%" }}>
                 <ReactMarkdown>
                     {`
-                \n - Note:
-                \n   - HDG: 06-01
-                \n   - NKG: 01-25
-                \n   - SCR: 02-18, 03-04, 04-27
-                \n   - DBC: 12-18, 12-29, 11-20, 09-11, 07-16, 03-30, 
-            `}
+                        \n - Note:
+                        \n   - HDG: 06-01
+                        \n   - NKG: 01-25
+                        \n   - SCR: 02-18, 03-04, 04-27
+                        \n   - DBC: 12-18, 12-29, 11-20, 09-11, 07-16, 03-30, 
+                    `}
                 </ReactMarkdown>
             </div>
         </div>
@@ -244,5 +394,11 @@ export default function StockTestBreak() {
                 pagination={false}
                 scroll={{ y: 800 }} />
         </div>
-    </div >
+    </>
+}
+
+function TestTab() {
+    return <div>
+        TestTab
+    </div>
 }
