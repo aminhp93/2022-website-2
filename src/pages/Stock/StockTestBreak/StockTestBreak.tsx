@@ -2,13 +2,13 @@ import ReactMarkdown from "react-markdown";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
-import { Input, Table, Button, Tabs, DatePicker } from "antd";
+import { Input, Table, Button, Tabs, DatePicker, Select } from "antd";
 import { mean, maxBy, minBy, meanBy, keyBy, sortBy } from "lodash";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
-
+const { Option } = Select;
 
 export default function StockTestBreak() {
     const [data, setData] = useState([]);
@@ -18,19 +18,6 @@ export default function StockTestBreak() {
 
     const getHistoricalQuotes = async (symbol: string, startDate: string, endDate: string) => {
         if (!startDate || !endDate) return
-        // const res = await axios({
-        //     url: `https://restv2.fireant.vn/symbols/${symbol}/historical-quotes`,
-        //     method: 'GET',
-        //     headers: {
-        //         Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxODg5NjIyNTMwLCJuYmYiOjE1ODk2MjI1MzAsImNsaWVudF9pZCI6ImZpcmVhbnQudHJhZGVzdGF0aW9uIiwic2NvcGUiOlsiYWNhZGVteS1yZWFkIiwiYWNhZGVteS13cml0ZSIsImFjY291bnRzLXJlYWQiLCJhY2NvdW50cy13cml0ZSIsImJsb2ctcmVhZCIsImNvbXBhbmllcy1yZWFkIiwiZmluYW5jZS1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImludmVzdG9wZWRpYS1yZWFkIiwib3JkZXJzLXJlYWQiLCJvcmRlcnMtd3JpdGUiLCJwb3N0cy1yZWFkIiwicG9zdHMtd3JpdGUiLCJzZWFyY2giLCJzeW1ib2xzLXJlYWQiLCJ1c2VyLWRhdGEtcmVhZCIsInVzZXItZGF0YS13cml0ZSIsInVzZXJzLXJlYWQiXSwianRpIjoiMjYxYTZhYWQ2MTQ5Njk1ZmJiYzcwODM5MjM0Njc1NWQifQ.dA5-HVzWv-BRfEiAd24uNBiBxASO-PAyWeWESovZm_hj4aXMAZA1-bWNZeXt88dqogo18AwpDQ-h6gefLPdZSFrG5umC1dVWaeYvUnGm62g4XS29fj6p01dhKNNqrsu5KrhnhdnKYVv9VdmbmqDfWR8wDgglk5cJFqalzq6dJWJInFQEPmUs9BW_Zs8tQDn-i5r4tYq2U8vCdqptXoM7YgPllXaPVDeccC9QNu2Xlp9WUvoROzoQXg25lFub1IYkTrM66gJ6t9fJRZToewCt495WNEOQFa_rwLCZ1QwzvL0iYkONHS_jZ0BOhBCdW9dWSawD6iF1SIQaFROvMDH1rg'
-        //     },
-        //     params: {
-        //         startDate,
-        //         endDate,
-        //         offset: "0",
-        //         limit: "1000",
-        //     }
-        // })
 
         const res = await axios({
             url: "https://fwtapi1.fialda.com/api/services/app/StockInfo/GetHistoricalData",
@@ -121,8 +108,6 @@ export default function StockTestBreak() {
         setData(xxx)
     }
 
-    // console.log(data)
-
     return <div>
         <div>
             <Tabs defaultActiveKey="overview" onChange={(key) => setTab(key)}>
@@ -141,10 +126,13 @@ export default function StockTestBreak() {
 
 function OverviewTab() {
     const [symbol, setSymbol] = useState("NKG");
+    const [listSymbol, setListSymbol] = useState(['HPG', 'NKG', 'TLH', "HSG"]);
     const [startDate, setStartDate] = useState("2020-01-01");
     const [endDate, setEndDate] = useState("2020-12-31")
     const [data, setData] = useState([]);
     const [fullData, setFullData] = useState([]);
+    const [listData, setListData] = useState([]);
+    const [listWatchlists, setListWatchlists] = useState([])
 
     const getData = async (symbol: string) => {
         const res = await getHistoricalQuotes(symbol, startDate, endDate)
@@ -220,23 +208,11 @@ function OverviewTab() {
         xxx.push(average)
         const analysedData = analyseData(xxx, res, startDate, endDate)
         setData(analysedData)
+        return { data: analysedData, symbol }
     }
 
     const getHistoricalQuotes = async (symbol: string, startDate: string, endDate: string) => {
         if (!startDate || !endDate) return
-        // const res = await axios({
-        //     url: `https://restv2.fireant.vn/symbols/${symbol}/historical-quotes`,
-        //     method: 'GET',
-        //     headers: {
-        //         Authorization: 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxODg5NjIyNTMwLCJuYmYiOjE1ODk2MjI1MzAsImNsaWVudF9pZCI6ImZpcmVhbnQudHJhZGVzdGF0aW9uIiwic2NvcGUiOlsiYWNhZGVteS1yZWFkIiwiYWNhZGVteS13cml0ZSIsImFjY291bnRzLXJlYWQiLCJhY2NvdW50cy13cml0ZSIsImJsb2ctcmVhZCIsImNvbXBhbmllcy1yZWFkIiwiZmluYW5jZS1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImludmVzdG9wZWRpYS1yZWFkIiwib3JkZXJzLXJlYWQiLCJvcmRlcnMtd3JpdGUiLCJwb3N0cy1yZWFkIiwicG9zdHMtd3JpdGUiLCJzZWFyY2giLCJzeW1ib2xzLXJlYWQiLCJ1c2VyLWRhdGEtcmVhZCIsInVzZXItZGF0YS13cml0ZSIsInVzZXJzLXJlYWQiXSwianRpIjoiMjYxYTZhYWQ2MTQ5Njk1ZmJiYzcwODM5MjM0Njc1NWQifQ.dA5-HVzWv-BRfEiAd24uNBiBxASO-PAyWeWESovZm_hj4aXMAZA1-bWNZeXt88dqogo18AwpDQ-h6gefLPdZSFrG5umC1dVWaeYvUnGm62g4XS29fj6p01dhKNNqrsu5KrhnhdnKYVv9VdmbmqDfWR8wDgglk5cJFqalzq6dJWJInFQEPmUs9BW_Zs8tQDn-i5r4tYq2U8vCdqptXoM7YgPllXaPVDeccC9QNu2Xlp9WUvoROzoQXg25lFub1IYkTrM66gJ6t9fJRZToewCt495WNEOQFa_rwLCZ1QwzvL0iYkONHS_jZ0BOhBCdW9dWSawD6iF1SIQaFROvMDH1rg'
-        //     },
-        //     params: {
-        //         startDate,
-        //         endDate,
-        //         offset: "0",
-        //         limit: "1000",
-        //     }
-        // })
 
         const res = await axios({
             url: "https://fwtapi1.fialda.com/api/services/app/StockInfo/GetHistoricalData",
@@ -252,7 +228,45 @@ function OverviewTab() {
         return res.data.result.items
     }
 
+    const testList = () => {
+        const listPromises: any = []
+        listSymbol.map((i: any) => {
+            listPromises.push(getData(i))
+        })
+        Promise.all(listPromises).then((res: any) => {
+            console.log(res)
+            const maxLength: any = maxBy(res, "data.length")
+            console.log(maxLength)
+            const result = [];
+            for (let i = 0; i < maxLength.data.length; i++) {
+                let item: any = {};
+                res.map((j: any) => {
+                    // console.log(j)
+                    item.count = i
+                    item[j.symbol] = (j.data[i] || {}).totalNAV
+                })
+                result.push(item)
+            }
+            console.log(249, result)
+            setListData(result)
+        })
+    }
+
+    const getWatchlist = async () => {
+        const res = await axios({
+            method: "GET",
+            url: "https://restv2.fireant.vn/me/watchlists",
+            headers: {
+                "Authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTEzNjIzMDMyLCJuYmYiOjE2MTM2MjMwMzIsImNsaWVudF9pZCI6ImZpcmVhbnQudHJhZGVzdGF0aW9uIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiIxZmI5NjI3Yy1lZDZjLTQwNGUtYjE2NS0xZjgzZTkwM2M1MmQiLCJhdXRoX3RpbWUiOjE2MTM2MjMwMzIsImlkcCI6IkZhY2Vib29rIiwibmFtZSI6Im1pbmhwbi5vcmcuZWMxQGdtYWlsLmNvbSIsInNlY3VyaXR5X3N0YW1wIjoiODIzMzcwOGUtYjFjOS00ZmQ3LTkwYmYtMzI2NTYzYmU4N2JkIiwianRpIjoiZmIyZWJkNzAzNTBiMDBjMGJhMWE5ZDA5NGUwNDMxMjYiLCJhbXIiOlsiZXh0ZXJuYWwiXX0.OhgGCRCsL8HVXSueC31wVLUhwWWPkOu-yKTZkt3jhdrK3MMA1yJroj0Y73odY9XSLZ3dA4hUTierF0LxcHgQ-pf3UXR5KYU8E7ieThAXnIPibWR8ESFtB0X3l8XYyWSYZNoqoUiV9NGgvG2yg0tQ7lvjM8UYbiI-3vUfWFsMX7XU3TQnhxW8jYS_bEXEz7Fvd_wQbjmnUhQZuIVJmyO0tFd7TGaVipqDbRdry3iJRDKETIAMNIQx9miHLHGvEqVD5BsadOP4l8M8zgVX_SEZJuYq6zWOtVhlq3uink7VvnbZ7tFahZ4Ty4z8ev5QbUU846OZPQyMlEnu_TpQNpI1hg"
+            }
+        })
+        if (res && res.data) {
+            setListWatchlists(res.data)
+        }
+    }
+
     useEffect(() => {
+        getWatchlist();
         getData(symbol);
     }, [])
 
@@ -287,7 +301,13 @@ function OverviewTab() {
     ]
 
     const dateFormat = 'YYYY-MM-DD';
-
+    const listDropdown = (listWatchlists.filter((i: any) => i.name === "thanh_khoan_vua")[0] || {}).symbols || []
+    // ['HPG', 'NKG', 'TLH', "HSG"]
+    // console.log(listDropdown, listWatchlists, listWatchlists.filter((i: any) => i.name === "thanh_khoan_vua"))
+    const children = [];
+    for (let i = 0; i < listDropdown.length; i++) {
+        children.push(<Option value={listDropdown[i]} key={i}>{listDropdown[i]}</Option>);
+    }
 
     return <div>
         <div>
@@ -305,6 +325,16 @@ function OverviewTab() {
         </div>
 
         <Input onPressEnter={() => getData(symbol)} style={{ width: "200px" }} value={symbol} onChange={(e) => setSymbol(e.target.value)} />
+        <Select
+            mode="multiple"
+            allowClear
+            style={{ width: '100%' }}
+            placeholder="Please select"
+            value={listSymbol}
+            onChange={(e) => setListSymbol(e)}
+        >
+            {children}
+        </Select>
         <RangePicker
             onChange={(e: any) => {
                 setStartDate(moment(e[0]).format(dateFormat))
@@ -315,90 +345,46 @@ function OverviewTab() {
         />
         <br />
         <Button onClick={() => getData(symbol)}>Test</Button>
+        <Button onClick={testList}>Test List</Button>
         <div>
             <Table
                 dataSource={data}
                 columns={columns}
                 pagination={false}
                 scroll={{ y: 800 }} />
+
+        </div>
+        <div>
+            <GraphsTab data={listData} listDataKey={listSymbol} />
         </div>
     </div>
 }
 
-function GraphsTab() {
-    const [tab, setTab] = useState("1")
-    const data2 = [
-        {
-            symbol: 'lan 1',
-            HPG: 100,
-            NKG: 100,
-            HSG: 100,
-            TLH: 100
-        },
-        {
-            symbol: 'lan 2',
-            HPG: 105,
-            NKG: 104,
-            HSG: 103,
-            TLH: 107
-        },
-        {
-            symbol: 'lan 2',
-            HPG: 105,
-            NKG: 104,
-            HSG: 103,
-            TLH: 107
-        },
-        {
-            symbol: 'lan 3',
-            HPG: 107,
-            NKG: 109,
-            HSG: 110,
-            TLH: 102
-        },
-        {
-            symbol: 'lan 4',
-            HPG: 109,
-            NKG: 103,
-            HSG: 111,
-            TLH: 107
-        },
-
-    ];
+function GraphsTab({ data, listDataKey }: any) {
+    const listColor = ['red', 'blue', 'green', 'orange', 'black']
     return <div>
-        {`So sanh cung nganh. Hieu qua dau tu 1 co phieu so vs vnindex`}
-        <Tabs defaultActiveKey="1" onChange={(key) => setTab(key)}>
-            <TabPane tab="Theo nganh" key="1">
-                <div>Dropdown watchlist</div>
-            </TabPane>
-            <TabPane tab="Custome" key="2">
-                <Input placeholder="HPG, HSG, TLH" />
-            </TabPane>
-        </Tabs>
-
-        <div>
-            <LineChart
-                width={1000}
-                height={500}
-                data={data2}
-                margin={{
-                    top: 5,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                }}
-            >
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="symbol" />
-                <YAxis domain={[100, 130]} />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="HPG" stroke="#8884d8" activeDot={{ r: 8 }} />
-                <Line type="monotone" dataKey="NKG" stroke="#82ca9d" />
-                <Line type="monotone" dataKey="HSG" stroke="red" />
-                <Line type="monotone" dataKey="TLH" stroke="green" />
-            </LineChart>
-        </div>
+        <LineChart
+            width={1000}
+            height={500}
+            data={data}
+            margin={{
+                top: 5,
+                right: 30,
+                left: 20,
+                bottom: 5,
+            }}
+        >
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="count" />
+            <YAxis domain={[100, 130]} />
+            <Tooltip />
+            <Legend />
+            {
+                listDataKey.map((i: any, index: number) => {
+                    return <Line type="monotone" dataKey={i} stroke={listColor[index]} />
+                })
+            }
+        </LineChart>
     </div >
 }
 
@@ -532,6 +518,7 @@ function ScoreboardTab({ cb, data }: any) {
                 columns={columns}
                 pagination={false}
                 scroll={{ y: 800 }} />
+
         </div>
     </>
 }
@@ -598,12 +585,16 @@ const analyseData = (data: any, fullData: any, startDate: string, endDate: strin
 
         if (buyDate) {
             sellDateObj = findSellDate(buyDate, fullData)
-            dataObj[date].sellDate = sellDateObj.tradingTime
-            dataObj[date].changeSellDate = (sellDateObj.adjClose - dataObj[date].adjClose) / dataObj[date].adjClose * 100
-            totalNAV = totalNAV * (dataObj[date].changeSellDate / 100 + 1) + monthlyAdd
-            dataObj[date].totalNAV = Number(totalNAV.toFixed(0))
+            console.log(sellDateObj)
+            if (sellDateObj) {
+                dataObj[date].sellDate = sellDateObj.tradingTime
+                dataObj[date].changeSellDate = (sellDateObj.adjClose - dataObj[date].adjClose) / dataObj[date].adjClose * 100
+                totalNAV = totalNAV * (dataObj[date].changeSellDate / 100 + 1) + monthlyAdd
+                dataObj[date].totalNAV = Number(totalNAV.toFixed(0))
 
-            result.push(dataObj[date])
+                result.push(dataObj[date])
+            }
+
         }
     }
     // console.log(result)
