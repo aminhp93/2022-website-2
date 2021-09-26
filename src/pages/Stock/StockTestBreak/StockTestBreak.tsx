@@ -13,8 +13,6 @@ const { Option } = Select;
 
 export default function StockTestBreak() {
     const [data, setData] = useState([]);
-
-    const [fullData, setFullData] = useState([]);
     const [tab, setTab] = useState("overview");
 
     const getHistoricalQuotes = async (symbol: string, startDate: string, endDate: string) => {
@@ -36,7 +34,6 @@ export default function StockTestBreak() {
 
     const getData = async (symbol: string) => {
         const res = await getHistoricalQuotes(symbol, "2020-01-01", "2021-08-31")
-        setFullData(res)
         const xxx = res.map((i: any, index: number) => {
             if (index < res.length - 1) {
                 const todayClose = i.adjClose
@@ -131,19 +128,16 @@ function OverviewTab() {
     const [startDate, setStartDate] = useState("2020-01-01");
     const [endDate, setEndDate] = useState("2020-12-31")
     const [data, setData] = useState([]);
-    const [fullData, setFullData] = useState([]);
     const [listData, setListData] = useState([]);
     const [listWatchlists, setListWatchlists] = useState([])
+    const [showAll, setShowAll] = useState(false);
 
     const getData = async (symbol: string) => {
         const res = await getHistoricalQuotes(symbol, startDate, endDate)
-
-        // setFullData(res)
         if (!res) {
             console.log(symbol)
             return { "hello": 123 }
         }
-
         const xxx = res.map((i: any, index: number) => {
             if (index < res.length - 1) {
                 const todayClose = i.adjClose
@@ -214,7 +208,7 @@ function OverviewTab() {
         }
         xxx.push(average)
         const analysedData = analyseData(xxx, res, startDate, endDate)
-        // setData(analysedData)
+        setData(analysedData)
         return { data: analysedData, symbol }
     }
 
@@ -238,11 +232,10 @@ function OverviewTab() {
             // console.log(e)
         })
 
-
-
     }
 
     const testList = () => {
+        setShowAll(true)
         const listPromises: any = []
         listSymbol.map((i: any) => {
             listPromises.push(getData(i))
@@ -340,7 +333,6 @@ function OverviewTab() {
                     
                 `}
             </ReactMarkdown>
-
         </div>
 
         <Input onPressEnter={() => getData(symbol)} style={{ width: "200px" }} value={symbol} onChange={(e) => setSymbol(e.target.value)} />
@@ -363,19 +355,23 @@ function OverviewTab() {
             format={dateFormat}
         />
         <br />
-        <Button onClick={() => getData(symbol)}>Test</Button>
+        <Button onClick={() => {
+            setShowAll(false)
+            getData(symbol)
+        }}>Test</Button>
         <Button onClick={testList}>Test List</Button>
-        {/* <div>
-            <Table
-                dataSource={data}
-                columns={columns}
-                pagination={false}
-                scroll={{ y: 800 }} />
-
-        </div> */}
-        <div>
-            <GraphsTab data={listData} listDataKey={listSymbol} />
-        </div>
+        {showAll
+            ? <div>
+                <GraphsTab data={listData} listDataKey={listSymbol} />
+            </div>
+            : <div>
+                <Table
+                    dataSource={data}
+                    columns={columns}
+                    pagination={false}
+                    scroll={{ y: 800 }} />
+            </div>
+        }
     </div>
 }
 
