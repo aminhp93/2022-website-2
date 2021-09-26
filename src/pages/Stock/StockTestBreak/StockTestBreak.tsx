@@ -5,6 +5,7 @@ import moment from "moment";
 import { Input, Table, Button, Tabs, DatePicker, Select } from "antd";
 import { mean, maxBy, minBy, meanBy, keyBy, sortBy } from "lodash";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { isConstructorDeclaration } from "typescript";
 
 const { TabPane } = Tabs;
 const { RangePicker } = DatePicker;
@@ -136,7 +137,13 @@ function OverviewTab() {
 
     const getData = async (symbol: string) => {
         const res = await getHistoricalQuotes(symbol, startDate, endDate)
-        setFullData(res)
+
+        // setFullData(res)
+        if (!res) {
+            console.log(symbol)
+            return { "hello": 123 }
+        }
+
         const xxx = res.map((i: any, index: number) => {
             if (index < res.length - 1) {
                 const todayClose = i.adjClose
@@ -207,14 +214,14 @@ function OverviewTab() {
         }
         xxx.push(average)
         const analysedData = analyseData(xxx, res, startDate, endDate)
-        setData(analysedData)
+        // setData(analysedData)
         return { data: analysedData, symbol }
     }
 
-    const getHistoricalQuotes = async (symbol: string, startDate: string, endDate: string) => {
+    const getHistoricalQuotes = (symbol: string, startDate: string, endDate: string) => {
         if (!startDate || !endDate) return
 
-        const res = await axios({
+        return axios({
             url: "https://fwtapi1.fialda.com/api/services/app/StockInfo/GetHistoricalData",
             method: "GET",
             params: {
@@ -224,8 +231,15 @@ function OverviewTab() {
                 pageNumber: 1,
                 pageSize: 1000
             }
+        }).then(res => {
+            // console.log(res)
+            return res.data.result.items
+        }).catch(e => {
+            // console.log(e)
         })
-        return res.data.result.items
+
+
+
     }
 
     const testList = () => {
@@ -236,7 +250,7 @@ function OverviewTab() {
         Promise.all(listPromises).then((res: any) => {
             console.log(res)
             const maxLength: any = maxBy(res, "data.length")
-            console.log(maxLength)
+            // console.log(maxLength)
             const result = [];
             for (let i = 0; i < maxLength.data.length; i++) {
                 let item: any = {};
@@ -247,8 +261,10 @@ function OverviewTab() {
                 })
                 result.push(item)
             }
-            console.log(249, result)
+            // console.log(249, result)
             setListData(result)
+        }).catch(e => {
+            console.log(e)
         })
     }
 
@@ -262,6 +278,9 @@ function OverviewTab() {
         })
         if (res && res.data) {
             setListWatchlists(res.data)
+            const listDropdown = (res.data.filter((i: any) => i.name === "thanh_khoan_vua")[0] || {}).symbols || []
+
+            setListSymbol(listDropdown)
         }
     }
 
@@ -346,14 +365,14 @@ function OverviewTab() {
         <br />
         <Button onClick={() => getData(symbol)}>Test</Button>
         <Button onClick={testList}>Test List</Button>
-        <div>
+        {/* <div>
             <Table
                 dataSource={data}
                 columns={columns}
                 pagination={false}
                 scroll={{ y: 800 }} />
 
-        </div>
+        </div> */}
         <div>
             <GraphsTab data={listData} listDataKey={listSymbol} />
         </div>
@@ -568,7 +587,7 @@ const findSellDate = (buyDate: string, listData: any) => {
 
 const analyseData = (data: any, fullData: any, startDate: string, endDate: string) => {
     const sortedData = sortBy(data, "tradingTime")
-    console.log(sortedData)
+    // console.log(sortedData)
     const dataObj = keyBy(sortedData, "tradingTime")
     const result = [];
     var end = new Date(2021, 8, 31);
@@ -585,7 +604,7 @@ const analyseData = (data: any, fullData: any, startDate: string, endDate: strin
 
         if (buyDate) {
             sellDateObj = findSellDate(buyDate, fullData)
-            console.log(sellDateObj)
+            // console.log(sellDateObj)
             if (sellDateObj) {
                 dataObj[date].sellDate = sellDateObj.tradingTime
                 dataObj[date].changeSellDate = (sellDateObj.adjClose - dataObj[date].adjClose) / dataObj[date].adjClose * 100
