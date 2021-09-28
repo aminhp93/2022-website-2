@@ -12,7 +12,6 @@ export default function News() {
 
 
         })
-        console.log(res);
         if (res && res.data) {
             setQuote(res.data)
         }

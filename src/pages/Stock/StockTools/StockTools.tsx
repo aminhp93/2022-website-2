@@ -77,6 +77,7 @@ function StockToolItem(props: IStockToolItemProps) {
             }
         })
         if (res && res.data) {
+            notification.success({ message: "Success" })
             setData(res.data)
             setValue(res.data.symbols.join(","))
         }
@@ -135,6 +136,7 @@ function StockToolItem(props: IStockToolItemProps) {
             <Input
                 value={value}
                 onChange={handleChangeInput}
+                onPressEnter={() => update(value.split(","))}
             />
             {/* <Button disabled={loading} onClick={handleUpdate}>Update list</Button> */}
         </div>

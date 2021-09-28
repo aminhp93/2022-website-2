@@ -123,7 +123,6 @@ export default function Stock() {
         if (res && res.data && res.data.content) {
             setNote(res.data.content)
         }
-        console.log(res)
     }
 
     const [listWatchlists, setListWatchlists] = useState([])
@@ -153,7 +152,7 @@ export default function Stock() {
 
     const objWatchlists = keyBy(listWatchlists, "name")
     const aimToBuyWatchlist = objWatchlists['aim_to_buy']
-    console.log(aimToBuyWatchlist)
+    // console.log(aimToBuyWatchlist)
 
     const aimToBuyDataSource = aimToBuyWatchlist && aimToBuyWatchlist.symbols && aimToBuyWatchlist.symbols.map((i: any) => {
         return {
@@ -171,7 +170,7 @@ export default function Stock() {
     ]
 
     const handleChangeNote = (e: any) => {
-        console.log(e.target.value)
+        // console.log(e.target.value)
         debounnceHandleChangeNote(e.target.value)
 
     }
@@ -189,7 +188,7 @@ export default function Stock() {
                 },
                 method: "PUT"
             }).then(res => {
-                console.log(res)
+                // console.log(res)
             }).catch(error => {
                 notification.error({ message: "Error Update Note" })
             })
