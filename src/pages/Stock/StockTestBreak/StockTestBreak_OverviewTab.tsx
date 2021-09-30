@@ -2,7 +2,7 @@ import ReactMarkdown from "react-markdown";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
-import { Input, Table, Button, DatePicker, Select, Dropdown, Menu } from "antd";
+import { Input, Table, Button, DatePicker, Select, Dropdown, Menu, notification } from "antd";
 import { mean, maxBy, minBy, meanBy, keyBy, sortBy } from "lodash";
 import StockTestBreak_GraphsTab from "./StockTestBreak_GraphsTab"
 import { analyseData } from "./StockTestBreak.helpers"
@@ -132,6 +132,7 @@ export default function StockTestBreak_OverviewTab() {
         })
         Promise.all(listPromises).then((res: any) => {
             let sortedRes = sortBy(res, 'totalNAV').reverse()
+            sortedRes = sortedRes.filter((i: any) => i.totalNAV)
             sortedRes = sortedRes.splice(0, 20)
             console.log(sortedRes)
             const maxLength: any = maxBy(sortedRes, "data.length")
@@ -139,7 +140,7 @@ export default function StockTestBreak_OverviewTab() {
             let result = [];
             for (let i = 0; i < maxLength.data.length; i++) {
                 let item: any = {};
-                res.map((j: any) => {
+                sortedRes.map((j: any) => {
                     // console.log(j)
                     item.count = i
                     item[j.symbol] = (j.data[i] || {}).totalNAV
@@ -149,10 +150,31 @@ export default function StockTestBreak_OverviewTab() {
             console.log(249, result)
             setListSymbol(sortedRes.map((i: any) => i.symbol))
             setListData(result)
+            update(sortedRes.map((i: any) => i.symbol))
 
         }).catch(e => {
             console.log(e)
         })
+    }
+
+    const update = async (list: any) => {
+        const res = await axios({
+            method: "PUT",
+            url: `https://restv2.fireant.vn/me/watchlists/1006042`,
+            headers: {
+                "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTEzNzE1ODY4LCJuYmYiOjE2MTM3MTU4NjgsImNsaWVudF9pZCI6ImZpcmVhbnQudHJhZGVzdGF0aW9uIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiIxZmI5NjI3Yy1lZDZjLTQwNGUtYjE2NS0xZjgzZTkwM2M1MmQiLCJhdXRoX3RpbWUiOjE2MTM3MTU4NjcsImlkcCI6IkZhY2Vib29rIiwibmFtZSI6Im1pbmhwbi5vcmcuZWMxQGdtYWlsLmNvbSIsInNlY3VyaXR5X3N0YW1wIjoiODIzMzcwOGUtYjFjOS00ZmQ3LTkwYmYtMzI2NTYzYmU4N2JkIiwianRpIjoiYzZmNmNkZWE2MTcxY2Q5NGRiNWZmOWZkNDIzOWM0OTYiLCJhbXIiOlsiZXh0ZXJuYWwiXX0.oZ8S_sTP6qVRJqY4h7g0JvXVPB0k8tm4go9pUFD0sS_sDZbC6zjelAVVNGHWJja82ewJbUEmTJrnDWAKR-rg5Pprp4DW7MzaN0lw3Bw0wEacphtyglx-H14-0Wnv_-2KMyQLP5EYH8wgyiw9I3ig_i7kHJy-XgCd__tdoMKvarkIXPzJJJY32gq-LScWb3HyZsfEdi-DEZUUzjAHR1nguY8oNmCiA6FaQCzOBU_qfgmOLWhN9ZNN1G3ODAeoOnphLJuWjHIrwPuVXy6B39eU2PtHmujtw_YOXdIWEi0lRhqV1pZOrJEarQqjdV3K5XNwpGvONT8lvUwUYGoOwwBFJg"
+            },
+            data: {
+                name: "highest_ROI_test",
+                symbols: list,
+                userName: "minhpn.org.ec1@gmail.com",
+                watchlistID: 1006042,
+            }
+        })
+        if (res && res.data) {
+            notification.success({ message: "Success" })
+
+        }
     }
 
     const getWatchlist = async () => {
