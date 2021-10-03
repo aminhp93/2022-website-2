@@ -2,7 +2,7 @@ import ReactMarkdown from "react-markdown";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
-import { Input, Table, Button, DatePicker, Select, Dropdown, Menu, notification } from "antd";
+import { Input, Table, Button, DatePicker, Select, Dropdown, Menu, notification, Spin } from "antd";
 import { mean, maxBy, minBy, meanBy, keyBy, sortBy, isEmpty } from "lodash";
 import StockTestBreak_GraphsTab from "./StockTestBreak_GraphsTab"
 import { analyseData, findSellDate, singleColumns, combinedColumns } from "./StockTestBreak.helpers"
@@ -11,6 +11,7 @@ const { RangePicker } = DatePicker;
 const { Option } = Select;
 
 export default function StockTestBreak_OverviewTab() {
+    const [loading, setLoading] = useState(false);
     const [symbol, setSymbol] = useState("NKG");
     const [listSymbol, setListSymbol] = useState(['HPG', 'NKG', 'TLH', "HSG"]);
     const [startDate, setStartDate] = useState("2020-01-01");
@@ -134,12 +135,14 @@ export default function StockTestBreak_OverviewTab() {
 
     const testList = () => {
         setTestType("multiple")
+        setLoading(true)
         const listPromises: any = []
         listSymbol.map((i: any) => {
             listPromises.push(getData(i))
         })
         Promise.all(listPromises).then((res: any) => {
             console.log(res)
+            setLoading(false)
             let sortedRes = sortBy(res, 'totalNAV').reverse()
             sortedRes = sortedRes.filter((i: any) => i.totalNAV)
             sortedRes = sortedRes.splice(0, 20)
@@ -162,18 +165,21 @@ export default function StockTestBreak_OverviewTab() {
             update(sortedRes.map((i: any) => i.symbol))
 
         }).catch(e => {
+            setLoading(false)
             console.log(e)
         })
     }
 
     const testCombineAutoFindSymbol = () => {
         setTestType("combined")
+        setLoading(true)
         const listPromises: any = []
         listSymbol.map((i: any) => {
             listPromises.push(getData(i, true))
         })
 
         Promise.all(listPromises).then((res: any) => {
+            setLoading(false)
             console.log(res)
             const objRes = keyBy(res, "symbol")
             const result: any[] | PromiseLike<any[]> = [];
@@ -216,6 +222,7 @@ export default function StockTestBreak_OverviewTab() {
             return result
 
         }).catch(e => {
+            setLoading(false)
             console.log(e)
         })
     }
@@ -302,6 +309,7 @@ export default function StockTestBreak_OverviewTab() {
         </Menu>
     );
 
+
     return <div>
         <div>
             <ReactMarkdown>
@@ -347,9 +355,9 @@ export default function StockTestBreak_OverviewTab() {
         >
             {children}
         </Select>
-        <Button onClick={testList}>Test List</Button>
+        <Button disabled={loading} onClick={testList}>Test List</Button>
         <hr />
-        <Button onClick={testCombineAutoFindSymbol}>Test Combine Auto Find Symbol</Button>
+        <Button disabled={loading} onClick={testCombineAutoFindSymbol}>Test Combine Auto Find Symbol</Button>
         <div style={{ marginBottom: "50px" }}>
 
         </div>
@@ -360,22 +368,27 @@ export default function StockTestBreak_OverviewTab() {
                 pagination={false}
                 scroll={{ y: 800 }} />
         </div>}
-
         {
-            testType === "mulitple" && <div>
-                <StockTestBreak_GraphsTab data={listData} listDataKey={listSymbol} />
-            </div>
-
+            testType === "mulitple" && (
+                loading
+                    ? <Spin />
+                    : <div>
+                        <StockTestBreak_GraphsTab data={listData} listDataKey={listSymbol} />
+                    </div>
+            )
         }
         {
-
-            testType === "combined" && <div>
-                <Table
-                    dataSource={combinedData}
-                    columns={combinedColumns}
-                    pagination={false}
-                    scroll={{ y: 800 }} />
-            </div>
+            testType === "combined" && (
+                loading
+                    ? <Spin />
+                    : <div>
+                        <Table
+                            dataSource={combinedData}
+                            columns={combinedColumns}
+                            pagination={false}
+                            scroll={{ y: 800 }} />
+                    </div>
+            )
         }
 
     </div>
