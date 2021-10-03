@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
 import { Input, Table, Button, DatePicker, Select, Dropdown, Menu, notification, Spin } from "antd";
-import { mean, maxBy, minBy, meanBy, keyBy, sortBy, isEmpty } from "lodash";
+import { mean, maxBy, minBy, meanBy, keyBy, isEmpty, orderBy } from "lodash";
 import StockTestBreak_GraphsTab from "./StockTestBreak_GraphsTab"
 import { analyseData, findSellDate, singleColumns, combinedColumns } from "./StockTestBreak.helpers"
 
@@ -26,73 +26,74 @@ export default function StockTestBreak_OverviewTab() {
     const getData = async (symbol: string, combined?: boolean) => {
         const res = await getHistoricalQuotes(symbol, startDate, endDate)
         if (!res) {
-            // console.log(symbol)
             return { "hello": 123 }
         }
-        const xxx = res.map((i: any, index: number) => {
-            if (index < res.length - 1) {
-                const todayClose = i.adjClose
-                const yesterdayClose = res[index + 1].adjClose
-                i.priceChange = Number(((todayClose - yesterdayClose) / yesterdayClose * 100).toFixed(2))
-            }
-
-            // Condition 1
-            let max = 0
-            for (let j = 0; j < 20; j++) {
-                if (res[index + j] && res[index + j].adjClose > max) {
-                    max = res[index + j].adjClose
+        const xxx = res
+            .map((i: any, index: number) => {
+                if (index < res.length - 1) {
+                    const todayClose = i.adjClose
+                    const yesterdayClose = res[index + 1].adjClose
+                    i.priceChange = Number(((todayClose - yesterdayClose) / yesterdayClose * 100).toFixed(2))
                 }
-            }
-            i.diffInMonth = Number(((max - i.adjClose) / i.adjClose * 100).toFixed(2))
-            const t3Price = res[index - 3]
-            if (t3Price) {
-                i.t3PriceClose = t3Price.adjClose
-                i.t3Change = Number(((t3Price.adjClose - i.adjClose) / i.adjClose * 100).toFixed(2))
-            }
 
-            // Condition 2
-            let arrVolume = []
-            for (let j = 0; j < 15; j++) {
-                if (res[index + j]) {
-                    arrVolume.push(res[index + j].totalDealVolume)
+                // Condition 1
+                let max = 0
+                for (let j = 0; j < 20; j++) {
+                    if (res[index + j] && res[index + j].adjClose > max) {
+                        max = res[index + j].adjClose
+                    }
                 }
-            }
-            i.volume15dayChange = Number(((i.totalDealVolume - mean(arrVolume)) / mean(arrVolume) * 100).toFixed(2))
-            i.arrVolume = arrVolume
-
-            // Condition 3
-            let arr20day = []
-            for (let j = 0; j < 20; j++) {
-                if (res[index - j]) {
-                    arr20day.push(res[index - j])
+                i.diffInMonth = Number(((max - i.adjClose) / i.adjClose * 100).toFixed(2))
+                const t3Price = res[index - 3]
+                if (t3Price) {
+                    i.t3PriceClose = t3Price.adjClose
+                    i.t3Change = Number(((t3Price.adjClose - i.adjClose) / i.adjClose * 100).toFixed(2))
                 }
-            }
 
-            i.highestPriceClose = maxBy(arr20day, "adjClose").adjClose
-            i.highestPriceCloseDate = maxBy(arr20day, "adjClose").tradingTime
-            i.highestChangePrice20day = Number(((i.highestPriceClose - i.adjClose) / i.adjClose * 100).toFixed(2))
+                // Condition 2
+                let arrVolume = []
+                for (let j = 0; j < 15; j++) {
+                    if (res[index + j]) {
+                        arrVolume.push(res[index + j].totalDealVolume)
+                    }
+                }
+                i.volume15dayChange = Number(((i.totalDealVolume - mean(arrVolume)) / mean(arrVolume) * 100).toFixed(2))
+                i.arrVolume = arrVolume
 
-            i.lowestPriceCloseDate = minBy(arr20day, "adjClose").tradingTime
-            i.lowestPriceClose = minBy(arr20day, "adjClose").adjClose
-            i.lowestChangePrice20day = Number(((i.lowestPriceClose - i.adjClose) / i.adjClose * 100).toFixed(2))
+                // Condition 3
+                let arr20day = []
+                for (let j = 0; j < 20; j++) {
+                    if (res[index - j]) {
+                        arr20day.push(res[index - j])
+                    }
+                }
 
-            // Condition 4
-            if (res[index + 1]) {
-                const previousDayChange = res[index + 1].changePercent
-                i.previousDayChange = Number((previousDayChange * 100).toFixed(2))
-            }
-            i.tradingTime = moment(i.tradingTime).format("YYYY-MM-DD")
+                i.highestPriceClose = maxBy(arr20day, "adjClose").adjClose
+                i.highestPriceCloseDate = maxBy(arr20day, "adjClose").tradingTime
+                i.highestChangePrice20day = Number(((i.highestPriceClose - i.adjClose) / i.adjClose * 100).toFixed(2))
 
-            return i
-        }).filter((i: any, index: number) => {
-            return i.priceChange
-                && i.priceChange > 4
-                && i.volume15dayChange > 50
-                && i.previousDayChange < 4
-                && i.open !== i.high
-                && i.diffInMonth < 10
-            // && i.t3Change > -3
-        })
+                i.lowestPriceCloseDate = minBy(arr20day, "adjClose").tradingTime
+                i.lowestPriceClose = minBy(arr20day, "adjClose").adjClose
+                i.lowestChangePrice20day = Number(((i.lowestPriceClose - i.adjClose) / i.adjClose * 100).toFixed(2))
+
+                // Condition 4
+                if (res[index + 1]) {
+                    const previousDayChange = res[index + 1].changePercent
+                    i.previousDayChange = Number((previousDayChange * 100).toFixed(2))
+                }
+                i.tradingTime = moment(i.tradingTime).format("YYYY-MM-DD")
+
+                return i
+            })
+            .filter((i: any, index: number) => {
+                return i.priceChange
+                    && i.priceChange > 4
+                    && i.volume15dayChange > 50
+                    && i.previousDayChange < 4
+                    && i.open !== i.high
+                    && i.diffInMonth < 10
+            })
+
         const average = {
             date: "averageDate",
             highestChangePrice20day: Number(meanBy(xxx, 'highestChangePrice20day').toFixed(2))
@@ -106,8 +107,9 @@ export default function StockTestBreak_OverviewTab() {
             }
         }
         const analysedData = analyseData(xxx, res, startDate, endDate)
-        setData(analysedData)
+
         const totalNAV = (maxBy(analysedData, 'totalNAV') || {}).totalNAV
+        setData(analysedData)
         return { data: analysedData, symbol, totalNAV }
     }
 
@@ -143,7 +145,7 @@ export default function StockTestBreak_OverviewTab() {
         Promise.all(listPromises).then((res: any) => {
             console.log(res)
             setLoading(false)
-            let sortedRes = sortBy(res, 'totalNAV').reverse()
+            let sortedRes = orderBy(res, 'totalNAV', "desc")
             sortedRes = sortedRes.filter((i: any) => i.totalNAV)
             sortedRes = sortedRes.splice(0, 20)
             console.log(sortedRes)
@@ -240,12 +242,16 @@ export default function StockTestBreak_OverviewTab() {
             }
         })
         if (!isEmpty(result)) {
+            if (result[date].length > 1) {
+                result[date] = orderBy(result[date], "volume15dayChange", "desc")
+                console.log(result[date])
+            }
+
             return result[date][0]
         }
 
         return null
     }
-
 
     const update = async (list: any) => {
         const res = await axios({
@@ -309,7 +315,6 @@ export default function StockTestBreak_OverviewTab() {
         </Menu>
     );
 
-
     return <div>
         <div>
             <ReactMarkdown>
@@ -369,7 +374,7 @@ export default function StockTestBreak_OverviewTab() {
                 scroll={{ y: 800 }} />
         </div>}
         {
-            testType === "mulitple" && (
+            testType === "multiple" && (
                 loading
                     ? <Spin />
                     : <div>
