@@ -1,8 +1,81 @@
 import moment from "moment";
 import { mean, maxBy, minBy, meanBy, keyBy, sortBy } from "lodash";
 
-const findSellDate = (buyDate: string, listData: any) => {
-    let result: string
+export const singleColumns = [
+    {
+        title: 'Buy Date',
+        render: (data: any) => {
+            return data.tradingTime
+        }
+    },
+    {
+        title: 'Sell Date',
+        align: 'right' as 'right',
+        render: (data: any) => {
+            return data.sellDate
+        }
+    },
+    {
+        title: 'changeSellDate',
+        align: 'right' as 'right',
+        render: (data: any) => {
+            return data.changeSellDate.toFixed(2)
+        }
+    },
+    {
+        title: 'totalNAV',
+        align: 'right' as 'right',
+        render: (data: any) => {
+            return data.totalNAV
+        }
+    },
+    {
+        title: 'baseNAV',
+        align: 'right' as 'right',
+        render: (data: any) => {
+            return data.baseNAV
+        }
+    },
+]
+
+export const combinedColumns = [
+
+    {
+        title: "Symbol",
+        render: (data: any) => {
+            return data.symbol
+        }
+    },
+    {
+        title: 'Buy Date',
+        render: (data: any) => {
+            return data.buyDate
+        }
+    },
+    {
+        title: 'Sell Date',
+        render: (data: any) => {
+            return data.sellDate
+        }
+    },
+    {
+        title: 'Percent Change',
+        render: (data: any) => {
+            return data.percentChange
+        }
+    },
+    {
+        title: 'total NAV',
+        render: (data: any) => {
+            return data.totalNAV
+        }
+    },
+
+]
+
+
+export const findSellDate = (buyDate: string, listData: any) => {
+    let result: any;
     const filteredListData = sortBy(listData, "tradingTime")
     let buyItem: any;
     let changePercent: number;
