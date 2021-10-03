@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
 import { Input, Table, Button, DatePicker, Select, Dropdown, Menu, notification, Spin } from "antd";
-import { mean, maxBy, minBy, meanBy, keyBy, isEmpty, orderBy } from "lodash";
+import { mean, maxBy, minBy, meanBy, keyBy, orderBy, range } from "lodash";
 import StockTestBreak_GraphsTab from "./StockTestBreak_GraphsTab"
-import { analyseData, findSellDate, singleColumns, combinedColumns } from "./StockTestBreak.helpers"
+import { analyseData, findSellDate, singleColumns, combinedColumns, findBuyDate, testVariableColumns } from "./StockTestBreak.helpers"
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -22,6 +22,7 @@ export default function StockTestBreak_OverviewTab() {
     const [selectedWatchlist, setSelectedWatchlist] = useState(null)
     const [testType, setTestType] = useState(null);
     const [combinedData, setCombinedData] = useState([]);
+    const [testVariableData, setTestVariableData] = useState([]);
 
     const getData = async (symbol: string, combined?: boolean) => {
         const res = await getHistoricalQuotes(symbol, startDate, endDate)
@@ -132,7 +133,6 @@ export default function StockTestBreak_OverviewTab() {
         }).catch(e => {
             // console.log(e)
         })
-
     }
 
     const testList = () => {
@@ -143,12 +143,12 @@ export default function StockTestBreak_OverviewTab() {
             listPromises.push(getData(i))
         })
         Promise.all(listPromises).then((res: any) => {
-            console.log(res)
+            // console.log(res)
             setLoading(false)
             let sortedRes = orderBy(res, 'totalNAV', "desc")
             sortedRes = sortedRes.filter((i: any) => i.totalNAV)
             sortedRes = sortedRes.splice(0, 20)
-            console.log(sortedRes)
+            // console.log(sortedRes)
             const maxLength: any = maxBy(sortedRes, "data.length")
             // console.log(maxLength)
             let result = [];
@@ -161,7 +161,7 @@ export default function StockTestBreak_OverviewTab() {
                 })
                 result.push(item)
             }
-            console.log(249, result)
+            // console.log(249, result)
             setListSymbol(sortedRes.map((i: any) => i.symbol))
             setListData(result)
             update(sortedRes.map((i: any) => i.symbol))
@@ -173,84 +173,138 @@ export default function StockTestBreak_OverviewTab() {
     }
 
     const testCombineAutoFindSymbol = () => {
-        setTestType("combined")
-        setLoading(true)
         const listPromises: any = []
         listSymbol.map((i: any) => {
             listPromises.push(getData(i, true))
         })
 
-        Promise.all(listPromises).then((res: any) => {
-            setLoading(false)
-            console.log(res)
-            const objRes = keyBy(res, "symbol")
-            const result: any[] | PromiseLike<any[]> = [];
-            let buyDate: any;
-            let sellDate: any;
-            let buyDateObj: any;
-            let sellDateObj: any;
-            let percentChange: any;
-            let totalNAV = 100;
+        return Promise.all(listPromises)
+            .then((res: any) => {
+                // console.log(res)
+                const objRes = keyBy(res, "symbol")
+                const result: any[] | PromiseLike<any[]> = [];
+                let buyDate: any;
+                let sellDate: any;
+                let buyDateObj: any;
+                let sellDateObj: any;
+                let percentChange: any;
+                let totalNAV = 100;
 
-            for (let d = moment(startDate); d.isBefore(moment(endDate)); d.add(1, "days")) {
-                const date = moment(d).format('YYYY-MM-DD')
+                for (let d = moment(startDate); d.isBefore(moment(endDate)); d.add(1, "days")) {
+                    const date = moment(d).format('YYYY-MM-DD')
 
-                if (!buyDate) {
-                    buyDateObj = findBuyDate(date, res)
-                    if (buyDateObj && buyDateObj.tradingTime && (!sellDate || buyDateObj.tradingTime > sellDate)) {
-                        buyDate = buyDateObj.tradingTime
+                    if (!buyDate) {
+                        buyDateObj = findBuyDate(date, res)
+                        if (buyDateObj && buyDateObj.tradingTime && (!sellDate || buyDateObj.tradingTime > sellDate)) {
+                            buyDate = buyDateObj.tradingTime
+                        }
+                    }
+
+                    if (buyDate) {
+                        sellDateObj = findSellDate(buyDate, objRes[buyDateObj.symbol].fullData)
+                        sellDate = sellDateObj && sellDateObj.tradingTime
+                        if (sellDate) {
+                            percentChange = Number(((sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose * 100).toFixed(2))
+                            totalNAV = Number((totalNAV * (1 + (sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose)).toFixed(0))
+                            result.push({
+                                buyDate,
+                                symbol: buyDateObj.symbol,
+                                sellDate,
+                                percentChange,
+                                totalNAV
+                            })
+                            buyDate = null
+                        }
                     }
                 }
+                // console.log(result)
+                return result
 
-                if (buyDate) {
-                    sellDateObj = findSellDate(buyDate, objRes[buyDateObj.symbol].fullData)
-                    sellDate = sellDateObj && sellDateObj.tradingTime
-                    if (sellDate) {
-                        percentChange = Number(((sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose * 100).toFixed(2))
-                        totalNAV = Number((totalNAV * (1 + (sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose)).toFixed(0))
-                        result.push({
-                            buyDate,
-                            symbol: buyDateObj.symbol,
-                            sellDate,
-                            percentChange,
-                            totalNAV
-                        })
-                        buyDate = null
-                    }
-                }
-            }
-            console.log(result)
-            setCombinedData(result)
-            return result
-
-        }).catch(e => {
-            setLoading(false)
-            console.log(e)
-        })
+            })
+            .catch(e => {
+                console.log(e)
+            })
     }
 
-    const findBuyDate = (date: string, listData: any) => {
-        const result: any = {};
-        listData.map((i: any) => {
-            const filteredList = i.data && i.data.filter((j: any) => j.tradingTime === date)
-            if (filteredList && filteredList.length === 1) {
-                if (!result[date]) {
-                    result[date] = []
-                }
-                filteredList[0].symbol = i.symbol
-                result[date].push(filteredList[0])
-            }
+    const testVariable = () => {
+        setLoading(true)
+        setTestType("testVariable")
+        const listPromises: any = []
+        listSymbol.map((i: any) => {
+            listPromises.push(getData(i, true))
         })
-        if (!isEmpty(result)) {
-            if (result[date].length > 1) {
-                result[date] = orderBy(result[date], "volume15dayChange", "desc")
-                console.log(result[date])
-            }
 
-            return result[date][0]
-        }
+        return Promise.all(listPromises)
+            .then((res: any) => {
+                // console.log(res)
+                setLoading(false)
+                let rootResult: any = [];
+                range(10, 30).map((var1: any) => {
+                    range(-10, 0).map((var2: any) => {
+                        range(5, 15).map((var3: any) => {
+                            const objRes = keyBy(res, "symbol")
+                            const result: any[] | PromiseLike<any[]> = [];
+                            let buyDate: any;
+                            let sellDate: any;
+                            let buyDateObj: any;
+                            let sellDateObj: any;
+                            let percentChange: any;
+                            let totalNAV = 100;
 
-        return null
+                            for (let d = moment(startDate); d.isBefore(moment(endDate)); d.add(1, "days")) {
+                                const date = moment(d).format('YYYY-MM-DD')
+
+                                if (!buyDate) {
+                                    buyDateObj = findBuyDate(date, res)
+                                    if (buyDateObj && buyDateObj.tradingTime && (!sellDate || buyDateObj.tradingTime > sellDate)) {
+                                        buyDate = buyDateObj.tradingTime
+                                    }
+                                }
+
+                                if (buyDate) {
+                                    sellDateObj = findSellDate(buyDate, objRes[buyDateObj.symbol].fullData, var1, var2, var3)
+                                    sellDate = sellDateObj && sellDateObj.tradingTime
+                                    if (sellDate) {
+                                        percentChange = Number(((sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose * 100).toFixed(2))
+                                        totalNAV = Number((totalNAV * (1 + (sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose)).toFixed(0))
+                                        result.push({
+                                            buyDate,
+                                            symbol: buyDateObj.symbol,
+                                            sellDate,
+                                            percentChange,
+                                            totalNAV
+                                        })
+                                        buyDate = null
+                                    }
+                                }
+                            }
+                            // console.log(result)
+                            rootResult.push({
+                                variableCombine: `${var1}-${var2}-${var3}`,
+                                totalNAV: maxBy(result, "totalNAV").totalNAV,
+                                result
+                            })
+                        })
+                    })
+                })
+                console.log(rootResult)
+                rootResult = orderBy(rootResult, "totalNAV", "desc")
+                setTestVariableData(rootResult)
+
+            })
+            .catch(e => {
+                setLoading(false)
+                console.log(e)
+            })
+
+    }
+
+    const clickTestCombine = async () => {
+        setTestType("combined")
+        setLoading(true)
+        const res = await testCombineAutoFindSymbol()
+        setLoading(false)
+        res && setCombinedData(res)
     }
 
     const update = async (list: any) => {
@@ -269,7 +323,6 @@ export default function StockTestBreak_OverviewTab() {
         })
         if (res && res.data) {
             notification.success({ message: "Success" })
-
         }
     }
 
@@ -293,7 +346,7 @@ export default function StockTestBreak_OverviewTab() {
 
     const dateFormat = 'YYYY-MM-DD';
     const listDropdown = (listWatchlists.filter((i: any) => i.name === "thanh_khoan_vua")[0] || {}).symbols || []
-    const children = [];
+    const children: any = [];
     for (let i = 0; i < listDropdown.length; i++) {
         children.push(<Option value={listDropdown[i]} key={i}>{listDropdown[i]}</Option>);
     }
@@ -315,13 +368,55 @@ export default function StockTestBreak_OverviewTab() {
         </Menu>
     );
 
-    return <div>
-        <div>
+    const leftHeader = () => {
+        return <div style={{ width: "50%", height: "100%", overflow: "auto" }}>
+            <RangePicker
+                onChange={(e: any) => {
+                    setStartDate(moment(e[0]).format(dateFormat))
+                    setEndDate(moment(e[1]).format(dateFormat))
+                }}
+                defaultValue={[moment(startDate, dateFormat), moment(endDate, dateFormat)]}
+                format={dateFormat}
+            />
+            <hr />
+            <Input onPressEnter={() => getData(symbol)} style={{ width: "200px" }} value={symbol} onChange={(e) => setSymbol(e.target.value)} />
+            <Button onClick={() => {
+                setTestType("single")
+                getData(symbol)
+            }}>Test</Button>
+            <hr />
+            <Dropdown overlay={menu} placement="bottomLeft" arrow>
+                <div>{(selectedWatchlist && selectedWatchlist.name) || "Select watchlist"}</div>
+            </Dropdown>
+            <Select
+                mode="multiple"
+                allowClear
+                style={{ width: '100%' }}
+                placeholder="Please select"
+                value={listSymbol}
+                onChange={(e) => setListSymbol(e)}
+            >
+                {children}
+            </Select>
+            <Button disabled={loading} onClick={testList}>Test List</Button>
+            <hr />
+            <Button disabled={loading} onClick={clickTestCombine}>Test Combine Auto Find Symbol</Button>
+            <hr />
+            <Button disabled={loading} onClick={testVariable}>Test variable</Button>
+            <div>
+                <div>Number days till sell: 19</div>
+                <div>Profit percent to sell: 10%</div>
+                <div>Stop loss percent to sell: -3%</div>
+                <div>{`Find buy date: if > 1 results found, order by volume15dayChange`}</div>
+            </div>
+        </div>
+    }
+
+    const rightHeader = () => {
+        return <div style={{ width: "50%", height: "100%", overflow: "auto" }}>
             <ReactMarkdown>
                 {`
                     \n - dau tu 1 ma theo chien thuat nay       
-                    \n - List ma: ${symbol}
-                    \n - Thoi gian: ${startDate} -> ${endDate}
                     \n - So tien ban dau: 100
                     \n - So tien them hang thang: 30
                     \n - findSellDate
@@ -331,59 +426,28 @@ export default function StockTestBreak_OverviewTab() {
                 `}
             </ReactMarkdown>
         </div>
-        <hr />
-        <RangePicker
-            onChange={(e: any) => {
-                setStartDate(moment(e[0]).format(dateFormat))
-                setEndDate(moment(e[1]).format(dateFormat))
-            }}
-            defaultValue={[moment(startDate, dateFormat), moment(endDate, dateFormat)]}
-            format={dateFormat}
-        />
-        <hr />
-        <Input onPressEnter={() => getData(symbol)} style={{ width: "200px" }} value={symbol} onChange={(e) => setSymbol(e.target.value)} />
-        <Button onClick={() => {
-            setTestType("single")
-            getData(symbol)
-        }}>Test</Button>
-        <hr />
-        <Dropdown overlay={menu} placement="bottomLeft" arrow>
-            <div>{(selectedWatchlist && selectedWatchlist.name) || "Select watchlist"}</div>
-        </Dropdown>
-        <Select
-            mode="multiple"
-            allowClear
-            style={{ width: '100%' }}
-            placeholder="Please select"
-            value={listSymbol}
-            onChange={(e) => setListSymbol(e)}
-        >
-            {children}
-        </Select>
-        <Button disabled={loading} onClick={testList}>Test List</Button>
-        <hr />
-        <Button disabled={loading} onClick={testCombineAutoFindSymbol}>Test Combine Auto Find Symbol</Button>
-        <div style={{ marginBottom: "50px" }}>
+    }
 
-        </div>
-        {testType === "single" && <div>
-            <Table
-                dataSource={data}
-                columns={singleColumns}
-                pagination={false}
-                scroll={{ y: 800 }} />
-        </div>}
-        {
-            testType === "multiple" && (
+    const content = () => {
+        return <div>
+            {!testType && "No content"}
+            {testType === "single" && <div>
+                <Table
+                    dataSource={data}
+                    columns={singleColumns}
+                    pagination={false}
+                    scroll={{ y: 800 }} />
+            </div>}
+
+            {testType === "multiple" && (
                 loading
                     ? <Spin />
                     : <div>
                         <StockTestBreak_GraphsTab data={listData} listDataKey={listSymbol} />
                     </div>
-            )
-        }
-        {
-            testType === "combined" && (
+            )}
+
+            {testType === "combined" && (
                 loading
                     ? <Spin />
                     : <div>
@@ -393,9 +457,28 @@ export default function StockTestBreak_OverviewTab() {
                             pagination={false}
                             scroll={{ y: 800 }} />
                     </div>
-            )
-        }
+            )}
 
+            {testType === "testVariable" && (
+                loading
+                    ? <Spin />
+                    : <div>
+                        <Table
+                            dataSource={testVariableData}
+                            columns={testVariableColumns}
+                            pagination={false}
+                            scroll={{ y: 800 }} />
+                    </div>
+            )}
+        </div>
+    }
+
+    return <div>
+        <div style={{ display: "flex", height: "400px" }}>
+            {leftHeader()}
+            {rightHeader()}
+        </div>
+        {content()}
     </div>
 }
 

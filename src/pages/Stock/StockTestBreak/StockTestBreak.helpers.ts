@@ -1,5 +1,5 @@
 import moment from "moment";
-import { mean, maxBy, minBy, meanBy, keyBy, sortBy } from "lodash";
+import { keyBy, sortBy, isEmpty, orderBy } from "lodash";
 
 export const singleColumns = [
     {
@@ -39,7 +39,6 @@ export const singleColumns = [
 ]
 
 export const combinedColumns = [
-
     {
         title: "Symbol",
         render: (data: any) => {
@@ -70,11 +69,24 @@ export const combinedColumns = [
             return data.totalNAV
         }
     },
-
 ]
 
+export const testVariableColumns = [
+    {
+        title: "variableCombine",
+        render: (data: any) => {
+            return data.variableCombine
+        }
+    },
+    {
+        title: "totalNAV",
+        render: (data: any) => {
+            return data.totalNAV
+        }
+    },
+]
 
-export const findSellDate = (buyDate: string, listData: any) => {
+export const findSellDate = (buyDate: string, listData: any, var1 = 19, var2 = -3, var3 = 10) => {
     let result: any;
     const filteredListData = sortBy(listData, "tradingTime")
     let buyItem: any;
@@ -90,7 +102,7 @@ export const findSellDate = (buyDate: string, listData: any) => {
         if (next) {
             if (i.tradingTime === buyDate) {
                 buyItem = i
-                sellIndex = index + 19
+                sellIndex = index + var1
                 buyItemIndex = index
             }
 
@@ -99,23 +111,20 @@ export const findSellDate = (buyDate: string, listData: any) => {
                     changePercent = (i.adjClose - buyItem.adjClose) / buyItem.adjClose * 100
                 }
 
-                if (changePercent > 10) {
+                if (changePercent > var3) {
                     result = i
                     next = false
                 }
 
-                if (changePercent < -3) {
+                if (changePercent < var2) {
                     result = i
                     next = false
                 }
 
-                if (changePercent) {
-                    // console.log(index, i, changePercent)
-                }
             }
         }
     })
-    console.log(result)
+    // console.log(result)
     return result
 }
 
@@ -148,4 +157,26 @@ export const analyseData = (data: any, fullData: any, startDate: string, endDate
         }
     }
     return result
+}
+
+export const findBuyDate = (date: string, listData: any) => {
+    const result: any = {};
+    listData.map((i: any) => {
+        const filteredList = i.data && i.data.filter((j: any) => j.tradingTime === date)
+        if (filteredList && filteredList.length === 1) {
+            if (!result[date]) {
+                result[date] = []
+            }
+            filteredList[0].symbol = i.symbol
+            result[date].push(filteredList[0])
+        }
+    })
+    if (!isEmpty(result)) {
+        if (result[date].length > 1) {
+            result[date] = orderBy(result[date], "volume15dayChange", "desc")
+            // console.log(result[date])
+        }
+        return result[date][0]
+    }
+    return null
 }
