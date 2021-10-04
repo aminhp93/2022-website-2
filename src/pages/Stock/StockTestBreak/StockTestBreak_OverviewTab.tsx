@@ -239,9 +239,9 @@ export default function StockTestBreak_OverviewTab() {
                 // console.log(res)
                 setLoading(false)
                 let rootResult: any = [];
-                range(10, 30).map((var1: any) => {
-                    range(-10, 0).map((var2: any) => {
-                        range(5, 15).map((var3: any) => {
+                range(10, 20).map((var1: any) => {
+                    range(-3, 0).map((var2: any) => {
+                        range(6, 14).map((var3: any) => {
                             const objRes = keyBy(res, "symbol")
                             const result: any[] | PromiseLike<any[]> = [];
                             let buyDate: any;
@@ -287,8 +287,9 @@ export default function StockTestBreak_OverviewTab() {
                         })
                     })
                 })
-                console.log(rootResult)
+
                 rootResult = orderBy(rootResult, "totalNAV", "desc")
+                console.log(rootResult)
                 setTestVariableData(rootResult)
 
             })

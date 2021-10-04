@@ -86,7 +86,7 @@ export const testVariableColumns = [
     },
 ]
 
-export const findSellDate = (buyDate: string, listData: any, var1 = 19, var2 = -3, var3 = 10) => {
+export const findSellDate = (buyDate: string, listData: any, var1 = 10, var2 = -3, var3 = 10) => {
     let result: any;
     const filteredListData = sortBy(listData, "tradingTime")
     let buyItem: any;
