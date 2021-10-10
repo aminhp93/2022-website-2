@@ -1,23 +1,23 @@
 {
   "files": {
-    "main.css": "/hello/static/css/main.e94294ad.chunk.css",
-    "main.js": "/hello/static/js/main.ba54821d.chunk.js",
-    "main.js.map": "/hello/static/js/main.ba54821d.chunk.js.map",
-    "runtime-main.js": "/hello/static/js/runtime-main.05ac204f.js",
-    "runtime-main.js.map": "/hello/static/js/runtime-main.05ac204f.js.map",
-    "static/css/2.cdd54528.chunk.css": "/hello/static/css/2.cdd54528.chunk.css",
-    "static/js/2.867daa1e.chunk.js": "/hello/static/js/2.867daa1e.chunk.js",
-    "static/js/2.867daa1e.chunk.js.map": "/hello/static/js/2.867daa1e.chunk.js.map",
-    "index.html": "/hello/index.html",
-    "static/css/2.cdd54528.chunk.css.map": "/hello/static/css/2.cdd54528.chunk.css.map",
-    "static/css/main.e94294ad.chunk.css.map": "/hello/static/css/main.e94294ad.chunk.css.map",
-    "static/js/2.867daa1e.chunk.js.LICENSE.txt": "/hello/static/js/2.867daa1e.chunk.js.LICENSE.txt",
-    "static/media/chessground.css": "/hello/static/media/wR.a5a16b36.svg"
+    "main.css": "/2022-website-2/static/css/main.e94294ad.chunk.css",
+    "main.js": "/2022-website-2/static/js/main.ba54821d.chunk.js",
+    "main.js.map": "/2022-website-2/static/js/main.ba54821d.chunk.js.map",
+    "runtime-main.js": "/2022-website-2/static/js/runtime-main.261ee45f.js",
+    "runtime-main.js.map": "/2022-website-2/static/js/runtime-main.261ee45f.js.map",
+    "static/css/2.cc88afb9.chunk.css": "/2022-website-2/static/css/2.cc88afb9.chunk.css",
+    "static/js/2.ade9b961.chunk.js": "/2022-website-2/static/js/2.ade9b961.chunk.js",
+    "static/js/2.ade9b961.chunk.js.map": "/2022-website-2/static/js/2.ade9b961.chunk.js.map",
+    "index.html": "/2022-website-2/index.html",
+    "static/css/2.cc88afb9.chunk.css.map": "/2022-website-2/static/css/2.cc88afb9.chunk.css.map",
+    "static/css/main.e94294ad.chunk.css.map": "/2022-website-2/static/css/main.e94294ad.chunk.css.map",
+    "static/js/2.ade9b961.chunk.js.LICENSE.txt": "/2022-website-2/static/js/2.ade9b961.chunk.js.LICENSE.txt",
+    "static/media/chessground.css": "/2022-website-2/static/media/wR.a5a16b36.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.05ac204f.js",
-    "static/css/2.cdd54528.chunk.css",
-    "static/js/2.867daa1e.chunk.js",
+    "static/js/runtime-main.261ee45f.js",
+    "static/css/2.cc88afb9.chunk.css",
+    "static/js/2.ade9b961.chunk.js",
     "static/css/main.e94294ad.chunk.css",
     "static/js/main.ba54821d.chunk.js"
   ]
