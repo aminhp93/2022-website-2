@@ -2,7 +2,7 @@
   "name": "2022-website-2",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://aminhp93.github.io/2022-website-2",
+  "homepage": "http://aminhp93.github.io/",
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.1",
     "@types/jest": "^26.0.15",
