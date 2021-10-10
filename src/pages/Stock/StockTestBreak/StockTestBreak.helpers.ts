@@ -176,6 +176,7 @@ export const findBuyDate = (date: string, listData: any) => {
             result[date] = orderBy(result[date], "volume15dayChange", "desc")
             // console.log(result[date])
         }
+        // console.log(result[date])
         return result[date][0]
     }
     return null

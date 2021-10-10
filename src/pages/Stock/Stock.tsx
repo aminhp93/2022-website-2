@@ -3,12 +3,10 @@ import { useCallback, useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 // import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import {
-    cloneDeep,
-    groupBy,
     keyBy,
     debounce
 } from "lodash";
-import { Button, Modal, Table, Input, notification } from "antd";
+import { Button, Modal, Input, notification } from "antd";
 
 import HistoryTrade from "./HistoryTrade/HistoryTrade";
 import StockTools from "./StockTools/StockTools";

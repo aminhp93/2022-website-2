@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
 import { Input, Table, Button, DatePicker, Select, Dropdown, Menu, notification, Spin } from "antd";
-import { mean, maxBy, minBy, meanBy, keyBy, orderBy, range } from "lodash";
+import { mean, maxBy, minBy, meanBy, keyBy, orderBy, range, chunk, cloneDeep } from "lodash";
 import StockTestBreak_GraphsTab from "./StockTestBreak_GraphsTab"
 import { analyseData, findSellDate, singleColumns, combinedColumns, findBuyDate, testVariableColumns } from "./StockTestBreak.helpers"
 
@@ -23,13 +23,14 @@ export default function StockTestBreak_OverviewTab() {
     const [testType, setTestType] = useState(null);
     const [combinedData, setCombinedData] = useState([]);
     const [testVariableData, setTestVariableData] = useState([]);
+    const [volume15dayChange, setVolume15dayChange] = useState(50);
 
-    const getData = async (symbol: string, combined?: boolean) => {
+    const getData = async (symbol: string, combined?: boolean, testVariable?: boolean) => {
         const res = await getHistoricalQuotes(symbol, startDate, endDate)
         if (!res) {
-            return { "hello": 123 }
+            return { "failedSymbol": symbol }
         }
-        const xxx = res
+        let xxx = res
             .map((i: any, index: number) => {
                 if (index < res.length - 1) {
                     const todayClose = i.adjClose
@@ -86,14 +87,23 @@ export default function StockTestBreak_OverviewTab() {
 
                 return i
             })
-            .filter((i: any, index: number) => {
+
+        if (testVariable) {
+            return {
+                symbol,
+                data: xxx
+            }
+        } else {
+            xxx = xxx.filter((i: any, index: number) => {
                 return i.priceChange
                     && i.priceChange > 4
-                    && i.volume15dayChange > 50
+                    && i.volume15dayChange > volume15dayChange
                     && i.previousDayChange < 4
                     && i.open !== i.high
                     && i.diffInMonth < 10
             })
+        }
+
 
         const average = {
             date: "averageDate",
@@ -135,177 +145,197 @@ export default function StockTestBreak_OverviewTab() {
         })
     }
 
-    const testList = () => {
+    const testList = async () => {
         setTestType("multiple")
         setLoading(true)
-        const listPromises: any = []
-        listSymbol.map((i: any) => {
-            listPromises.push(getData(i))
-        })
-        Promise.all(listPromises).then((res: any) => {
-            // console.log(res)
-            setLoading(false)
-            let sortedRes = orderBy(res, 'totalNAV', "desc")
-            sortedRes = sortedRes.filter((i: any) => i.totalNAV)
-            sortedRes = sortedRes.splice(0, 20)
-            // console.log(sortedRes)
-            const maxLength: any = maxBy(sortedRes, "data.length")
-            // console.log(maxLength)
-            let result = [];
-            for (let i = 0; i < maxLength.data.length; i++) {
-                let item: any = {};
-                sortedRes.map((j: any) => {
-                    // console.log(j)
-                    item.count = i
-                    item[j.symbol] = (j.data[i] || {}).totalNAV
-                })
-                result.push(item)
+
+        const chunkedListSymbol = chunk(listSymbol, 30)
+        console.log(chunkedListSymbol)
+        let res: any = [];
+        for (let i = 0; i < chunkedListSymbol.length; i++) {
+            const listPromises: any = []
+            for (let j = 0; j < chunkedListSymbol[i].length; j++) {
+                listPromises.push(getData(chunkedListSymbol[i][j]))
             }
-            // console.log(249, result)
-            setListSymbol(sortedRes.map((i: any) => i.symbol))
-            setListData(result)
-            update(sortedRes.map((i: any) => i.symbol))
+            const partialRes = await Promise.all(listPromises)
+            res = res.concat(partialRes)
+        }
+        setLoading(false)
+        const failedSymbolList = res.filter((i: any) => i.failedSymbol)
 
-        }).catch(e => {
-            setLoading(false)
-            console.log(e)
-        })
+        if (failedSymbolList && failedSymbolList.length > 0) {
+            notification.error({ message: failedSymbolList.map((i: any) => i.failedSymbol).join(", ") })
+            return
+        }
+
+        let sortedRes = orderBy(res, 'totalNAV', "desc")
+        sortedRes = sortedRes.splice(0, 20)
+        const maxLength: any = maxBy(sortedRes, "data.length")
+        let result = [];
+        for (let i = 0; i < maxLength.data.length; i++) {
+            let item: any = {};
+            sortedRes.map((j: any) => {
+                item.count = i
+                item[j.symbol] = (j.data[i] || {}).totalNAV
+            })
+            result.push(item)
+        }
+        setListSymbol(sortedRes.map((i: any) => i.symbol))
+        setListData(result)
+        console.log(result)
+        update(sortedRes.map((i: any) => i.symbol))
     }
 
-    const testCombineAutoFindSymbol = () => {
-        const listPromises: any = []
-        listSymbol.map((i: any) => {
-            listPromises.push(getData(i, true))
-        })
-
-        return Promise.all(listPromises)
-            .then((res: any) => {
-                // console.log(res)
-                const objRes = keyBy(res, "symbol")
-                const result: any[] | PromiseLike<any[]> = [];
-                let buyDate: any;
-                let sellDate: any;
-                let buyDateObj: any;
-                let sellDateObj: any;
-                let percentChange: any;
-                let totalNAV = 100;
-
-                for (let d = moment(startDate); d.isBefore(moment(endDate)); d.add(1, "days")) {
-                    const date = moment(d).format('YYYY-MM-DD')
-
-                    if (!buyDate) {
-                        buyDateObj = findBuyDate(date, res)
-                        if (buyDateObj && buyDateObj.tradingTime && (!sellDate || buyDateObj.tradingTime > sellDate)) {
-                            buyDate = buyDateObj.tradingTime
-                        }
-                    }
-
-                    if (buyDate) {
-                        sellDateObj = findSellDate(buyDate, objRes[buyDateObj.symbol].fullData)
-                        sellDate = sellDateObj && sellDateObj.tradingTime
-                        if (sellDate) {
-                            percentChange = Number(((sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose * 100).toFixed(2))
-                            totalNAV = Number((totalNAV * (1 + (sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose)).toFixed(0))
-                            result.push({
-                                buyDate,
-                                symbol: buyDateObj.symbol,
-                                sellDate,
-                                percentChange,
-                                totalNAV
-                            })
-                            buyDate = null
-                        }
-                    }
-                }
-                // console.log(result)
-                return result
-
-            })
-            .catch(e => {
-                console.log(e)
-            })
-    }
-
-    const testVariable = () => {
+    const testVariable = async () => {
         setLoading(true)
         setTestType("testVariable")
-        const listPromises: any = []
-        listSymbol.map((i: any) => {
-            listPromises.push(getData(i, true))
+
+        const chunkedListSymbol = chunk(listSymbol, 30)
+        console.log(chunkedListSymbol)
+        let res: any = [];
+        for (let i = 0; i < chunkedListSymbol.length; i++) {
+            const listPromises: any = []
+            for (let j = 0; j < chunkedListSymbol[i].length; j++) {
+                listPromises.push(getData(chunkedListSymbol[i][j], true, true))
+            }
+            const partialRes = await Promise.all(listPromises)
+            res = res.concat(partialRes)
+        }
+        setLoading(false)
+        const failedSymbolList = res.filter((i: any) => i.failedSymbol)
+
+        if (failedSymbolList && failedSymbolList.length > 0) {
+            notification.error({ message: failedSymbolList.map((i: any) => i.failedSymbol).join(", ") })
+            return
+        }
+
+        let rootResult: any = [];
+        let tempRes: any;
+        range(50, 100).map((var4: any) => {
+            tempRes = cloneDeep(res).map((item: any) => {
+                item.fullData = item.data
+
+                item.data = item.data.filter((i: any, index: number) => {
+                    return i.priceChange
+                        && i.priceChange > 4
+                        && i.volume15dayChange > var4
+                        && i.previousDayChange < 4
+                        && i.open !== i.high
+                        && i.diffInMonth < 10
+                })
+                return item
+            })
+
+            const objRes = keyBy(tempRes, "symbol")
+            const result: any[] | PromiseLike<any[]> = [];
+            let buyDate: any;
+            let sellDate: any;
+            let buyDateObj: any;
+            let sellDateObj: any;
+            let percentChange: any;
+            let totalNAV = 100;
+
+            for (let d = moment(startDate); d.isBefore(moment(endDate)); d.add(1, "days")) {
+                const date = moment(d).format('YYYY-MM-DD')
+
+                if (!buyDate) {
+                    buyDateObj = findBuyDate(date, tempRes)
+                    if (buyDateObj && buyDateObj.tradingTime && (!sellDate || buyDateObj.tradingTime > sellDate)) {
+                        buyDate = buyDateObj.tradingTime
+                    }
+                }
+
+                if (buyDate) {
+                    sellDateObj = findSellDate(buyDate, objRes[buyDateObj.symbol].fullData)
+                    sellDate = sellDateObj && sellDateObj.tradingTime
+                    if (sellDate) {
+                        percentChange = Number(((sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose * 100).toFixed(2))
+                        totalNAV = Number((totalNAV * (1 + (sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose)).toFixed(0))
+                        result.push({
+                            buyDate,
+                            symbol: buyDateObj.symbol,
+                            sellDate,
+                            percentChange,
+                            totalNAV,
+                            volume15dayChange: buyDateObj.volume15dayChange
+                        })
+                        buyDate = null
+                    }
+                }
+            }
+            rootResult.push({
+                variableCombine: `${var4}`,
+                totalNAV: maxBy(result, "totalNAV").totalNAV,
+                result
+            })
         })
 
-        return Promise.all(listPromises)
-            .then((res: any) => {
-                // console.log(res)
-                setLoading(false)
-                let rootResult: any = [];
-                range(10, 20).map((var1: any) => {
-                    range(-3, 0).map((var2: any) => {
-                        range(6, 14).map((var3: any) => {
-                            const objRes = keyBy(res, "symbol")
-                            const result: any[] | PromiseLike<any[]> = [];
-                            let buyDate: any;
-                            let sellDate: any;
-                            let buyDateObj: any;
-                            let sellDateObj: any;
-                            let percentChange: any;
-                            let totalNAV = 100;
-
-                            for (let d = moment(startDate); d.isBefore(moment(endDate)); d.add(1, "days")) {
-                                const date = moment(d).format('YYYY-MM-DD')
-
-                                if (!buyDate) {
-                                    buyDateObj = findBuyDate(date, res)
-                                    if (buyDateObj && buyDateObj.tradingTime && (!sellDate || buyDateObj.tradingTime > sellDate)) {
-                                        buyDate = buyDateObj.tradingTime
-                                    }
-                                }
-
-                                if (buyDate) {
-                                    sellDateObj = findSellDate(buyDate, objRes[buyDateObj.symbol].fullData, var1, var2, var3)
-                                    sellDate = sellDateObj && sellDateObj.tradingTime
-                                    if (sellDate) {
-                                        percentChange = Number(((sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose * 100).toFixed(2))
-                                        totalNAV = Number((totalNAV * (1 + (sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose)).toFixed(0))
-                                        result.push({
-                                            buyDate,
-                                            symbol: buyDateObj.symbol,
-                                            sellDate,
-                                            percentChange,
-                                            totalNAV
-                                        })
-                                        buyDate = null
-                                    }
-                                }
-                            }
-                            // console.log(result)
-                            rootResult.push({
-                                variableCombine: `${var1}-${var2}-${var3}`,
-                                totalNAV: maxBy(result, "totalNAV").totalNAV,
-                                result
-                            })
-                        })
-                    })
-                })
-
-                rootResult = orderBy(rootResult, "totalNAV", "desc")
-                console.log(rootResult)
-                setTestVariableData(rootResult)
-
-            })
-            .catch(e => {
-                setLoading(false)
-                console.log(e)
-            })
-
+        rootResult = orderBy(rootResult, "totalNAV", "desc")
+        console.log(rootResult)
+        setTestVariableData(rootResult)
     }
 
     const clickTestCombine = async () => {
         setTestType("combined")
         setLoading(true)
-        const res = await testCombineAutoFindSymbol()
+
+        const chunkedListSymbol = chunk(listSymbol, 30)
+        console.log(chunkedListSymbol)
+        let res: any = [];
+        for (let i = 0; i < chunkedListSymbol.length; i++) {
+            const listPromises: any = []
+            for (let j = 0; j < chunkedListSymbol[i].length; j++) {
+                listPromises.push(getData(chunkedListSymbol[i][j], true))
+            }
+            const partialRes = await Promise.all(listPromises)
+            res = res.concat(partialRes)
+        }
         setLoading(false)
-        res && setCombinedData(res)
+        const failedSymbolList = res.filter((i: any) => i.failedSymbol)
+
+        if (failedSymbolList && failedSymbolList.length > 0) {
+            notification.error({ message: failedSymbolList.map((i: any) => i.failedSymbol).join(", ") })
+            return
+        }
+
+        const objRes = keyBy(res, "symbol")
+        const result: any[] | PromiseLike<any[]> = [];
+        let buyDate: any;
+        let sellDate: any;
+        let buyDateObj: any;
+        let sellDateObj: any;
+        let percentChange: any;
+        let totalNAV = 100;
+
+        for (let d = moment(startDate); d.isBefore(moment(endDate)); d.add(1, "days")) {
+            const date = moment(d).format('YYYY-MM-DD')
+
+            if (!buyDate) {
+                buyDateObj = findBuyDate(date, res)
+                if (buyDateObj && buyDateObj.tradingTime && (!sellDate || buyDateObj.tradingTime > sellDate)) {
+                    buyDate = buyDateObj.tradingTime
+                }
+            }
+
+            if (buyDate) {
+                sellDateObj = findSellDate(buyDate, objRes[buyDateObj.symbol].fullData)
+                sellDate = sellDateObj && sellDateObj.tradingTime
+                if (sellDate) {
+                    percentChange = Number(((sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose * 100).toFixed(2))
+                    totalNAV = Number((totalNAV * (1 + (sellDateObj.adjClose - buyDateObj.adjClose) / buyDateObj.adjClose)).toFixed(0))
+                    result.push({
+                        buyDate,
+                        symbol: buyDateObj.symbol,
+                        sellDate,
+                        percentChange,
+                        totalNAV
+                    })
+                    buyDate = null
+                }
+            }
+        }
+        // console.log(result)
+        result && setCombinedData(result)
     }
 
     const update = async (list: any) => {
@@ -403,6 +433,7 @@ export default function StockTestBreak_OverviewTab() {
             <hr />
             <Button disabled={loading} onClick={clickTestCombine}>Test Combine Auto Find Symbol</Button>
             <hr />
+            <Input onPressEnter={testVariable} style={{ width: "200px" }} value={volume15dayChange} onChange={(e) => setVolume15dayChange(Number(e.target.value))} />
             <Button disabled={loading} onClick={testVariable}>Test variable</Button>
             <div>
                 <div>Number days till sell: 19</div>
@@ -461,15 +492,24 @@ export default function StockTestBreak_OverviewTab() {
             )}
 
             {testType === "testVariable" && (
+
                 loading
                     ? <Spin />
                     : <div>
+                        <div style={{ display: "flex" }}>
+                            <div>{`<100: ${testVariableData.filter((i: any) => i.totalNAV < 100).length}`}</div>
+                            <div>{`>100: ${testVariableData.filter((i: any) => i.totalNAV > 100 && i.totalNAV < 200).length}`}</div>
+                            <div>{`>200: ${testVariableData.filter((i: any) => i.totalNAV > 200 && i.totalNAV < 300).length}`}</div>
+                            <div>{`>300: ${testVariableData.filter((i: any) => i.totalNAV > 300 && i.totalNAV < 400).length}`}</div>
+                            <div>{`>400: ${testVariableData.filter((i: any) => i.totalNAV > 400).length}`}</div>
+                        </div>
                         <Table
                             dataSource={testVariableData}
                             columns={testVariableColumns}
                             pagination={false}
                             scroll={{ y: 800 }} />
                     </div>
+
             )}
         </div>
     }

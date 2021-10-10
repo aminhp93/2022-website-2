@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Tabs } from "antd";
 
 import StockTestBreak_TestTab from "./StockTestBreak_TestTab"

@@ -1,7 +1,7 @@
 import ReactMarkdown from "react-markdown";
 import { useEffect, useState } from "react";
 import moment from "moment";
-import { Input, Table, Button, Tabs, DatePicker, Select, Dropdown, Menu } from "antd";
+import { Input, Table } from "antd";
 
 
 export default function StockTestBreak_ScoreboardTab({ cb, data }: any) {
