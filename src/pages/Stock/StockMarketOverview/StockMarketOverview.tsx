@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { keyBy, meanBy } from "lodash";
-import { notification } from "antd";
+import { notification, Table, Button } from "antd";
 import axios from "axios";
 import { CloseOutlined } from '@ant-design/icons'
 
@@ -13,6 +13,7 @@ export default function StockMarketOverview() {
     const [data3, setData3] = useState([]);
     const [data4, setData4] = useState([]);
     const [editable, setEditable] = useState(false);
+    const [confirmReset, setConfirmReset] = useState(false)
 
     const fetch = async (listWatchlists: any, watchlistID: string) => {
         const xxx = keyBy(listWatchlists, "watchlistID")
@@ -108,6 +109,38 @@ export default function StockMarketOverview() {
         // }, 60000)
     }, [])
 
+    const columns = [
+        {
+            title: 'Symbol',
+            sorter: (a: any, b: any) => {
+                return (a.symbol).localeCompare(b.symbol)
+            },
+            render: (i: any) => {
+                return <div style={{ width: "50px" }}>{i.symbol} {editable && <CloseOutlined style={{ marginLeft: "2px" }} onClick={() => handleRemove(i.symbol)} />} </div>
+            }
+        },
+        {
+            title: '%change',
+            sorter: (a: any, b: any) => {
+                return a.changePercent - b.changePercent
+            },
+            align: 'right' as 'right',
+            render: (data: any) => {
+                return data.changePercent
+            }
+        },
+        {
+            title: '%volume',
+            sorter: (a: any, b: any) => {
+                return a.estimatedVolumeChange - b.estimatedVolumeChange
+            },
+            align: 'right' as 'right',
+            render: (data: any) => {
+                return data.estimatedVolumeChange
+            }
+        },
+    ]
+
     return <div>
         StockMarketOverview
         <div style={{ display: "flex" }}>
@@ -146,27 +179,29 @@ export default function StockMarketOverview() {
             </div>
             <div style={{ margin: "0 20px" }}>
                 <div>aim to buy</div>
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <div style={{ width: "300px" }}>
-                        {
-                            data4.map((i: any) => {
-                                return <div style={{ display: "flex" }}>
-                                    <div style={{ width: "50px" }}>{i.symbol} {editable && <CloseOutlined onClick={() => handleRemove(i.symbol)} />} </div>
-                                    <div style={{ width: "50px" }}>{i.changePercent}</div>
-                                    <div style={{ width: "50px" }}>{i.estimatedVolumeChange}</div>
-                                    {/* <div>{i.todayVolume}</div> */}
-                                    {/* <div>{i.averageVolume15Days}</div> */}
-                                </div>
-                            })
-                        }
-                    </div>
-                    <div>
-                        <div onClick={handleReset}>Reset</div>
-                        <div onClick={() => setEditable(!editable)}>Edit</div>
-                    </div>
+                <div>
+                    {
+                        confirmReset
+                            ? <div style={{ display: "flex" }}>
+                                <Button onClick={handleReset}>Sure</Button>
+                                <Button onClick={() => setConfirmReset(false)}>Cancel</Button>
+                            </div>
+                            : <Button onClick={() => setConfirmReset(true)}> Reset</Button>
+                    }
+                    <Button onClick={() => setEditable(!editable)}>Edit</Button>
+                </div>
+                <div style={{ width: "400px" }}>
+                    <Table
+                        dataSource={data4}
+                        columns={columns}
+                        pagination={false}
+                        scroll={{ y: 800 }} />
+
+
                 </div>
 
             </div>
+
         </div>
     </div>
 }
