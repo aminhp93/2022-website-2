@@ -192,6 +192,7 @@ export default function StockMarketOverview() {
                 </div>
                 <div style={{ width: "400px" }}>
                     <Table
+                        size="small"
                         dataSource={data4}
                         columns={columns}
                         pagination={false}
