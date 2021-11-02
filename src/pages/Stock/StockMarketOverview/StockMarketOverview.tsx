@@ -20,7 +20,7 @@ export default function StockMarketOverview() {
         const xxx2 = xxx[watchlistID];
         const listPromises: any = [];
         ((xxx2 || {}).symbols || []).forEach((i: any) => {
-            listPromises.push(StockService.getHistoricalQuotes(i, "2021-01-01", "2021-11-01", 'fireant'))
+            listPromises.push(StockService.getHistoricalQuotes(i, "2021-01-01", "2021-11-02", 'fireant'))
         })
         return Promise.all(listPromises).then(res => {
             let mappedData = res
