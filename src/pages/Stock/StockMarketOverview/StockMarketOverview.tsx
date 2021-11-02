@@ -20,7 +20,7 @@ export default function StockMarketOverview() {
         const xxx2 = xxx[watchlistID];
         const listPromises: any = [];
         ((xxx2 || {}).symbols || []).forEach((i: any) => {
-            listPromises.push(StockService.getHistoricalQuotes(i, "2021-01-01", "2021-11-02", 'fireant'))
+            listPromises.push(StockService.getHistoricalQuotes(i, "2021-01-01", "2021-11-01", 'fireant'))
         })
         return Promise.all(listPromises).then(res => {
             let mappedData = res
@@ -104,9 +104,9 @@ export default function StockMarketOverview() {
 
     useEffect(() => {
         fetchList()
-        // setInterval(() => {
-        // fetchList()
-        // }, 60000)
+        setInterval(() => {
+            fetchList()
+        }, 60000)
     }, [])
 
     const columns = [
@@ -116,6 +116,7 @@ export default function StockMarketOverview() {
                 return (a.symbol).localeCompare(b.symbol)
             },
             render: (i: any) => {
+
                 return <div style={{ width: "50px" }}>{i.symbol} {editable && <CloseOutlined style={{ marginLeft: "2px" }} onClick={() => handleRemove(i.symbol)} />} </div>
             }
         },
@@ -141,14 +142,31 @@ export default function StockMarketOverview() {
         },
     ]
 
-    return <div>
+    return <div style={{ background: "white" }}>
         StockMarketOverview
         <div style={{ display: "flex" }}>
             <div>
                 <div>bds</div>
                 {
                     data1.map((i: any) => {
-                        return <div style={{ display: "flex", justifyContent: "space-between", width: "100px" }}>
+                        let color = "rgb(204, 170, 0)"
+                        if (i.changePercent > 0) {
+                            if (i.changePercent > 6.5) {
+                                color = "rgb(255, 0, 255)"
+                            } else {
+                                color = "green"
+                            }
+
+                        }
+                        if (i.changePercent < 0) {
+                            if (i.changePercent < -6.5) {
+                                color = "rgb(0, 204, 204)"
+                            } else {
+                                color = "red"
+                            }
+
+                        }
+                        return <div style={{ display: "flex", justifyContent: "space-between", width: "100px", color }}>
                             <div>{i.symbol} </div>
                             <div>{i.changePercent}</div>
                         </div>
@@ -159,7 +177,24 @@ export default function StockMarketOverview() {
                 <div>Ck</div>
                 {
                     data2.map((i: any) => {
-                        return <div style={{ display: "flex", justifyContent: "space-between", width: "100px" }}>
+                        let color = "rgb(204, 170, 0)"
+                        if (i.changePercent > 0) {
+                            if (i.changePercent > 6.5) {
+                                color = "rgb(255, 0, 255)"
+                            } else {
+                                color = "green"
+                            }
+
+                        }
+                        if (i.changePercent < 0) {
+                            if (i.changePercent < -6.5) {
+                                color = "rgb(0, 204, 204)"
+                            } else {
+                                color = "red"
+                            }
+
+                        }
+                        return <div style={{ display: "flex", justifyContent: "space-between", width: "100px", color }}>
                             <div>{i.symbol} </div>
                             <div>{i.changePercent}</div>
                         </div>
@@ -170,7 +205,24 @@ export default function StockMarketOverview() {
                 <div>watching</div>
                 {
                     data3.map((i: any) => {
-                        return <div style={{ display: "flex", justifyContent: "space-between", width: "100px" }}>
+                        let color = "rgb(204, 170, 0)"
+                        if (i.changePercent > 0) {
+                            if (i.changePercent > 6.5) {
+                                color = "rgb(255, 0, 255)"
+                            } else {
+                                color = "green"
+                            }
+
+                        }
+                        if (i.changePercent < 0) {
+                            if (i.changePercent < -6.5) {
+                                color = "rgb(0, 204, 204)"
+                            } else {
+                                color = "red"
+                            }
+
+                        }
+                        return <div style={{ display: "flex", justifyContent: "space-between", width: "100px", color }}>
                             <div>{i.symbol} </div>
                             <div>{i.changePercent}</div>
                         </div>
