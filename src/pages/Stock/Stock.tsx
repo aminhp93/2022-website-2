@@ -69,6 +69,9 @@ export default function Stock() {
     }, 1000), [])
 
     return <div style={{ background: "lightblue", height: "100%", overflow: "auto" }} onMouseDown={e => e.stopPropagation()}>
+        <div>
+            <StockMarketOverview />
+        </div>
         <div style={{ textAlign: "start" }}>
             <Button onClick={() => setEditNote(!editNote)}>
                 {editNote ? 'Edit' : 'Not edit'}
@@ -81,23 +84,35 @@ export default function Stock() {
             }
         </div>
 
-        <Button onClick={() => setModal("HistoryTrade")}>History Trade</Button>
-        <br />
-        <Button onClick={() => setModal("StockTools")}>Stock Tools</Button>
-        <br />
-        <Button onClick={() => setModal("IndustryAndMarket")}>IndustryAndMarket</Button>
-        <br />
-        <Button onClick={() => setModal("InvestmentStrategy")}>InvestmentStrategy</Button>
-        <br />
-        <Button onClick={() => setModal("StockEvent")}>Stock Event</Button>
-        <br />
-        <Button onClick={() => setModal("StockTestBreak")}>Test Break</Button>
-        <br />
-        <Button onClick={() => setModal("StockPattern")}>Stock Pattern</Button>
-        <br />
-        <StockMarketOverview />
-        <br />
-        <Button onClick={() => setModal("StockBuyCheck")}>StockBuyCheck</Button>
+        <div className="flex" >
+            <div style={{ flex: 1 }}>
+                <div>Working</div>
+                <Button onClick={() => setModal("HistoryTrade")}>History Trade</Button>
+                <br />
+                <Button onClick={() => setModal("StockTools")}>Stock Tools</Button>
+                <br />
+            </div>
+            <div style={{ flex: 1 }}>
+                <div>Developing</div>
+
+                <Button onClick={() => setModal("IndustryAndMarket")}>IndustryAndMarket</Button>
+                <br />
+                <Button onClick={() => setModal("InvestmentStrategy")}>InvestmentStrategy</Button>
+                <br />
+                <Button onClick={() => setModal("StockEvent")}>Stock Event</Button>
+                <br />
+                <Button onClick={() => setModal("StockTestBreak")}>Test Break</Button>
+                <br />
+                <Button onClick={() => setModal("StockPattern")}>Stock Pattern</Button>
+                <br />
+                <Button onClick={() => setModal("StockBuyCheck")}>StockBuyCheck</Button>
+            </div>
+
+        </div>
+
+
+
+
 
         {
             modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>

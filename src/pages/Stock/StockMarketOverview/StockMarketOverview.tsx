@@ -12,6 +12,7 @@ export default function StockMarketOverview() {
     const [data2, setData2] = useState([]);
     const [data3, setData3] = useState([]);
     const [data4, setData4] = useState([]);
+    const [filtered, setFiltered] = useState(false);
     const [editable, setEditable] = useState(false);
     const [confirmReset, setConfirmReset] = useState(false)
 
@@ -20,7 +21,7 @@ export default function StockMarketOverview() {
         const xxx2 = xxx[watchlistID];
         const listPromises: any = [];
         ((xxx2 || {}).symbols || []).forEach((i: any) => {
-            listPromises.push(StockService.getHistoricalQuotes(i, "2021-01-01", "2021-11-02", 'fireant'))
+            listPromises.push(StockService.getHistoricalQuotes(i, null, null, 'fireant'))
         })
         return Promise.all(listPromises).then(res => {
             let mappedData = res
@@ -241,20 +242,17 @@ export default function StockMarketOverview() {
                             : <Button onClick={() => setConfirmReset(true)}> Reset</Button>
                     }
                     <Button onClick={() => setEditable(!editable)}>Edit</Button>
+                    <Button onClick={() => setFiltered(!filtered)}>Turn {filtered ? "Off" : "On"} Filtered</Button>
                 </div>
                 <div style={{ width: "400px" }}>
                     <Table
                         size="small"
-                        dataSource={data4}
+                        dataSource={filtered ? data4.filter((i: any) => i.changePercent > 1 && i.estimatedVolumeChange > 50) : data4}
                         columns={columns}
                         pagination={false}
-                        scroll={{ y: 800 }} />
-
-
+                        scroll={{ y: 500 }} />
                 </div>
-
             </div>
-
         </div>
     </div>
 }

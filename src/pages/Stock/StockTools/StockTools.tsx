@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from "axios";
 import { Button, Input, notification } from "antd";
+import { chunk, minBy, orderBy } from "lodash";
 import moment from "moment";
 import {
     DATE_FORMAT,
@@ -30,7 +31,7 @@ export default function StockTools(props: IProps) {
     return <div >
         {
             listWatchlists.map((i: any, index: number) => {
-                return <StockToolItem data={i} key={index} />
+                return <StockToolItem data={i} key={index} dataAll={listWatchlists} />
             })
         }
     </div>
@@ -38,6 +39,7 @@ export default function StockTools(props: IProps) {
 
 interface IStockToolItemProps {
     data: any;
+    dataAll: any;
 }
 
 function StockToolItem(props: IStockToolItemProps) {
@@ -89,9 +91,7 @@ function StockToolItem(props: IStockToolItemProps) {
             listPromises.push(getHistorialQuote(j))
         })
         Promise.all(listPromises).then(res => {
-            // console.log(res);
             const list = res.filter((i: any) => i)
-            // console.log(93, list)
             update(list)
             setLoading(false)
             notification.success({ message: "success" })
@@ -123,10 +123,47 @@ function StockToolItem(props: IStockToolItemProps) {
         return null
     }
 
+    const handleUpdateThanhKhoanVua = async () => {
+        let finalList = [];
+        // Get list symbol from all
+        const wlAll = props.dataAll.filter((i: any) => i.name === "all")[0].symbols
+
+        // Remove list symbol in blacklist
+        const wlBlacklist = props.dataAll.filter((i: any) => i.name === "blacklist")[0].symbols
+
+        finalList = wlAll.filter((i: any) => !wlBlacklist.includes(i))
+
+        const chunkedListSymbol: any = chunk(finalList, 30)
+        let res: any = [];
+        for (let i = 0; i < chunkedListSymbol.length; i++) {
+            const listPromises: any = []
+            for (let j = 0; j < chunkedListSymbol[i].length; j++) {
+                listPromises.push(StockService.getHistoricalQuotes(chunkedListSymbol[i][j], "", "", "fireant"))
+            }
+            const partialRes = await Promise.all(listPromises)
+            res = res.concat(partialRes)
+        }
+        const mappedRes = orderBy(res.map((i: any) => {
+            const result: any = {
+                symbol: i.data[0].symbol,
+                minTotalValue: (minBy(i.data, "totalValue") as any).totalValue,
+                minTotalVolume: (minBy(i.data, "totalVolume") as any).totalVolume
+            }
+            return result
+        }).filter((i: any) => i.minTotalValue > 5000000000), "minTotalValue")
+        update(mappedRes.map((i: any) => i.symbol))
+    }
+
     return <div>
         {data.watchlistID} - {data.name} - {data.symbols.length}
         <Button disabled={loading} style={{ marginLeft: "20px" }} danger onClick={handleReset}>Reset</Button>
         <Button onClick={handleFilter} disabled={loading}>Loc Tong Gia Tri</Button>
+        {
+            data.name === "all" && <span>{`Von: >500, Gia: >5, Tong KL: >50000`}</span>
+        }
+        {
+            data.name === "thanh_khoan_vua" && <Button onClick={handleUpdateThanhKhoanVua}>Update</Button>
+        }
         <div style={{ display: "flex" }}>
             <Input
                 value={value}

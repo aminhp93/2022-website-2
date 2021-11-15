@@ -1,11 +1,20 @@
-import axios from 'axios'
+import axios from 'axios';
+import moment from "moment";
 
 const StockService = {
-    getHistoricalQuotes(symbol: string, startDate: string, endDate: string, platform?: string) {
+    getHistoricalQuotes(symbol: string, startDate?: string, endDate?: string, platform?: string) {
         // symbol = "FPT"
         // startDate = "2021-01-01"
         // endDate = "2021-12-31"
-        if (!startDate || !endDate || !symbol) return
+        if (!symbol) return
+        if (!endDate) {
+            endDate = moment().format("YYYY-MM-DD")
+        }
+
+        if (!startDate) {
+            startDate = moment().add(-3, "years").format("YYYY-MM-DD")
+        }
+
         if (platform === "fireant") {
             return axios({
                 url: `https://restv2.fireant.vn/symbols/${symbol.toUpperCase()}/historical-quotes`,
