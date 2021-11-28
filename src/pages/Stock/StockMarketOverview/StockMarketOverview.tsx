@@ -5,6 +5,7 @@ import axios from "axios";
 import { CloseOutlined } from '@ant-design/icons'
 
 import StockService from '../../../services/stock'
+import "./StockMarketOverview.css";
 
 export default function StockMarketOverview() {
     const [listWatchlists, setListWatchlists] = useState([])
@@ -15,6 +16,9 @@ export default function StockMarketOverview() {
     const [filtered, setFiltered] = useState(false);
     const [editable, setEditable] = useState(false);
     const [confirmReset, setConfirmReset] = useState(false)
+    const [changePercentMin, setChangePercentMin] = useState(null)
+    const [changePercentMax, setChangePercentMax] = useState(null)
+    const [estimatedVolumeChange, setEstimatedVolumeChange] = useState(null)
 
     const fetch = async (listWatchlists: any, watchlistID: string) => {
         const xxx = keyBy(listWatchlists, "watchlistID")
@@ -103,6 +107,20 @@ export default function StockMarketOverview() {
 
     }
 
+    const handleFilter = () => {
+        if (filtered) {
+            setFiltered(false)
+            setChangePercentMax(null);
+            setChangePercentMin(null);
+            setEstimatedVolumeChange(null);
+        } else {
+            setFiltered(true)
+            setChangePercentMax(5);
+            setChangePercentMin(1);
+            setEstimatedVolumeChange(50);
+        }
+    }
+
     useEffect(() => {
         fetchList()
         setInterval(() => {
@@ -143,7 +161,14 @@ export default function StockMarketOverview() {
         },
     ]
 
-    return <div style={{ background: "white" }}>
+    const dataSource = filtered
+        ? data4.filter((i: any) =>
+            (changePercentMin && i.changePercent > changePercentMin)
+            && (changePercentMax && i.changePercent < changePercentMax)
+            && (estimatedVolumeChange && i.estimatedVolumeChange > estimatedVolumeChange))
+        : data4
+
+    return <div style={{ background: "white" }} className="StockMarketOverview">
         StockMarketOverview
         <div style={{ display: "flex" }}>
             <div>
@@ -231,7 +256,6 @@ export default function StockMarketOverview() {
                 }
             </div>
             <div style={{ margin: "0 20px" }}>
-                <div>aim to buy</div>
                 <div>
                     {
                         confirmReset
@@ -242,12 +266,24 @@ export default function StockMarketOverview() {
                             : <Button onClick={() => setConfirmReset(true)}> Reset</Button>
                     }
                     <Button onClick={() => setEditable(!editable)}>Edit</Button>
-                    <Button onClick={() => setFiltered(!filtered)}>Turn {filtered ? "Off" : "On"} Filtered</Button>
+
+                </div>
+                <div>
+                    <Button onClick={handleFilter}>Turn {filtered ? "Off" : "On"} Filtered</Button>
+                    <div>
+                        Change Percent Min: {changePercentMin}
+                    </div>
+                    <div>
+                        Change Percent Max: {changePercentMax}
+                    </div>
+                    <div>
+                        Volume Change: {estimatedVolumeChange}
+                    </div>
                 </div>
                 <div style={{ width: "400px" }}>
                     <Table
                         size="small"
-                        dataSource={filtered ? data4.filter((i: any) => i.changePercent > 1 && i.estimatedVolumeChange > 50) : data4}
+                        dataSource={dataSource}
                         columns={columns}
                         pagination={false}
                         scroll={{ y: 500 }} />
