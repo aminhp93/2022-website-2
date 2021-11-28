@@ -9,6 +9,7 @@ import {
     MIN_TOTAL_VALUE
 } from "../../../helpers/utils";
 import StockService from '../../../services/stock'
+import ReactMarkdown from 'react-markdown';
 
 interface IProps {
 
@@ -24,11 +25,92 @@ export default function StockTools(props: IProps) {
         }
     }
 
+    const handleUpdateThanhKhoanVua = async () => {
+        let finalList = [];
+        // Get list symbol from all
+        const wlAll = listWatchlists.filter((i: any) => i.name === "all")[0].symbols
+
+        // Remove list symbol in blacklist
+        const wlBlacklist = listWatchlists.filter((i: any) => i.name === "blacklist")[0].symbols
+
+        finalList = wlAll.filter((i: any) => !wlBlacklist.includes(i))
+
+        const chunkedListSymbol: any = chunk(finalList, 30)
+        let res: any = [];
+        for (let i = 0; i < chunkedListSymbol.length; i++) {
+            const listPromises: any = []
+            for (let j = 0; j < chunkedListSymbol[i].length; j++) {
+                listPromises.push(StockService.getHistoricalQuotes(chunkedListSymbol[i][j], "", "", "fireant"))
+            }
+            const partialRes = await Promise.all(listPromises)
+            res = res.concat(partialRes)
+        }
+
+        const allRes = orderBy(res.map((i: any) => {
+            const result: any = {
+                symbol: i.data[0].symbol,
+                minTotalValue: (minBy(i.data, "totalValue") as any).totalValue,
+                minTotalVolume: (minBy(i.data, "totalVolume") as any).totalVolume
+            }
+            return result
+        }), "minTotalValue")
+
+        const mappedRes = orderBy(res.map((i: any) => {
+            const result: any = {
+                symbol: i.data[0].symbol,
+                minTotalValue: (minBy(i.data, "totalValue") as any).totalValue,
+                minTotalVolume: (minBy(i.data, "totalVolume") as any).totalVolume
+            }
+            return result
+        }).filter((i: any) => i.minTotalValue > 5000000000), "minTotalValue")
+
+        const aim_to_buy_wl = listWatchlists.filter((i: any) => i.name === "aim_to_buy")[0]
+        const thanh_khoan_vua_wl = listWatchlists.filter((i: any) => i.name === "thanh_khoan_vua")[0]
+        const all_wl = listWatchlists.filter((i: any) => i.name === "all")[0]
+
+        update(aim_to_buy_wl, mappedRes.map((i: any) => i.symbol))
+        update(thanh_khoan_vua_wl, mappedRes.map((i: any) => i.symbol))
+        update(all_wl, allRes.map((i: any) => i.symbol))
+    }
+
+    const update = async (data: any, list: any) => {
+        const res = await axios({
+            method: "PUT",
+            url: `https://restv2.fireant.vn/me/watchlists/${data.watchlistID}`,
+            headers: {
+                "authorization": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSIsImtpZCI6IkdYdExONzViZlZQakdvNERWdjV4QkRITHpnSSJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4iLCJhdWQiOiJodHRwczovL2FjY291bnRzLmZpcmVhbnQudm4vcmVzb3VyY2VzIiwiZXhwIjoxOTEzNzE1ODY4LCJuYmYiOjE2MTM3MTU4NjgsImNsaWVudF9pZCI6ImZpcmVhbnQudHJhZGVzdGF0aW9uIiwic2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsInJvbGVzIiwiZW1haWwiLCJhY2NvdW50cy1yZWFkIiwiYWNjb3VudHMtd3JpdGUiLCJvcmRlcnMtcmVhZCIsIm9yZGVycy13cml0ZSIsImNvbXBhbmllcy1yZWFkIiwiaW5kaXZpZHVhbHMtcmVhZCIsImZpbmFuY2UtcmVhZCIsInBvc3RzLXdyaXRlIiwicG9zdHMtcmVhZCIsInN5bWJvbHMtcmVhZCIsInVzZXItZGF0YS1yZWFkIiwidXNlci1kYXRhLXdyaXRlIiwidXNlcnMtcmVhZCIsInNlYXJjaCIsImFjYWRlbXktcmVhZCIsImFjYWRlbXktd3JpdGUiLCJibG9nLXJlYWQiLCJpbnZlc3RvcGVkaWEtcmVhZCJdLCJzdWIiOiIxZmI5NjI3Yy1lZDZjLTQwNGUtYjE2NS0xZjgzZTkwM2M1MmQiLCJhdXRoX3RpbWUiOjE2MTM3MTU4NjcsImlkcCI6IkZhY2Vib29rIiwibmFtZSI6Im1pbmhwbi5vcmcuZWMxQGdtYWlsLmNvbSIsInNlY3VyaXR5X3N0YW1wIjoiODIzMzcwOGUtYjFjOS00ZmQ3LTkwYmYtMzI2NTYzYmU4N2JkIiwianRpIjoiYzZmNmNkZWE2MTcxY2Q5NGRiNWZmOWZkNDIzOWM0OTYiLCJhbXIiOlsiZXh0ZXJuYWwiXX0.oZ8S_sTP6qVRJqY4h7g0JvXVPB0k8tm4go9pUFD0sS_sDZbC6zjelAVVNGHWJja82ewJbUEmTJrnDWAKR-rg5Pprp4DW7MzaN0lw3Bw0wEacphtyglx-H14-0Wnv_-2KMyQLP5EYH8wgyiw9I3ig_i7kHJy-XgCd__tdoMKvarkIXPzJJJY32gq-LScWb3HyZsfEdi-DEZUUzjAHR1nguY8oNmCiA6FaQCzOBU_qfgmOLWhN9ZNN1G3ODAeoOnphLJuWjHIrwPuVXy6B39eU2PtHmujtw_YOXdIWEi0lRhqV1pZOrJEarQqjdV3K5XNwpGvONT8lvUwUYGoOwwBFJg"
+            },
+            data: {
+                name: data.name,
+                symbols: list,
+                userName: "minhpn.org.ec1@gmail.com",
+                watchlistID: data.watchlistID,
+            }
+        })
+        if (res && res.data) {
+            notification.success({ message: "Success" })
+            getWatchlist()
+        }
+    }
+
     useEffect(() => {
         getWatchlist()
     }, [])
 
     return <div >
+        <ReactMarkdown>
+            {`
+                    \n - Update thanh_khoan_vua: 
+                    \n   - Filter list with last 15 mins Total value > 5000000000
+                    \n   - Filter blacklist
+                    \n - Update aim_to_buy === thanh_khoan_vua
+                    \n - Update all
+                `}
+        </ReactMarkdown>
+        <Button onClick={handleUpdateThanhKhoanVua}>
+            Update
+        </Button>
+        <hr />
         {
             listWatchlists.map((i: any, index: number) => {
                 return <StockToolItem data={i} key={index} dataAll={listWatchlists} />
@@ -123,37 +205,6 @@ function StockToolItem(props: IStockToolItemProps) {
         return null
     }
 
-    const handleUpdateThanhKhoanVua = async () => {
-        let finalList = [];
-        // Get list symbol from all
-        const wlAll = props.dataAll.filter((i: any) => i.name === "all")[0].symbols
-
-        // Remove list symbol in blacklist
-        const wlBlacklist = props.dataAll.filter((i: any) => i.name === "blacklist")[0].symbols
-
-        finalList = wlAll.filter((i: any) => !wlBlacklist.includes(i))
-
-        const chunkedListSymbol: any = chunk(finalList, 30)
-        let res: any = [];
-        for (let i = 0; i < chunkedListSymbol.length; i++) {
-            const listPromises: any = []
-            for (let j = 0; j < chunkedListSymbol[i].length; j++) {
-                listPromises.push(StockService.getHistoricalQuotes(chunkedListSymbol[i][j], "", "", "fireant"))
-            }
-            const partialRes = await Promise.all(listPromises)
-            res = res.concat(partialRes)
-        }
-        const mappedRes = orderBy(res.map((i: any) => {
-            const result: any = {
-                symbol: i.data[0].symbol,
-                minTotalValue: (minBy(i.data, "totalValue") as any).totalValue,
-                minTotalVolume: (minBy(i.data, "totalVolume") as any).totalVolume
-            }
-            return result
-        }).filter((i: any) => i.minTotalValue > 5000000000), "minTotalValue")
-        update(mappedRes.map((i: any) => i.symbol))
-    }
-
     return <div>
         {data.watchlistID} - {data.name} - {data.symbols.length}
         <Button disabled={loading} style={{ marginLeft: "20px" }} danger onClick={handleReset}>Reset</Button>
@@ -161,9 +212,7 @@ function StockToolItem(props: IStockToolItemProps) {
         {
             data.name === "all" && <span>{`Von: >500, Gia: >5, Tong KL: >50000`}</span>
         }
-        {
-            data.name === "thanh_khoan_vua" && <Button onClick={handleUpdateThanhKhoanVua}>Update</Button>
-        }
+
         <div style={{ display: "flex" }}>
             <Input
                 value={value}

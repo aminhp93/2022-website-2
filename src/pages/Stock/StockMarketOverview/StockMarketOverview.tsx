@@ -20,9 +20,9 @@ export default function StockMarketOverview() {
     const [changePercentMax, setChangePercentMax] = useState(null)
     const [estimatedVolumeChange, setEstimatedVolumeChange] = useState(null)
 
-    const fetch = async (listWatchlists: any, watchlistID: string) => {
-        const xxx = keyBy(listWatchlists, "watchlistID")
-        const xxx2 = xxx[watchlistID];
+    const fetch = async (listWatchlists: any, watchlistName: string) => {
+        const xxx = keyBy(listWatchlists, "name")
+        const xxx2 = xxx[watchlistName];
         const listPromises: any = [];
         ((xxx2 || {}).symbols || []).forEach((i: any) => {
             listPromises.push(StockService.getHistoricalQuotes(i, null, null, 'fireant'))
@@ -56,10 +56,10 @@ export default function StockMarketOverview() {
         const res = await StockService.getWatchlist()
         if (res && res.data) {
             setListWatchlists(res.data)
-            fetch(res.data, "476714").then(res => setData1(res))
-            fetch(res.data, "476720").then(res => setData2(res))
-            fetch(res.data, "75482").then(res => setData3(res))
-            fetch(res.data, "1140364").then(res => setData4(res))
+            fetch(res.data, "8633_dau_co_va_BDS").then(res => setData1(res))
+            fetch(res.data, "8781_chung_khoan").then(res => setData2(res))
+            fetch(res.data, "watching").then(res => setData3(res))
+            fetch(res.data, "aim_to_buy").then(res => setData4(res))
         }
     }
 
@@ -136,7 +136,7 @@ export default function StockMarketOverview() {
             },
             render: (i: any) => {
 
-                return <div style={{ width: "50px" }}>{i.symbol} {editable && <CloseOutlined style={{ marginLeft: "2px" }} onClick={() => handleRemove(i.symbol)} />} </div>
+                return <div style={{ width: "60px" }}>{i.symbol} {editable && <CloseOutlined style={{ marginLeft: "2px" }} onClick={() => handleRemove(i.symbol)} />} </div>
             }
         },
         {
@@ -255,38 +255,41 @@ export default function StockMarketOverview() {
                     })
                 }
             </div>
-            <div style={{ margin: "0 20px" }}>
-                <div>
-                    {
-                        confirmReset
-                            ? <div style={{ display: "flex" }}>
-                                <Button onClick={handleReset}>Sure</Button>
-                                <Button onClick={() => setConfirmReset(false)}>Cancel</Button>
-                            </div>
-                            : <Button onClick={() => setConfirmReset(true)}> Reset</Button>
-                    }
-                    <Button onClick={() => setEditable(!editable)}>Edit</Button>
+            <div style={{ margin: "0 20px", display: "flex" }}>
 
-                </div>
-                <div>
-                    <Button onClick={handleFilter}>Turn {filtered ? "Off" : "On"} Filtered</Button>
-                    <div>
-                        Change Percent Min: {changePercentMin}
-                    </div>
-                    <div>
-                        Change Percent Max: {changePercentMax}
-                    </div>
-                    <div>
-                        Volume Change: {estimatedVolumeChange}
-                    </div>
-                </div>
-                <div style={{ width: "400px" }}>
+                <div style={{ width: "300px" }}>
                     <Table
                         size="small"
                         dataSource={dataSource}
                         columns={columns}
                         pagination={false}
                         scroll={{ y: 500 }} />
+                </div>
+                <div style={{ marginLeft: "20px" }}>
+                    <div>
+                        {
+                            confirmReset
+                                ? <div style={{ display: "flex" }}>
+                                    <Button onClick={handleReset}>Sure</Button>
+                                    <Button onClick={() => setConfirmReset(false)}>Cancel</Button>
+                                </div>
+                                : <Button onClick={() => setConfirmReset(true)}> Reset</Button>
+                        }
+                        <Button onClick={() => setEditable(!editable)}>Edit</Button>
+
+                    </div>
+                    <div>
+                        <Button onClick={handleFilter}>Turn {filtered ? "Off" : "On"} Filtered</Button>
+                        <div>
+                            Change Percent Min: {changePercentMin}
+                        </div>
+                        <div>
+                            Change Percent Max: {changePercentMax}
+                        </div>
+                        <div>
+                            Volume Change: {estimatedVolumeChange}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
