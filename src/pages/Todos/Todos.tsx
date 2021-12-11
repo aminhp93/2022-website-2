@@ -3,6 +3,7 @@ import { Button, Input, notification } from 'antd';
 import axios from 'axios';
 import { debounce, } from "lodash";
 import ReactMarkdown from "react-markdown";
+import YouTube from 'react-youtube';
 
 const { TextArea } = Input;
 
@@ -58,6 +59,21 @@ export default function Todos() {
         getStockNote();
     }, [])
 
+    const opts = {
+        // height: '390',
+        // width: '640',
+        // playerVars: {
+        //     // https://developers.google.com/youtube/player_parameters
+        //     autoplay: 1,
+        // },
+    };
+
+    const _onReady = (event: any) => {
+        // access to player in all event handlers via event.target
+        event.target.pauseVideo();
+    }
+
+
     return <div>Todos
         <div style={{ textAlign: "start" }}>
             <Button onClick={() => setEditNote(!editNote)}>
@@ -70,5 +86,6 @@ export default function Todos() {
                 : <ReactMarkdown children={note} />
             }
         </div>
+        <YouTube videoId="2g811Eo7K8U" opts={opts} onReady={_onReady} />
     </div>
 }

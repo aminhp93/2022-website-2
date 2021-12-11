@@ -30,10 +30,11 @@ export default function StockTools(props: IProps) {
         // Get list symbol from all
         const wlAll = listWatchlists.filter((i: any) => i.name === "all")[0].symbols
 
-        // Remove list symbol in blacklist
+        // Remove list symbol in blacklist and temp_blacklist
         const wlBlacklist = listWatchlists.filter((i: any) => i.name === "blacklist")[0].symbols
+        const wlTempBlacklist = listWatchlists.filter((i: any) => i.name === "temp_blacklist")[0].symbols
 
-        finalList = wlAll.filter((i: any) => !wlBlacklist.includes(i))
+        finalList = wlAll.filter((i: any) => !wlTempBlacklist.includes(i) && !wlBlacklist.includes(i))
 
         const chunkedListSymbol: any = chunk(finalList, 30)
         let res: any = [];
