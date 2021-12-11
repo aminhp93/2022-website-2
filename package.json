@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "http://aminhp93.github.io/2022-website-2",
   "dependencies": {
+    "@craco/craco": "^6.4.3",
     "@reduxjs/toolkit": "^1.6.1",
     "@types/jest": "^26.0.15",
     "@types/lodash": "^4.14.172",
@@ -14,6 +15,7 @@
     "@types/react-router-dom": "^5.1.8",
     "antd": "^4.16.13",
     "axios": "^0.21.1",
+    "craco-less": "^1.20.0",
     "gh-pages": "^3.2.3",
     "lodash": "^4.17.21",
     "react": "^17.0.2",
@@ -33,12 +35,12 @@
     "ws": "^8.2.1"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "craco start",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "craco eject"
   },
   "eslintConfig": {
     "extends": [

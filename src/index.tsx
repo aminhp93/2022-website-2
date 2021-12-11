@@ -2,8 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 
-import 'antd/dist/antd.css'
-import './index.css';
+import './styles/index.less';
 
 import App from './App';
 import store from './store/store';

@@ -107,13 +107,7 @@ export default function Stock() {
                 <br />
                 <Button onClick={() => setModal("StockBuyCheck")}>StockBuyCheck</Button>
             </div>
-
         </div>
-
-
-
-
-
         {
             modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>
                 {modal === "HistoryTrade" && <HistoryTrade />}
