@@ -4,6 +4,7 @@ import {
   Route,
   Link
 } from "react-router-dom";
+import Nhi from './pages/Nhi/Nhi'
 
 import ReactGridRoot from './pages/ReactGridRoot/ReactGridRoot'
 
@@ -11,8 +12,11 @@ function App() {
   return (
     <div className="App">
       <Router>
-        <div>
+        <div style={{ height: "100%" }}>
           <Switch>
+            <Route path="/nhi/">
+              <Nhi />
+            </Route>
             <Route path="/">
               <ReactGridRoot />
             </Route>
