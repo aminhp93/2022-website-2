@@ -14,7 +14,7 @@ function App() {
       <Router>
         <div style={{ height: "100%" }}>
           <Switch>
-            <Route path="/nhi/">
+            <Route path="/nhi">
               <Nhi />
             </Route>
             <Route path="/">
