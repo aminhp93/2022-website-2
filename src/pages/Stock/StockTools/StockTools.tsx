@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from "axios";
-import { Button, Input, notification } from "antd";
+import { Button, Input, notification, Spin } from "antd";
 import { chunk, minBy, orderBy } from "lodash";
 import moment from "moment";
 import {
@@ -17,6 +17,7 @@ interface IProps {
 
 export default function StockTools(props: IProps) {
     const [listWatchlists, setListWatchlists] = useState([])
+    const [loading, setLoading] = useState(false);
 
     const getWatchlist = async () => {
         const res = await StockService.getWatchlist()
@@ -32,11 +33,10 @@ export default function StockTools(props: IProps) {
 
         // Remove list symbol in blacklist and temp_blacklist
         const wlBlacklist = listWatchlists.filter((i: any) => i.name === "blacklist")[0].symbols
-        const wlTempBlacklist = listWatchlists.filter((i: any) => i.name === "temp_blacklist")[0].symbols
-
-        finalList = wlAll.filter((i: any) => !wlTempBlacklist.includes(i) && !wlBlacklist.includes(i))
+        finalList = wlAll.filter((i: any) => !wlBlacklist.includes(i))
 
         const chunkedListSymbol: any = chunk(finalList, 30)
+        setLoading(true)
         let res: any = [];
         for (let i = 0; i < chunkedListSymbol.length; i++) {
             const listPromises: any = []
@@ -46,15 +46,7 @@ export default function StockTools(props: IProps) {
             const partialRes = await Promise.all(listPromises)
             res = res.concat(partialRes)
         }
-
-        const allRes = orderBy(res.map((i: any) => {
-            const result: any = {
-                symbol: i.data[0].symbol,
-                minTotalValue: (minBy(i.data, "totalValue") as any).totalValue,
-                minTotalVolume: (minBy(i.data, "totalVolume") as any).totalVolume
-            }
-            return result
-        }), "minTotalValue")
+        setLoading(false)
 
         const mappedRes = orderBy(res.map((i: any) => {
             const result: any = {
@@ -65,13 +57,9 @@ export default function StockTools(props: IProps) {
             return result
         }).filter((i: any) => i.minTotalValue > 5000000000), "minTotalValue")
 
-        const aim_to_buy_wl = listWatchlists.filter((i: any) => i.name === "aim_to_buy")[0]
         const thanh_khoan_vua_wl = listWatchlists.filter((i: any) => i.name === "thanh_khoan_vua")[0]
-        const all_wl = listWatchlists.filter((i: any) => i.name === "all")[0]
 
-        update(aim_to_buy_wl, mappedRes.map((i: any) => i.symbol))
         update(thanh_khoan_vua_wl, mappedRes.map((i: any) => i.symbol))
-        update(all_wl, allRes.map((i: any) => i.symbol))
     }
 
     const update = async (data: any, list: any) => {
@@ -97,6 +85,10 @@ export default function StockTools(props: IProps) {
     useEffect(() => {
         getWatchlist()
     }, [])
+
+    if (loading) {
+        return <div><Spin /></div>
+    }
 
     return <div >
         <ReactMarkdown>
@@ -220,7 +212,6 @@ function StockToolItem(props: IStockToolItemProps) {
                 onChange={handleChangeInput}
                 onPressEnter={() => update(value.split(","))}
             />
-            {/* <Button disabled={loading} onClick={handleUpdate}>Update list</Button> */}
         </div>
         <hr />
     </div>

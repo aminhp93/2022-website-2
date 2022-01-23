@@ -123,9 +123,9 @@ export default function StockMarketOverview() {
 
     useEffect(() => {
         fetchList()
-        setInterval(() => {
-            fetchList()
-        }, 60000)
+        // setInterval(() => {
+        //     fetchList()
+        // }, 60000)
     }, [])
 
     const columns = [
