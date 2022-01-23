@@ -6,13 +6,8 @@ import { Button, Modal, Input, notification } from "antd";
 
 import HistoryTrade from "./HistoryTrade/HistoryTrade";
 import StockTools from "./StockTools/StockTools";
-import IndustryAndMarket from "./IndustryAndMarket/IndustryAndMarket";
-import InvestmentStrategy from "./InvestmentStrategy/InvestmentStrategy";
-import StockEvent from "./StockEvent/StockEvent";
 import StockTestBreak from "./StockTestBreak/StockTestBreak";
-import StockPattern from "./StockPattern/StockPattern";
 import StockMarketOverview from "./StockMarketOverview/StockMarketOverview";
-import StockBuyCheck from "./StockBuyCheck/StockBuyCheck";
 
 const { TextArea } = Input
 
@@ -86,38 +81,20 @@ export default function Stock() {
 
         <div className="flex" >
             <div style={{ flex: 1 }}>
-                <div>Working</div>
                 <Button onClick={() => setModal("HistoryTrade")}>History Trade</Button>
                 <br />
                 <Button onClick={() => setModal("StockTools")}>Stock Tools</Button>
                 <br />
             </div>
             <div style={{ flex: 1 }}>
-                <div>Developing</div>
-
-                <Button onClick={() => setModal("IndustryAndMarket")}>IndustryAndMarket</Button>
-                <br />
-                <Button onClick={() => setModal("InvestmentStrategy")}>InvestmentStrategy</Button>
-                <br />
-                <Button onClick={() => setModal("StockEvent")}>Stock Event</Button>
-                <br />
-                <Button onClick={() => setModal("StockTestBreak")}>Test Break</Button>
-                <br />
-                <Button onClick={() => setModal("StockPattern")}>Stock Pattern</Button>
-                <br />
-                <Button onClick={() => setModal("StockBuyCheck")}>StockBuyCheck</Button>
+                <Button onClick={() => setModal("StockTestBreak")}>Test Break (Dev mode)</Button>
             </div>
         </div>
         {
             modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>
                 {modal === "HistoryTrade" && <HistoryTrade />}
                 {modal === "StockTools" && <StockTools />}
-                {modal === "IndustryAndMarket" && <IndustryAndMarket />}
-                {modal === "InvestmentStrategy" && <InvestmentStrategy />}
-                {modal === "StockEvent" && <StockEvent />}
                 {modal === "StockTestBreak" && <StockTestBreak />}
-                {modal === "StockPattern" && <StockPattern />}
-                {modal === "StockBuyCheck" && <StockBuyCheck />}
             </Modal>
         }
     </div>

@@ -3,6 +3,7 @@ import { keyBy, meanBy } from "lodash";
 import { notification, Table, Button } from "antd";
 import axios from "axios";
 import { CloseOutlined } from '@ant-design/icons'
+import StockEvent from "../StockEvent/StockEvent";
 
 import StockService from '../../../services/stock'
 import "./StockMarketOverview.css";
@@ -168,8 +169,7 @@ export default function StockMarketOverview() {
             && (estimatedVolumeChange && i.estimatedVolumeChange > estimatedVolumeChange))
         : data4
 
-    return <div style={{ background: "white" }} className="StockMarketOverview">
-        StockMarketOverview
+    return <div style={{ background: "white", display: 'flex' }} className="StockMarketOverview">
         <div style={{ display: "flex" }}>
             <div>
                 <div>bds</div>
@@ -292,6 +292,10 @@ export default function StockMarketOverview() {
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div>
+            <StockEvent />
         </div>
     </div>
 }
