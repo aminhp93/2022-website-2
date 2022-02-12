@@ -70,7 +70,10 @@ export default function RootLayout() {
     const renderRightContainer = () => {
         return <div className="RootLayout-right-container" >
             {renderTitle()}
-            {renderMainContent()}
+            <div className="RootLayout-main-content">
+                {renderMainContent()}
+            </div>
+            
         </div>
     }
 
