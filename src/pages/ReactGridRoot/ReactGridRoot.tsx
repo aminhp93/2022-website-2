@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
-import ReactMarkdown from 'react-markdown';
 import ReactGridLayout from 'react-grid-layout';
-import remarkGfm from 'remark-gfm'
 import { Table } from 'antd';
+import MDEditor from '@uiw/react-md-editor';
 
 import '../../../node_modules/react-grid-layout/css/styles.css'
 import '../../../node_modules/react-resizable/css/styles.css'
@@ -10,6 +9,7 @@ import News from '../News/News'
 import Stock from '../Stock/Stock'
 import Todos from '../Todos/Todos'
 import Utility from '../Utility/Utility'
+import React from 'react';
 
 const ResponsiveReactGridLayout = ReactGridLayout.WidthProvider(ReactGridLayout.Responsive);
 
@@ -69,7 +69,10 @@ export default function ReactGridRoot() {
         {
             title: 'Element',
             render: (data: any) => {
-                return <div><ReactMarkdown children={data.text} remarkPlugins={[remarkGfm]} /></div>
+                return <div>
+                    <MDEditor.Markdown source={data.text} />
+
+                </div>
             }
         },
         {

@@ -7,6 +7,9 @@ import {
 import Nhi from './pages/Nhi/Nhi'
 
 import ReactGridRoot from './pages/ReactGridRoot/ReactGridRoot'
+import Stock from './pages/Stock/Stock'
+import RootLayout from './pages/RootLayout/RootLayout'
+import React from "react";
 
 function App() {
   return (
@@ -16,9 +19,13 @@ function App() {
           <Route path="/nhi">
             <Nhi />
           </Route>
-          <Route path="/">
-            <ReactGridRoot />
+          <Route path="/stock">
+            <Stock />
           </Route>
+          <Route path="/">
+            <RootLayout />
+          </Route>
+
           <Route path="/">
             <nav>
               <ul>

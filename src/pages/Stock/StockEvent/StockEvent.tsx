@@ -1,6 +1,7 @@
-import ReactMarkdown from "react-markdown";
 import { useState } from "react";
 import { Timeline, Modal } from 'antd';
+import React from "react";
+import MDEditor from '@uiw/react-md-editor';
 
 export default function StockEvent() {
     const listEvents = [
@@ -65,9 +66,9 @@ function StockEventItem({ data }: StockEventItemProps) {
             {data.time} - {data.name}
         </div>
         {modal && <Modal visible={true} onCancel={() => setModal(false)} footer={null} >
-            <ReactMarkdown>
-                {data.note}
-            </ReactMarkdown>
+
+            <MDEditor.Markdown source={data.note} />
+
         </Modal>}
     </>
 }

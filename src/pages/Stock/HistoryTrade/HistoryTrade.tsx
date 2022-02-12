@@ -9,6 +9,7 @@ import {
     fetchOrdersHistory
 } from "../../../reducers/account"
 import './HistoryTrade.css';
+import React from "react";
 
 interface TProps {
     onClose?: any;

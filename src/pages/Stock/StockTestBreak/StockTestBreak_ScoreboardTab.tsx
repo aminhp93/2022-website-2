@@ -1,7 +1,8 @@
-import ReactMarkdown from "react-markdown";
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { Input, Table } from "antd";
+import React from "react";
+import MDEditor from '@uiw/react-md-editor';
 
 
 export default function StockTestBreak_ScoreboardTab({ cb, data }: any) {
@@ -98,8 +99,7 @@ export default function StockTestBreak_ScoreboardTab({ cb, data }: any) {
     return <>
         <div style={{ display: "flex" }}>
             <div style={{ width: "50%" }}>
-                <ReactMarkdown>
-                    {`
+                <MDEditor.Markdown source={`
                         \n - Test break
                         \n - Symbol: NKG
                         \n - Time: 1/1/2020 - 31/12/2020
@@ -110,19 +110,19 @@ export default function StockTestBreak_ScoreboardTab({ cb, data }: any) {
                         \n   - volume15dayChange > 50%
                         \n   - previousDayChange < 4%
                         \n   - open !== high
-                    `}
-                </ReactMarkdown>
+                    `} />
+
             </div>
             <div style={{ width: "50%" }}>
-                <ReactMarkdown>
-                    {`
+                <MDEditor.Markdown source={`
                         \n - Note:
                         \n   - HDG: 06-01
                         \n   - NKG: 01-25
                         \n   - SCR: 02-18, 03-04, 04-27
                         \n   - DBC: 12-18, 12-29, 11-20, 09-11, 07-16, 03-30, 
-                    `}
-                </ReactMarkdown>
+                    `} />
+
+
             </div>
         </div>
         <div>

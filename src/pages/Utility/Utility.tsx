@@ -7,6 +7,7 @@ import Sport from './Sport/Sport';
 import HistorialEvents from './HistorialEvents/HistorialEvents';
 import MemorialSpeech from './MemorialSpeech/MemorialSpeech';
 import Funny from './Funny/Funny';
+import React from 'react';
 
 export default function Utility() {
     const [modal, setModal] = useState(null)

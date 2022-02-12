@@ -9,7 +9,8 @@ import {
     MIN_TOTAL_VALUE
 } from "../../../helpers/utils";
 import StockService from '../../../services/stock'
-import ReactMarkdown from 'react-markdown';
+import React from 'react';
+import MDEditor from '@uiw/react-md-editor';
 
 interface IProps {
 
@@ -91,15 +92,14 @@ export default function StockTools(props: IProps) {
     }
 
     return <div >
-        <ReactMarkdown>
-            {`
+        <MDEditor.Markdown source={`
                     \n - Update thanh_khoan_vua: 
                     \n   - Filter list with last 15 mins Total value > 5000000000
                     \n   - Filter blacklist
                     \n - Update aim_to_buy === thanh_khoan_vua
                     \n - Update all
-                `}
-        </ReactMarkdown>
+                `} />
+
         <Button onClick={handleUpdateThanhKhoanVua}>
             Update
         </Button>

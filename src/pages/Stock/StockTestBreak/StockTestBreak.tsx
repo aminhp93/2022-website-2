@@ -6,6 +6,7 @@ import StockTestBreak_TestTab from "./StockTestBreak_TestTab"
 import StockTestBreak_GraphsTab from "./StockTestBreak_GraphsTab"
 import StockTestBreak_ScoreboardTab from "./StockTestBreak_ScoreboardTab"
 import StockTestBreak_OverviewTab from "./StockTestBreak_OverviewTab"
+import React from "react";
 
 const { TabPane } = Tabs;
 

@@ -1,20 +1,27 @@
 import axios from "axios";
 import { useCallback, useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
 import { debounce } from "lodash";
-import { Button, Modal, Input, notification } from "antd";
+import MDEditor from '@uiw/react-md-editor';
+
+import { Button, Modal, Input, notification, Layout, Menu } from "antd";
+
 
 import HistoryTrade from "./HistoryTrade/HistoryTrade";
 import StockTools from "./StockTools/StockTools";
 import StockTestBreak from "./StockTestBreak/StockTestBreak";
 import StockMarketOverview from "./StockMarketOverview/StockMarketOverview";
+import React from "react";
 
 const { TextArea } = Input
+
+
 
 export default function Stock() {
     const [modal, setModal] = useState(null);
     const [note, setNote] = useState(`\n # Write something here for note`);
+    const [tempNote, setTempNote] = useState(null)
     const [editNote, setEditNote] = useState(false);
+
 
     const getStockNote = async () => {
         const res: any = await axios({
@@ -38,44 +45,73 @@ export default function Stock() {
     }, [])
 
     const handleChangeNote = (e: any) => {
-        debounnceHandleChangeNote(e.target.value)
+        const value = String(e.target.value.trim());
+        if (value) {
+            setTempNote(value)
+        }
     }
 
-    const debounnceHandleChangeNote = useCallback(debounce((value) => {
-        if (value) {
-            axios({
-                url: "https://testapi.io/api/aminhp93/resource/note/1",
-                data: {
-                    title: "stock",
-                    content: value
-                },
-                headers: {
-                    'Content-type': 'application/json; charset=UTF-8',
-                },
-                method: "PUT"
-            }).then(res => {
-                // console.log(res)
-            }).catch(error => {
-                notification.error({ message: "Error Update Note" })
-            })
+    const handleConfirmNote = () => {
+        let content
+        if (!tempNote) {
+            content = `\n # Write something here for note`
+        } else {
+            content = tempNote
         }
-        setNote(value)
 
-    }, 1000), [])
+
+        axios({
+            url: "https://testapi.io/api/aminhp93/resource/note/1",
+            data: {
+                title: "stock",
+                content
+            },
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+            method: "PUT"
+        }).then(res => {
+            // console.log(res)
+        }).catch(error => {
+            notification.error({ message: "Error Update Note" })
+        })
+        setTempNote(null)
+        setNote(content)
+        setEditNote(false)
+    }
+
+    const handleCancelNote = () => {
+        setTempNote(null)
+        setEditNote(false)
+    }
 
     return <div style={{ background: "lightblue", height: "100%", overflow: "auto" }} onMouseDown={e => e.stopPropagation()}>
         <div>
             <StockMarketOverview />
         </div>
         <div style={{ textAlign: "start" }}>
-            <Button onClick={() => setEditNote(!editNote)}>
-                {editNote ? 'Edit' : 'Not edit'}
+            {
+                editNote
+                    ? <>
+                        <Button onClick={handleConfirmNote}>
+                            Confirm
             </Button>
+                        <Button onClick={handleCancelNote}>
+                            Cancel
+            </Button>
+                    </>
+                    : <Button onClick={() => setEditNote(true)}>
+                        Edit
+            </Button>
+            }
+
             {editNote
                 ? <TextArea
                     // onPressEnter={() => setEditNote(false)}
                     defaultValue={note} onChange={handleChangeNote} />
-                : <ReactMarkdown children={note} />
+                : <MDEditor.Markdown source={note} />
+
+
             }
         </div>
 

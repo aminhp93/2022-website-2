@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useEffect, useState } from 'react';
+import React from 'react';
 
 export default function News() {
     const [quote, setQuote] = useState(null)

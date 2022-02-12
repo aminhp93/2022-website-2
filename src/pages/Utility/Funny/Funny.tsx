@@ -1,11 +1,11 @@
-import ReactMarkdown from "react-markdown";
+import React from "react";
+import MDEditor from '@uiw/react-md-editor';
 
 export default function Funny() {
     return <div>
-        <ReactMarkdown>
-            {`
+        <MDEditor.Markdown source={`
                 \n - [3 con ha ma](https://vt.tiktok.com/ZSJKUuV2D/)
-            `}
-        </ReactMarkdown>
+            `} />
+
     </div>
 }

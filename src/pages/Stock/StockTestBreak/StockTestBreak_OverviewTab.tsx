@@ -1,4 +1,3 @@
-import ReactMarkdown from "react-markdown";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import moment from "moment";
@@ -7,6 +6,8 @@ import { mean, maxBy, minBy, meanBy, keyBy, orderBy, range, chunk, cloneDeep, ge
 import StockTestBreak_GraphsTab from "./StockTestBreak_GraphsTab"
 import { analyseData, findSellDate, singleColumns, combinedColumns, findBuyDate, testVariableColumns } from "./StockTestBreak.helpers"
 import StockService from '../../../services/stock'
+import React from "react";
+import MDEditor from '@uiw/react-md-editor';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -420,8 +421,7 @@ export default function StockTestBreak_OverviewTab() {
 
     const rightHeader = () => {
         return <div style={{ width: "50%", height: "100%", overflow: "auto" }}>
-            <ReactMarkdown>
-                {`
+            <MDEditor.Markdown source={`
                     \n - dau tu 1 ma theo chien thuat nay       
                     \n - So tien ban dau: 100
                     \n - So tien them hang thang: 30
@@ -429,8 +429,9 @@ export default function StockTestBreak_OverviewTab() {
                     \n   - within 19 trading days
                     \n   - sell all if < -3
                     \n   - sell all if > 10
-                `}
-            </ReactMarkdown>
+                `} />
+
+
         </div>
     }
 

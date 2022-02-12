@@ -7,6 +7,7 @@ import StockEvent from "../StockEvent/StockEvent";
 
 import StockService from '../../../services/stock'
 import "./StockMarketOverview.css";
+import React from "react";
 
 export default function StockMarketOverview() {
     const [listWatchlists, setListWatchlists] = useState([])
