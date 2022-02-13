@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback } from "react";
+import React from "react";
+import { useState, useEffect } from "react";
 import { keyBy, meanBy } from "lodash";
 import { notification, Table, Button } from "antd";
 import axios from "axios";
 import { CloseOutlined } from '@ant-design/icons'
-import StockEvent from "../StockEvent/StockEvent";
 
 import StockService from '../../../services/stock'
 import "./StockMarketOverview.css";
-import React from "react";
+
 
 export default function StockMarketOverview() {
     const [listWatchlists, setListWatchlists] = useState([])
@@ -170,133 +170,148 @@ export default function StockMarketOverview() {
             && (estimatedVolumeChange && i.estimatedVolumeChange > estimatedVolumeChange))
         : data4
 
-    return <div style={{ background: "white", display: 'flex' }} className="StockMarketOverview">
-        <div style={{ display: "flex" }}>
-            <div>
-                <div>bds</div>
-                {
-                    data1.map((i: any) => {
-                        let color = "rgb(204, 170, 0)"
-                        if (i.changePercent > 0) {
-                            if (i.changePercent > 6.5) {
-                                color = "rgb(255, 0, 255)"
-                            } else {
-                                color = "green"
-                            }
-
+    const renderBds = () => {
+        return <div>
+            <div>bds</div>
+            {
+                data1.map((i: any) => {
+                    let color = "rgb(204, 170, 0)"
+                    if (i.changePercent > 0) {
+                        if (i.changePercent > 6.5) {
+                            color = "rgb(255, 0, 255)"
+                        } else {
+                            color = "green"
                         }
-                        if (i.changePercent < 0) {
-                            if (i.changePercent < -6.5) {
-                                color = "rgb(0, 204, 204)"
-                            } else {
-                                color = "red"
-                            }
 
+                    }
+                    if (i.changePercent < 0) {
+                        if (i.changePercent < -6.5) {
+                            color = "rgb(0, 204, 204)"
+                        } else {
+                            color = "red"
                         }
-                        return <div style={{ display: "flex", justifyContent: "space-between", width: "100px", color }}>
-                            <div>{i.symbol} </div>
-                            <div>{i.changePercent}</div>
-                        </div>
-                    })
-                }
+
+                    }
+                    return <div style={{ display: "flex", justifyContent: "space-between", width: "100px", color }}>
+                        <div>{i.symbol} </div>
+                        <div>{i.changePercent}</div>
+                    </div>
+                })
+            }
+        </div>
+
+    }
+
+    const renderCk = () => {
+        return <div style={{ margin: "0 20px" }}>
+            <div>Ck</div>
+            {
+                data2.map((i: any) => {
+                    let color = "rgb(204, 170, 0)"
+                    if (i.changePercent > 0) {
+                        if (i.changePercent > 6.5) {
+                            color = "rgb(255, 0, 255)"
+                        } else {
+                            color = "green"
+                        }
+
+                    }
+                    if (i.changePercent < 0) {
+                        if (i.changePercent < -6.5) {
+                            color = "rgb(0, 204, 204)"
+                        } else {
+                            color = "red"
+                        }
+
+                    }
+                    return <div style={{ display: "flex", justifyContent: "space-between", width: "100px", color }}>
+                        <div>{i.symbol} </div>
+                        <div>{i.changePercent}</div>
+                    </div>
+                })
+            }
+        </div>
+
+    }
+
+    const renderWatching = () => {
+        return <div>
+            <div>watching</div>
+            {
+                data3.map((i: any) => {
+                    let color = "rgb(204, 170, 0)"
+                    if (i.changePercent > 0) {
+                        if (i.changePercent > 6.5) {
+                            color = "rgb(255, 0, 255)"
+                        } else {
+                            color = "green"
+                        }
+
+                    }
+                    if (i.changePercent < 0) {
+                        if (i.changePercent < -6.5) {
+                            color = "rgb(0, 204, 204)"
+                        } else {
+                            color = "red"
+                        }
+
+                    }
+                    return <div style={{ display: "flex", justifyContent: "space-between", width: "100px", color }}>
+                        <div>{i.symbol} </div>
+                        <div>{i.changePercent}</div>
+                    </div>
+                })
+            }
+        </div>
+
+    }
+
+    const renderPotentialBuyTable = () => {
+        return <div style={{ margin: "0 20px", display: "flex" }}>
+            <div style={{ width: "300px" }}>
+                <Table
+                    size="small"
+                    dataSource={dataSource}
+                    columns={columns}
+                    pagination={false}
+                    scroll={{ y: 500 }} />
             </div>
-            <div style={{ margin: "0 20px" }}>
-                <div>Ck</div>
-                {
-                    data2.map((i: any) => {
-                        let color = "rgb(204, 170, 0)"
-                        if (i.changePercent > 0) {
-                            if (i.changePercent > 6.5) {
-                                color = "rgb(255, 0, 255)"
-                            } else {
-                                color = "green"
-                            }
+            <div style={{ marginLeft: "20px" }}>
+                <div>
+                    {
+                        confirmReset
+                            ? <div style={{ display: "flex" }}>
+                                <Button onClick={handleReset}>Sure</Button>
+                                <Button onClick={() => setConfirmReset(false)}>Cancel</Button>
+                            </div>
+                            : <Button onClick={() => setConfirmReset(true)}> Reset</Button>
+                    }
+                    <Button onClick={() => setEditable(!editable)}>Edit</Button>
 
-                        }
-                        if (i.changePercent < 0) {
-                            if (i.changePercent < -6.5) {
-                                color = "rgb(0, 204, 204)"
-                            } else {
-                                color = "red"
-                            }
-
-                        }
-                        return <div style={{ display: "flex", justifyContent: "space-between", width: "100px", color }}>
-                            <div>{i.symbol} </div>
-                            <div>{i.changePercent}</div>
-                        </div>
-                    })
-                }
-            </div>
-            <div>
-                <div>watching</div>
-                {
-                    data3.map((i: any) => {
-                        let color = "rgb(204, 170, 0)"
-                        if (i.changePercent > 0) {
-                            if (i.changePercent > 6.5) {
-                                color = "rgb(255, 0, 255)"
-                            } else {
-                                color = "green"
-                            }
-
-                        }
-                        if (i.changePercent < 0) {
-                            if (i.changePercent < -6.5) {
-                                color = "rgb(0, 204, 204)"
-                            } else {
-                                color = "red"
-                            }
-
-                        }
-                        return <div style={{ display: "flex", justifyContent: "space-between", width: "100px", color }}>
-                            <div>{i.symbol} </div>
-                            <div>{i.changePercent}</div>
-                        </div>
-                    })
-                }
-            </div>
-            <div style={{ margin: "0 20px", display: "flex" }}>
-
-                <div style={{ width: "300px" }}>
-                    <Table
-                        size="small"
-                        dataSource={dataSource}
-                        columns={columns}
-                        pagination={false}
-                        scroll={{ y: 500 }} />
                 </div>
-                <div style={{ marginLeft: "20px" }}>
+                <div>
+                    <Button onClick={handleFilter}>Turn {filtered ? "Off" : "On"} Filtered</Button>
                     <div>
-                        {
-                            confirmReset
-                                ? <div style={{ display: "flex" }}>
-                                    <Button onClick={handleReset}>Sure</Button>
-                                    <Button onClick={() => setConfirmReset(false)}>Cancel</Button>
-                                </div>
-                                : <Button onClick={() => setConfirmReset(true)}> Reset</Button>
-                        }
-                        <Button onClick={() => setEditable(!editable)}>Edit</Button>
-
+                        Change Percent Min: {changePercentMin}
                     </div>
                     <div>
-                        <Button onClick={handleFilter}>Turn {filtered ? "Off" : "On"} Filtered</Button>
-                        <div>
-                            Change Percent Min: {changePercentMin}
-                        </div>
-                        <div>
-                            Change Percent Max: {changePercentMax}
-                        </div>
-                        <div>
-                            Volume Change: {estimatedVolumeChange}
-                        </div>
+                        Change Percent Max: {changePercentMax}
+                    </div>
+                    <div>
+                        Volume Change: {estimatedVolumeChange}
                     </div>
                 </div>
             </div>
         </div>
 
-        <div>
-            <StockEvent />
+    }
+
+    return <div style={{ background: "white", display: 'flex' }} className="StockMarketOverview">
+        <div style={{ display: "flex" }}>
+            {renderBds()}
+            {renderCk()}
+            {renderWatching()}
+            {/* {renderPotentialBuyTable()} */}
         </div>
     </div>
 }

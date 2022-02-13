@@ -55,11 +55,11 @@ export default function RootLayout() {
 
     const renderRightContainer = () => {
         return <div className="RootLayout-right-container" >
-            {renderTitle()}
+            {/* {renderTitle()} */}
             <div className="RootLayout-main-content">
                 {renderMainContent()}
             </div>
-            
+
         </div>
     }
 
