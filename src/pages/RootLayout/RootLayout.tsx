@@ -1,29 +1,15 @@
 import React from 'react';
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
+import { Menu } from "antd";
 
-import { Button, Modal, Input, notification, Layout, Menu } from "antd";
-import {
-    MenuUnfoldOutlined,
-    MenuFoldOutlined,
-    UserOutlined,
-    VideoCameraOutlined,
-    UploadOutlined,
-} from '@ant-design/icons';
 import Stock from '../../pages/Stock/Stock'
-import Todos from '../../pages/Todos/Todos'
-
-const { Header, Footer, Sider, Content } = Layout;
-
-
+import Note from '../Note/Note'
 
 export default function RootLayout() {
-    const [collapsed, setCollapsed] = useState(false);
     const [keyMenu, setKeyMenu] = useState(null);
 
     const handleChangeMenu = (e: any) => {
-        console.log(e)
         setKeyMenu(e.key)
-
     }
 
     // RENDER PART
@@ -32,7 +18,7 @@ export default function RootLayout() {
         if (keyMenu === "stock") {
             return <Stock />
         } else if (keyMenu === "todos") {
-            return <Todos />
+            return <Note title="todos" />
         }
         return <div>Select menu to render content</div>
     }

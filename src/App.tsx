@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import Nhi from './pages/Nhi/Nhi'
 
-import ReactGridRoot from './pages/ReactGridRoot/ReactGridRoot'
 import Stock from './pages/Stock/Stock'
 import RootLayout from './pages/RootLayout/RootLayout'
 import React from "react";

@@ -4,18 +4,25 @@ import axios from 'axios';
 import React from 'react';
 import MDEditor from '@uiw/react-md-editor';
 
-export default function Todos() {
+function getId(key: string) {
+    if (key === "todos") {
+        return "3"
+    } else if (key === "stock") {
+        return "1"
+    } else {
+        return null
+    }
+}
+
+export default function Note({ title }: any) {
+    const id = getId(title)
     const [canEdit, setCanEdit] = useState(false)
     const [note, setNote] = useState(`\n # Write something here for note`);
     const [tempNote, setTempNote] = useState(null);
 
     const getStockNote = async () => {
         const res: any = await axios({
-            url: "https://testapi.io/api/aminhp93/resource/note/3",
-            data: {
-                title: "stock",
-                content: note
-            },
+            url: `https://testapi.io/api/aminhp93/resource/note/${id}`,
             headers: {
                 'Content-type': 'application/json; charset=UTF-8',
             },
@@ -34,9 +41,9 @@ export default function Todos() {
             content = tempNote;
         }
         await axios({
-            url: "https://testapi.io/api/aminhp93/resource/note/3",
+            url: `https://testapi.io/api/aminhp93/resource/note/${id}`,
             data: {
-                title: "stock",
+                title,
                 content
             },
             headers: {
@@ -67,7 +74,7 @@ export default function Todos() {
         getStockNote();
     }, [])
 
-    return <div className="Todos">
+    return <div className="Note">
         {
             canEdit
                 ? <div>
