@@ -59,10 +59,14 @@ export default function StockNews() {
     }
 
     useEffect(() => {
+        setInterval(() => {
+            fetch();
+        }, 1000 * 60)
         fetch();
+
     }, [])
 
-    return <div style={{ height: "500px", overflow: "auto" }}>
+    return <div className="StockNews">
         {
             viewDetail
                 ? <div>
@@ -74,8 +78,16 @@ export default function StockNews() {
                     bordered
                     dataSource={list}
                     renderItem={item => (
-                        <List.Item onClick={() => handleClickNews(item.postID)}>
-                            {moment(item.date).format("MM-DD")} - {item.symbol} - {item.title}
+                        <List.Item
+                            onClick={() => handleClickNews(item.postID)}
+                            className={`StockNews-item flex ${moment(item.date).format("MM-DD") === moment().format("MM-DD") ? "highlight" : ""}`}>
+                            <div style={{ width: "60px" }}>
+                                {moment(item.date).format("MM-DD")}
+                            </div>
+                            <div style={{ flex: 1 }}>
+                                {item.symbol} - {item.title}
+                            </div>
+
                         </List.Item>
                     )}
                 />

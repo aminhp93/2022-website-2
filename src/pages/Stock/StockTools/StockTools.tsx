@@ -6,7 +6,8 @@ import moment from "moment";
 import {
     DATE_FORMAT,
     MIN_TOTAL_VOLUME,
-    MIN_TOTAL_VALUE
+    MIN_TOTAL_VALUE,
+    MIN_MEDIUM_TOTOL_VALUE,
 } from "../../../helpers/utils";
 import StockService from '../../../services/stock'
 import React from 'react';
@@ -56,7 +57,7 @@ export default function StockTools(props: IProps) {
                 minTotalVolume: (minBy(i.data, "totalVolume") as any).totalVolume
             }
             return result
-        }).filter((i: any) => i.minTotalValue > 5000000000), "minTotalValue")
+        }).filter((i: any) => i.minTotalValue > MIN_MEDIUM_TOTOL_VALUE), "minTotalValue")
 
         const thanh_khoan_vua_wl = listWatchlists.filter((i: any) => i.name === "thanh_khoan_vua")[0]
 

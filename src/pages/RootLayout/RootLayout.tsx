@@ -6,7 +6,7 @@ import Stock from '../../pages/Stock/Stock'
 import Note from '../Note/Note'
 
 export default function RootLayout() {
-    const [keyMenu, setKeyMenu] = useState(null);
+    const [keyMenu, setKeyMenu] = useState("stock");
 
     const handleChangeMenu = (e: any) => {
         setKeyMenu(e.key)
@@ -29,7 +29,7 @@ export default function RootLayout() {
 
     const renderListMenu = () => {
         return <div className="RootLayout-list-menu">
-            <Menu mode="inline" onClick={handleChangeMenu}>
+            <Menu mode="inline" onClick={handleChangeMenu} selectedKeys={["stock"]}>
                 <Menu.Item key="stock">Stock</Menu.Item>
                 <Menu.Item key="todos">Todos</Menu.Item>
                 <Menu.Item key="test">Test</Menu.Item>
