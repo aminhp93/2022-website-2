@@ -49,18 +49,15 @@ export default function StockTools(props: IProps) {
             res = res.concat(partialRes)
         }
         setLoading(false)
-
         const mappedRes = orderBy(res.map((i: any) => {
             const result: any = {
                 symbol: i.data[0].symbol,
                 minTotalValue: (minBy(i.data, "totalValue") as any).totalValue,
-                minTotalVolume: (minBy(i.data, "totalVolume") as any).totalVolume
+                minTotalVolume: (minBy(i.data, "totalVolume") as any).totalVolume,
             }
             return result
         }).filter((i: any) => i.minTotalValue > MIN_MEDIUM_TOTOL_VALUE), "minTotalValue")
-
         const thanh_khoan_vua_wl = listWatchlists.filter((i: any) => i.name === "thanh_khoan_vua")[0]
-
         update(thanh_khoan_vua_wl, mappedRes.map((i: any) => i.symbol))
     }
 
@@ -205,6 +202,10 @@ function StockToolItem(props: IStockToolItemProps) {
         <Button onClick={handleFilter} disabled={loading}>Loc Tong Gia Tri</Button>
         {
             data.name === "all" && <span>{`Von: >500, Gia: >5, Tong KL: >50000`}</span>
+        }
+
+        {
+            data.name === "thanh_khoan_vua" && <span>{`Total_value > 20`}</span>
         }
 
         <div style={{ display: "flex" }}>
