@@ -40,13 +40,13 @@ export default function Stock() {
     return <div className="Stock">
         <div className="Stock-header">
             <div style={{ flex: 1 }}>Stock</div>
-            <div style={{ width: "100px" }}>
+            <div className="Stock-header-menu" >
                 <Dropdown overlay={menu} trigger={['click']}>
-                    <MoreOutlined className="font-size-20" />
+                    <MoreOutlined className="font-size-30 color-black" />
                 </Dropdown>
             </div>
         </div>
-        <div className="flex">
+        <div className="flex" style={{ flex: 1, overflow: "hidden" }}>
             <div style={{ flex: 1 }}>
                 <StockMarketOverview />
             </div>
@@ -56,11 +56,7 @@ export default function Stock() {
             <div style={{ flex: 1 }}>
                 <StockNews />
             </div>
-
-
         </div>
-
-        {/* <Note title="stock" /> */}
         {
             modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>
                 {modal === "HistoryTrade" && <HistoryTrade />}

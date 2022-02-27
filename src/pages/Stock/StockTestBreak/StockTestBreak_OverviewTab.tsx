@@ -159,6 +159,7 @@ export default function StockTestBreak_OverviewTab() {
             sortedRes.map((j: any) => {
                 item.count = i
                 item[j.symbol] = (j.data[i] || {}).totalNAV
+                return null
             })
             result.push(item)
         }

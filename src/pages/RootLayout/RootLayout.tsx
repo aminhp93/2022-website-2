@@ -1,4 +1,3 @@
-import React from 'react';
 import { useState } from "react";
 import { Menu } from "antd";
 
@@ -29,7 +28,7 @@ export default function RootLayout() {
 
     const renderListMenu = () => {
         return <div className="RootLayout-list-menu">
-            <Menu mode="inline" onClick={handleChangeMenu} selectedKeys={["stock"]}>
+            <Menu mode="inline" onClick={handleChangeMenu} selectedKeys={[keyMenu]}>
                 <Menu.Item key="stock">Stock</Menu.Item>
                 <Menu.Item key="todos">Todos</Menu.Item>
                 <Menu.Item key="test">Test</Menu.Item>
@@ -39,10 +38,6 @@ export default function RootLayout() {
 
     const renderSetting = () => {
         return <div className="RootLayout-setting">renderSetting</div>
-    }
-
-    const renderTitle = () => {
-        return <div className="RootLayout-title">renderTitle</div>
     }
 
     const renderLeftContainer = () => {
@@ -55,7 +50,6 @@ export default function RootLayout() {
 
     const renderRightContainer = () => {
         return <div className="RootLayout-right-container" >
-            {/* {renderTitle()} */}
             <div className="RootLayout-main-content">
                 {renderMainContent()}
             </div>

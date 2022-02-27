@@ -124,10 +124,6 @@ function StockToolItem(props: IStockToolItemProps) {
         setValue(e.target.value);
     }
 
-    const handleUpdate = () => {
-        value && update(value.split(","))
-    }
-
     const handleReset = () => {
         update([])
     }
@@ -160,9 +156,7 @@ function StockToolItem(props: IStockToolItemProps) {
 
     const getHistorialQuoteAll = () => {
         const listPromises: any = [];
-        data.symbols.map((j: any) => {
-            listPromises.push(getHistorialQuote(j))
-        })
+        data.symbols.map((j: any) => listPromises.push(getHistorialQuote(j)))
         Promise.all(listPromises).then(res => {
             const list = res.filter((i: any) => i)
             update(list)
@@ -201,7 +195,7 @@ function StockToolItem(props: IStockToolItemProps) {
         <Button disabled={loading} style={{ marginLeft: "20px" }} danger onClick={handleReset}>Reset</Button>
         <Button onClick={handleFilter} disabled={loading}>Loc Tong Gia Tri</Button>
         {
-            data.name === "all" && <span>{`Von: >500, Gia: >5, Tong KL: >50000`}</span>
+            data.name === "all" && <span>{`Von: >500, Gia: >5, Tong KL: >100000`}</span>
         }
 
         {

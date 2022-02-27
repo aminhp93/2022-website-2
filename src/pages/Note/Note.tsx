@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Button, notification } from 'antd';
+import { Button, notification, Spin } from 'antd';
 import axios from 'axios';
-import React from 'react';
 import MDEditor from '@uiw/react-md-editor';
 
 function getId(key: string) {
@@ -19,8 +18,10 @@ export default function Note({ title }: any) {
     const [canEdit, setCanEdit] = useState(false)
     const [note, setNote] = useState(`\n # Write something here for note`);
     const [tempNote, setTempNote] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const getStockNote = async () => {
+        setLoading(true)
         const res: any = await axios({
             url: `https://testapi.io/api/aminhp93/resource/note/${id}`,
             headers: {
@@ -28,6 +29,7 @@ export default function Note({ title }: any) {
             },
             method: "GET"
         })
+        setLoading(false)
         if (res && res.data && res.data.content) {
             setNote(res.data.content)
         }
@@ -74,26 +76,42 @@ export default function Note({ title }: any) {
         getStockNote();
     }, [])
 
+    if (loading) return <Spin />
+
     return <div className="Note">
         {
             canEdit
-                ? <div>
-                    <MDEditor
-                        value={tempNote}
-                        onChange={setTempNote}
-                    />
-                    <Button onClick={handleConfirm}>
-                        Confirm
+                ? <div style={{ height: "100%" }}>
+                    <div style={{ height: "50px" }}>
+                        <Button type="primary" onClick={handleConfirm}>
+                            Confirm
                         </Button>
-                    <Button onClick={handleCancel}>
-                        Cancel
+                        <Button onClick={handleCancel}>
+                            Cancel
                         </Button>
+                    </div>
+                    <div style={{ flex: 1 }}>
+
+                        <MDEditor
+                            height={500}
+                            value={tempNote}
+                            onChange={setTempNote}
+                        />
+                    </div>
+
                 </div>
-                : <div>
-                    <MDEditor.Markdown source={note} />
-                    <Button onClick={handleUdpate}>
-                        Update
-                    </Button>
+                : <div style={{ height: "100%" }}>
+                    <div style={{ height: "50px" }}>
+                        <Button type="primary" danger onClick={handleUdpate}>
+                            Update
+                        </Button>
+                    </div>
+                    <div style={{ flex: 1 }}>
+
+
+                        <MDEditor.Markdown source={note} />
+                    </div>
+
                 </div>
         }
     </div>

@@ -11,8 +11,6 @@ const accountSlice = createSlice({
     reducers: {},
 });
 
-// export const {} = accountSlice.actions;
-
 export default accountSlice.reducer;
 
 export const postAuthToken = (): ThunkActionType => async () => {

@@ -1,7 +1,7 @@
 
 import { JigsawPuzzle } from 'react-jigsaw-puzzle/lib'
 import 'react-jigsaw-puzzle/lib/jigsaw-puzzle.css'
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ReactCanvasConfetti from "react-canvas-confetti";
 import { Progress } from 'antd'
 import { GiftOutlined, HeartOutlined } from '@ant-design/icons';

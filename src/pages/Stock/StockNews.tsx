@@ -14,7 +14,6 @@ export default function StockNews() {
     const fetch = async () => {
         const res = await StockService.getWatchlist()
         if (res && res.data) {
-            // fetch(res.data, "watching").then(res => setData3(res))
             const listWatchlist = keyBy(res.data, "name")
 
             const listWatching = listWatchlist['watching']
@@ -69,12 +68,15 @@ export default function StockNews() {
     return <div className="StockNews">
         {
             viewDetail
-                ? <div>
-                    <Button onClick={handleBack}>Back</Button>
-                    <div>{newsDetail && parse(newsDetail)}</div>
+                ? <div style={{ display: "flex", flexDirection: "column", overflow: "hidden", height: "100%" }}>
+                    <div style={{ height: "50px" }}>
+                        <Button onClick={handleBack}>Back</Button>
+                    </div>
+
+                    <div style={{ flex: 1, overflow: "auto" }}>{newsDetail && parse(newsDetail)}</div>
                 </div>
                 : <List
-
+                    style={{ overflow: "auto", height: "100%" }}
                     bordered
                     dataSource={list}
                     renderItem={item => (
