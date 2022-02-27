@@ -107,11 +107,8 @@ export default function Note({ title }: any) {
                         </Button>
                     </div>
                     <div style={{ flex: 1 }}>
-
-
                         <MDEditor.Markdown source={note} />
                     </div>
-
                 </div>
         }
     </div>
