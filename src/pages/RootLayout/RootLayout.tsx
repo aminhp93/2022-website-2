@@ -36,15 +36,11 @@ export default function RootLayout() {
         </div>
     }
 
-    const renderSetting = () => {
-        return <div className="RootLayout-setting">renderSetting</div>
-    }
 
     const renderLeftContainer = () => {
         return <div className="RootLayout-left-container" >
             {renderSearch()}
             {renderListMenu()}
-            {renderSetting()}
         </div>
     }
 

@@ -106,7 +106,6 @@ export default function StockMarketOverview() {
             fetchList()
             notification.success({ message: "Success" })
         }
-
     }
 
     const handleFilter = () => {
@@ -137,7 +136,6 @@ export default function StockMarketOverview() {
                 return (a.symbol).localeCompare(b.symbol)
             },
             render: (i: any) => {
-
                 return <div style={{ width: "60px" }}>{i.symbol} {editable && <CloseOutlined style={{ marginLeft: "2px" }} onClick={() => handleRemove(i.symbol)} />} </div>
             }
         },
@@ -170,75 +168,11 @@ export default function StockMarketOverview() {
             && (estimatedVolumeChange && i.estimatedVolumeChange > estimatedVolumeChange))
         : data4
 
-    const renderBds = () => {
-        return <div>
-            <div>bds</div>
+    const renderWatchList = (name: string, data: any) => {
+        return <div style={{ padding: "0 20px", borderRight: "1px solid black" }}>
+            <div>{name}</div>
             {
-                data1.map((i: any) => {
-                    let color = "rgb(204, 170, 0)"
-                    if (i.changePercent > 0) {
-                        if (i.changePercent > 6.5) {
-                            color = "rgb(255, 0, 255)"
-                        } else {
-                            color = "green"
-                        }
-
-                    }
-                    if (i.changePercent < 0) {
-                        if (i.changePercent < -6.5) {
-                            color = "rgb(0, 204, 204)"
-                        } else {
-                            color = "red"
-                        }
-
-                    }
-                    return <div style={{ display: "flex", justifyContent: "space-between", width: "100px", color }}>
-                        <div>{i.symbol} </div>
-                        <div>{i.changePercent}</div>
-                    </div>
-                })
-            }
-        </div>
-
-    }
-
-    const renderCk = () => {
-        return <div style={{ margin: "0 20px" }}>
-            <div>Ck</div>
-            {
-                data2.map((i: any) => {
-                    let color = "rgb(204, 170, 0)"
-                    if (i.changePercent > 0) {
-                        if (i.changePercent > 6.5) {
-                            color = "rgb(255, 0, 255)"
-                        } else {
-                            color = "green"
-                        }
-
-                    }
-                    if (i.changePercent < 0) {
-                        if (i.changePercent < -6.5) {
-                            color = "rgb(0, 204, 204)"
-                        } else {
-                            color = "red"
-                        }
-
-                    }
-                    return <div style={{ display: "flex", justifyContent: "space-between", width: "100px", color }}>
-                        <div>{i.symbol} </div>
-                        <div>{i.changePercent}</div>
-                    </div>
-                })
-            }
-        </div>
-
-    }
-
-    const renderWatching = () => {
-        return <div>
-            <div>watching</div>
-            {
-                data3.map((i: any) => {
+                data.map((i: any) => {
                     let color = "rgb(204, 170, 0)"
                     if (i.changePercent > 0) {
                         if (i.changePercent > 6.5) {
@@ -303,14 +237,13 @@ export default function StockMarketOverview() {
                 </div>
             </div>
         </div>
-
     }
 
     return <div style={{ background: "white", display: 'flex' }} className="StockMarketOverview">
         <div style={{ display: "flex" }}>
-            {renderBds()}
-            {renderCk()}
-            {renderWatching()}
+            {renderWatchList('bds', data1)}
+            {renderWatchList('ck', data2)}
+            {renderWatchList('watching', data3)}
             {/* {renderPotentialBuyTable()} */}
         </div>
     </div>
