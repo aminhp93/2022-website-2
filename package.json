@@ -5,6 +5,7 @@
   "homepage": "http://aminhp93.github.io/2022-website-2",
   "dependencies": {
     "@craco/craco": "^6.4.3",
+    "@emotion/css": "^11.7.1",
     "@reduxjs/toolkit": "^1.6.1",
     "@types/jest": "^26.0.15",
     "@types/lodash": "^4.14.172",
@@ -20,6 +21,7 @@
     "gh-pages": "^3.2.3",
     "html-react-parser": "^1.4.8",
     "lodash": "^4.17.21",
+    "prismjs": "^1.27.0",
     "react": "^17.0.2",
     "react-canvas-confetti": "^1.2.1",
     "react-chessground": "^1.5.0",
@@ -33,6 +35,9 @@
     "redux": "^4.1.1",
     "redux-thunk": "^2.3.0",
     "remark-gfm": "^2.0.0",
+    "slate": "^0.73.1",
+    "slate-history": "^0.66.0",
+    "slate-react": "^0.74.0",
     "typescript": "^4.1.2",
     "ws": "^8.2.1"
   },
@@ -63,6 +68,7 @@
     ]
   },
   "devDependencies": {
+    "@types/prismjs": "^1.26.0",
     "eslint-config-react-app": "^6.0.0"
   }
 }
