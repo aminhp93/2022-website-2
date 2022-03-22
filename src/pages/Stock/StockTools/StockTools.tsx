@@ -89,16 +89,8 @@ export default function StockTools(props: IProps) {
         return <div><Spin /></div>
     }
 
-    return <div >
-        <MDEditor.Markdown source={`
-                    \n - Update thanh_khoan_vua: 
-                    \n   - Filter list with last 15 mins Total value > 5000000000
-                    \n   - Filter blacklist
-                    \n - Update aim_to_buy === thanh_khoan_vua
-                    \n - Update all
-                `} />
-
-        <Button onClick={handleUpdateThanhKhoanVua}>
+    return <div>
+        <Button type="primary" onClick={handleUpdateThanhKhoanVua}>
             Update
         </Button>
         <hr />
@@ -199,7 +191,7 @@ function StockToolItem(props: IStockToolItemProps) {
         }
 
         {
-            data.name === "thanh_khoan_vua" && <span>{`Total_value > 20`}</span>
+            data.name === "thanh_khoan_vua" && <span>{`Total_value > 5`}</span>
         }
 
         <div style={{ display: "flex" }}>

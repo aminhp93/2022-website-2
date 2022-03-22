@@ -3,7 +3,9 @@ import { Menu } from "antd";
 
 import Stock from '../../pages/Stock/Stock'
 import Note from '../Note/Note'
-import SlateEditor from '../SlateExamples/markdown-preview'
+// import SlateEditor from '../SlateExamples/markdown-preview'
+// import SlateEditor from '../SlateExamples/_using_version'
+import SlateEditor from '../SlateExamples/richtext'
 
 export default function RootLayout() {
     const [keyMenu, setKeyMenu] = useState("stock");
@@ -18,10 +20,11 @@ export default function RootLayout() {
         if (keyMenu === "stock") {
             return <Stock />
         } else if (keyMenu === "todos") {
-            // return <Note title="todos" />
-            return <SlateEditor />
+            return <Note title="todos" />
+
         }
-        return <div>Select menu to render content</div>
+        // return <div>Select menu to render content</div>
+        return <SlateEditor />
     }
 
     const renderSearch = () => {
