@@ -1,12 +1,10 @@
-import React from "react";
 import { useState, useEffect } from "react";
 import { keyBy, meanBy } from "lodash";
 import { notification, Table, Button } from "antd";
 import axios from "axios";
 import { CloseOutlined } from '@ant-design/icons'
 
-import StockService from '../../../services/stock'
-import "./StockMarketOverview.css";
+import StockService from 'services/stock'
 
 
 export default function StockMarketOverview() {

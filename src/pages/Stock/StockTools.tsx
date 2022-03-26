@@ -8,10 +8,9 @@ import {
     MIN_TOTAL_VOLUME,
     MIN_TOTAL_VALUE,
     MIN_MEDIUM_TOTOL_VALUE,
-} from "../../../helpers/utils";
-import StockService from '../../../services/stock'
-import React from 'react';
-import MDEditor from '@uiw/react-md-editor';
+} from "../../helpers/utils";
+import StockService from '../../services/stock'
+
 
 interface IProps {
 

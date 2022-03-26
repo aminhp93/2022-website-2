@@ -1,14 +1,13 @@
-import React from "react";
 import { useState } from "react";
 import { Modal, Menu, Dropdown, Button } from "antd";
 import { MoreOutlined } from '@ant-design/icons';
 
-import HistoryTrade from "./HistoryTrade/HistoryTrade";
-import StockTools from "./StockTools/StockTools";
+import StockHistoryTrade from "pages/Stock/StockHistoryTrade";
+import StockTools from "pages/Stock/StockTools";
 import StockTestBreak from "./StockTestBreak/StockTestBreak";
-import StockMarketOverview from "./StockMarketOverview/StockMarketOverview";
-import StockEvent from "./StockEvent/StockEvent";
-import StockNews from "./StockNews";
+import StockMarketOverview from "pages/Stock/StockMarketOverview";
+import StockEvent from "pages/Stock/StockEvent";
+import StockNews from "pages/Stock/StockNews";
 
 
 export default function Stock() {
@@ -20,8 +19,8 @@ export default function Stock() {
     const handleChangeMenu = (e: any) => {
         if (e.key === "tools") {
             setModal("StockTools")
-        } else if (e.key === "historyTrade") {
-            setModal("HistoryTrade")
+        } else if (e.key === "stockHistoryTrade") {
+            setModal("StockHistoryTrade")
         } else if (e.key === "testBreak") {
             setModal("StockTestBreak")
         }
@@ -31,8 +30,8 @@ export default function Stock() {
         <Menu.Item key="tools">
             Tools
         </Menu.Item>
-        <Menu.Item key="historyTrade">
-            History trade
+        <Menu.Item key="stockHistoryTrade">
+            Stock History trade
         </Menu.Item>
         <Menu.Item key="testBreak">
             Test Break (Dev mode)
@@ -73,7 +72,7 @@ export default function Stock() {
         </div>
         {
             modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>
-                {modal === "HistoryTrade" && <HistoryTrade />}
+                {modal === "StockHistoryTrade" && <StockHistoryTrade />}
                 {modal === "StockTools" && <StockTools />}
                 {modal === "StockTestBreak" && <StockTestBreak />}
             </Modal>

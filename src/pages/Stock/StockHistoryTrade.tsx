@@ -7,9 +7,8 @@ import { sum, uniqBy } from "lodash";
 import {
     postAuthToken,
     fetchOrdersHistory
-} from "../../../reducers/account"
-import './HistoryTrade.css';
-import React from "react";
+} from "reducers/account"
+
 
 interface TProps {
     onClose?: any;
@@ -17,7 +16,7 @@ interface TProps {
     fetchOrdersHistory?: any;
 }
 
-function HistoryTrade(props: TProps) {
+function StockHistoryTrade(props: TProps) {
     const filterObj = {
         startDate: "2020-07-01",
         endDate: moment().format("YYYY-MM-DD"),
@@ -261,4 +260,4 @@ const mapDispatchToProps = {
     fetchOrdersHistory,
 }
 
-export default connect(null, mapDispatchToProps)(HistoryTrade)
+export default connect(null, mapDispatchToProps)(StockHistoryTrade)

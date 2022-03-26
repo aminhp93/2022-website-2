@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Button, Modal } from 'antd';
 
-import Game from './Game/Game';
-import Music from './Music/Music';
-import Sport from './Sport/Sport';
-import HistorialEvents from './HistorialEvents/HistorialEvents';
-import MemorialSpeech from './MemorialSpeech/MemorialSpeech';
-import Funny from './Funny/Funny';
+import Game from '@pages/Utility/Game';
+import Music from '@pages/Utility/Music';
+import Sport from '@pages/Utility/Sport';
+import HistorialEvents from '@pages/Utility/HistorialEvents';
+import MemorialSpeech from '@pages/Utility/MemorialSpeech';
+import Funny from '@pages/Utility/Funny';
 import React from 'react';
 
 export default function Utility() {
