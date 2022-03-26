@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button, notification, Spin } from 'antd';
+import { Button, notification, Spin, Input } from 'antd';
 import axios from 'axios';
 import MDEditor from '@uiw/react-md-editor';
 
@@ -8,6 +8,8 @@ function getId(key: string) {
         return "3"
     } else if (key === "stock") {
         return "1"
+    } else if (key === "insightOutsourcing") {
+        return "4"
     } else {
         return null
     }
@@ -19,6 +21,8 @@ export default function Note({ title }: any) {
     const [note, setNote] = useState(`\n # Write something here for note`);
     const [tempNote, setTempNote] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [confirmCreateNote, setConfirmCreateNote] = useState(false);
+    const [titleCreateNote, setTitleCreateNote] = useState(null);
 
     const getStockNote = async () => {
         setLoading(true)
@@ -33,6 +37,20 @@ export default function Note({ title }: any) {
         if (res && res.data && res.data.content) {
             setNote(res.data.content)
         }
+    }
+
+    const handleCreateNote = async () => {
+        await axios({
+            url: `https://testapi.io/api/aminhp93/resource/note/`,
+            headers: {
+                'Content-type': 'application/json; charset=UTF-8',
+            },
+            data: {
+                title: titleCreateNote
+            },
+            method: "POST"
+        })
+        setConfirmCreateNote(false)
     }
 
     const handleConfirm = async () => {
@@ -72,6 +90,10 @@ export default function Note({ title }: any) {
         setCanEdit(true)
     }
 
+    const handleChangeNote = (e: any) => {
+        setTitleCreateNote(e.target.value)
+    }
+
     useEffect(() => {
         getStockNote();
     }, [])
@@ -79,6 +101,16 @@ export default function Note({ title }: any) {
     if (loading) return <Spin />
 
     return <div className="Note">
+        {
+            confirmCreateNote
+                ? <>
+                    <Input onChange={handleChangeNote} />
+                    <Button onClick={() => handleCreateNote()}>Confirm</Button>
+                    <Button onClick={() => setConfirmCreateNote(false)}>Cancel</Button>
+                </>
+                : <Button onClick={() => setConfirmCreateNote(true)}>Create Note</Button>
+        }
+
         {
             canEdit
                 ? <div style={{ height: "100%" }}>

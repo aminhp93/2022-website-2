@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Menu } from "antd";
 
-import Stock from '../../pages/Stock/Stock'
-import Note from '../Note/Note'
+import Stock from '@pages/Stock/Stock'
+import Note from '@pages/Note'
 // import SlateEditor from '../SlateExamples/markdown-preview'
 // import SlateEditor from '../SlateExamples/_using_version'
-import SlateEditor from '../SlateExamples/richtext'
+// import SlateEditor from '../SlateExamples/richtext'
+import InsightOutsourcing from '../InsightOutsourcing'
 
 export default function RootLayout() {
     const [keyMenu, setKeyMenu] = useState("stock");
@@ -21,10 +22,11 @@ export default function RootLayout() {
             return <Stock />
         } else if (keyMenu === "todos") {
             return <Note title="todos" />
-
+        } else if (keyMenu === "insightOutsourcing") {
+            return <InsightOutsourcing />
         }
-        // return <div>Select menu to render content</div>
-        return <SlateEditor />
+        return <div>Select menu to render content</div>
+        // return <SlateEditor />
     }
 
     const renderSearch = () => {
@@ -36,6 +38,7 @@ export default function RootLayout() {
             <Menu mode="inline" onClick={handleChangeMenu} selectedKeys={[keyMenu]}>
                 <Menu.Item key="stock">Stock</Menu.Item>
                 <Menu.Item key="todos">Todos</Menu.Item>
+                <Menu.Item key="insightOutsourcing">Insight outsourcing</Menu.Item>
                 <Menu.Item key="test">Test</Menu.Item>
             </Menu>
         </div>

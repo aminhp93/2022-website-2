@@ -7,7 +7,6 @@ import HistoryTrade from "./HistoryTrade/HistoryTrade";
 import StockTools from "./StockTools/StockTools";
 import StockTestBreak from "./StockTestBreak/StockTestBreak";
 import StockMarketOverview from "./StockMarketOverview/StockMarketOverview";
-import Note from '../Note/Note'
 import StockEvent from "./StockEvent/StockEvent";
 import StockNews from "./StockNews";
 

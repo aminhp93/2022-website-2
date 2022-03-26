@@ -69,6 +69,7 @@
   },
   "devDependencies": {
     "@types/prismjs": "^1.26.0",
+    "craco-alias": "^3.0.1",
     "eslint-config-react-app": "^6.0.0"
   }
 }
