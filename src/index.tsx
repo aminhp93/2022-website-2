@@ -10,8 +10,8 @@ import store from './store/store';
 import { Switch, Route, Link } from "react-router-dom";
 import Nhi from './pages/Nhi/Nhi'
 
-import Stock from './pages/Stock/Stock'
-import RootLayout from './pages/RootLayout/RootLayout'
+import Stock from '@pages/Stock/Stock'
+import RootLayout from '@pages/RootLayout'
 
 ReactDOM.render(
   <React.StrictMode>

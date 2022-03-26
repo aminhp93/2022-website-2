@@ -5,8 +5,8 @@ import Stock from '@pages/Stock/Stock'
 import Note from '@pages/Note'
 // import SlateEditor from '../SlateExamples/markdown-preview'
 // import SlateEditor from '../SlateExamples/_using_version'
-// import SlateEditor from '../SlateExamples/richtext'
-import InsightOutsourcing from '../InsightOutsourcing'
+import SlateEditor from '@pages/SlateExamples/richtext'
+import InsightOutsourcing from './InsightOutsourcing'
 
 export default function RootLayout() {
     const [keyMenu, setKeyMenu] = useState("stock");
@@ -25,8 +25,8 @@ export default function RootLayout() {
         } else if (keyMenu === "insightOutsourcing") {
             return <InsightOutsourcing />
         }
-        return <div>Select menu to render content</div>
-        // return <SlateEditor />
+        // return <div>Select menu to render content</div>
+        return <SlateEditor />
     }
 
     const renderSearch = () => {
