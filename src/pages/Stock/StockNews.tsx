@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { keyBy, flatten } from "lodash";
 import moment from "moment";
-import { List, Button } from 'antd';
+import { List, Button, Input } from 'antd';
 import parse from 'html-react-parser';
 
-import StockService from '../../services/stock'
+import StockService from 'services/stock'
 
 export default function StockNews() {
     const [list, setList] = useState([]);
     const [viewDetail, setViewDetail] = useState(false);
     const [newsDetail, setNewsDetail] = useState(null);
+    const [searchText, setSearchText] = useState('')
 
     const fetch = async () => {
         const res = await StockService.getWatchlist()
@@ -65,6 +66,8 @@ export default function StockNews() {
 
     }, [])
 
+    const filterList = list.filter(i => i.symbol && i.symbol.toLowerCase().includes(searchText.toLowerCase()))
+
     return <div className="StockNews">
         {
             viewDetail
@@ -75,24 +78,26 @@ export default function StockNews() {
 
                     <div style={{ flex: 1, overflow: "auto" }}>{newsDetail && parse(newsDetail)}</div>
                 </div>
-                : <List
-                    style={{ overflow: "auto", height: "100%" }}
-                    bordered
-                    dataSource={list}
-                    renderItem={item => (
-                        <List.Item
-                            onClick={() => handleClickNews(item.postID)}
-                            className={`StockNews-item flex ${moment(item.date).format("MM-DD") === moment().format("MM-DD") ? "highlight" : ""}`}>
-                            <div style={{ width: "60px" }}>
-                                {moment(item.date).format("MM-DD")}
-                            </div>
-                            <div style={{ flex: 1 }}>
-                                {item.symbol} - {item.title}
-                            </div>
-
-                        </List.Item>
-                    )}
-                />
+                : <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+                    <Input placeholder="Search" onChange={(e: any) => setSearchText(e.target.value)} />
+                    <List
+                        style={{ overflow: "auto", flex: 1 }}
+                        bordered
+                        dataSource={filterList}
+                        renderItem={item => (
+                            <List.Item
+                                onClick={() => handleClickNews(item.postID)}
+                                className={`StockNews-item flex ${moment(item.date).format("MM-DD") === moment().format("MM-DD") ? "highlight" : ""}`}>
+                                <div style={{ width: "60px" }}>
+                                    {moment(item.date).format("MM-DD")}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    {item.symbol} - {item.title}
+                                </div>
+                            </List.Item>
+                        )}
+                    />
+                </div>
         }
 
     </div>

@@ -8,6 +8,7 @@ import StockTestBreak from "./StockTestBreak/StockTestBreak";
 import StockMarketOverview from "pages/Stock/StockMarketOverview";
 import StockEvent from "pages/Stock/StockEvent";
 import StockNews from "pages/Stock/StockNews";
+import StockAnalysis from "pages/Stock/StockAnalysis";
 
 
 export default function Stock() {
@@ -15,6 +16,7 @@ export default function Stock() {
     const [showStockMarketOverview, setShowStockMarketOverview] = useState(true);
     const [showStockEvent, setShowStockEvent] = useState(false);
     const [showStockNews, setShowStockNews] = useState(true);
+    const [showStockAnalysis, setShowStockAnalysis] = useState(false);
 
     const handleChangeMenu = (e: any) => {
         if (e.key === "tools") {
@@ -64,11 +66,18 @@ export default function Stock() {
                 </div>
             }
 
+            {
+                showStockAnalysis && <div style={{ flex: 1 }}>
+                    <StockAnalysis />
+                </div>
+            }
+
         </div>
         <div className="flex" style={{ background: 'gray' }}>
             <Button type={showStockMarketOverview ? "primary" : null} onClick={() => setShowStockMarketOverview(!showStockMarketOverview)}>StockMarketOverview</Button>
             <Button type={showStockEvent ? "primary" : null} onClick={() => setShowStockEvent(!showStockEvent)}>StockEvent</Button>
             <Button type={showStockNews ? "primary" : null} onClick={() => setShowStockNews(!showStockNews)}>StockNews</Button>
+            <Button type={showStockAnalysis ? "primary" : null} onClick={() => setShowStockAnalysis(!showStockAnalysis)}>StockAnalysis</Button>
         </div>
         {
             modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>

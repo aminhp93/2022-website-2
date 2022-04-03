@@ -13,6 +13,7 @@ export default function StockMarketOverview() {
     const [data2, setData2] = useState([]);
     const [data3, setData3] = useState([]);
     const [data4, setData4] = useState([]);
+    const [data5, setData5] = useState([]);
     const [filtered, setFiltered] = useState(false);
     const [editable, setEditable] = useState(false);
     const [confirmReset, setConfirmReset] = useState(false)
@@ -60,6 +61,7 @@ export default function StockMarketOverview() {
             fetch(res.data, "8781_chung_khoan").then(res => setData2(res))
             fetch(res.data, "watching").then(res => setData3(res))
             fetch(res.data, "aim_to_buy").then(res => setData4(res))
+            fetch(res.data, "8355_ngan_hang").then(res => setData5(res))
         }
     }
 
@@ -241,6 +243,7 @@ export default function StockMarketOverview() {
         <div style={{ display: "flex" }}>
             {renderWatchList('bds', data1)}
             {renderWatchList('ck', data2)}
+            {renderWatchList('ngan hang', data5)}
             {renderWatchList('watching', data3)}
             {/* {renderPotentialBuyTable()} */}
         </div>
