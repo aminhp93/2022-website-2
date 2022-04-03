@@ -23,7 +23,6 @@ export default function Test() {
             method: 'GET',
             headers: {
                 'Accept': 'application/vnd.github.v3+json',
-                'Authorization': 'token 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'
             },
             url: '  https://api.github.com/search/topics',
             params: {
