@@ -28,9 +28,19 @@ module.exports = {
             }
         }
     ],
-    // webpack: {
-    //     alias: {
-    //         'pages': path.join(path.resolve(__dirname, './src/pages'))
-    //     }
-    // }
+    webpack: {
+        configure: {
+            optimization: {
+                splitChunks: {
+                    chunks: 'async',
+                    maxSize: 5000000
+                },
+            },
+
+        },
+        output: {
+            filename: '[name].bundle.js'
+        },
+
+    }
 };
