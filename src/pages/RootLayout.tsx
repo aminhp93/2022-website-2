@@ -3,6 +3,7 @@ import { Menu } from "antd";
 
 import Stock from '@pages/Stock/Stock'
 import Note from '@pages/Note'
+import HouseFinance from '@pages/HouseFinance'
 // import SlateEditor from '../SlateExamples/markdown-preview'
 // import SlateEditor from '../SlateExamples/_using_version'
 import SlateEditor from '@pages/SlateExamples/richtext'
@@ -24,6 +25,8 @@ export default function RootLayout() {
             return <Note title="todos" />
         } else if (keyMenu === "insightOutsourcing") {
             return <InsightOutsourcing />
+        } else if (keyMenu === 'houseFinance') {
+            return <HouseFinance />
         }
         // return <div>Select menu to render content</div>
         return <SlateEditor />
@@ -40,6 +43,7 @@ export default function RootLayout() {
                 <Menu.Item key="todos">Todos</Menu.Item>
                 <Menu.Item key="insightOutsourcing">Insight outsourcing</Menu.Item>
                 <Menu.Item key="test">Test</Menu.Item>
+                <Menu.Item key="houseFinance">HousingFinance</Menu.Item>
             </Menu>
         </div>
     }
