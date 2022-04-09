@@ -1,4 +1,4 @@
-import Note from '@pages/Note'
+import Note from 'pages/Note'
 
 export default function InsightOutsourcing() {
     return <div>InsightOutsourcing

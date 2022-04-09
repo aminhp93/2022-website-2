@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useEffect, useState } from "react"
 import { Table } from 'antd';
 import InViewMonitor from 'react-inview-monitor';
+import { getColumns } from 'helpers/utils'
 
 export default function Test() {
 
@@ -31,26 +32,8 @@ export default function Test() {
         })
     }
 
-    const columns: any = []
+    const columns = getColumns(data)
 
-    data && data.length > 0 && Object.keys(data[0]).map((i: any) => {
-        if (i === 'post') {
-            columns.push({
-                title: i,
-                dataIndex: i,
-                key: i,
-                render: (key) => {
-                    return <div>{key.title}</div>
-                }
-            })
-        } else {
-            columns.push({
-                title: i,
-                dataIndex: i,
-                key: i
-            })
-        }
-    })
 
     useEffect(() => {
         fetch();

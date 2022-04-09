@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Menu } from "antd";
-
 import Stock from 'pages/Stock/Stock'
 import Note from 'pages/Note'
 import HouseFinance from 'pages/HouseFinance'
@@ -9,8 +8,15 @@ import Test from 'pages/Test'
 // import SlateEditor from '../SlateExamples/_using_version'
 import SlateEditor from 'pages/SlateExamples/richtext'
 import InsightOutsourcing from 'pages/InsightOutsourcing'
+import StoryTellerBusiness from 'pages/StoryTellerBusiness';
+import { withRouter, RouteComponentProps } from "react-router-dom";
 
-export default function RootLayout() {
+interface IProps {
+
+}
+
+function RootLayout({ history }: IProps & RouteComponentProps) {
+    // console.log(18, props)
     const [keyMenu, setKeyMenu] = useState("stock");
 
     const handleChangeMenu = (e: any) => {
@@ -30,9 +36,11 @@ export default function RootLayout() {
             return <HouseFinance />
         } else if (keyMenu === 'test') {
             return <Test />
+        } else if (keyMenu === 'storyTellerBusiness') {
+            return <StoryTellerBusiness />
         }
         // return <div>Select menu to render content</div>
-        return <SlateEditor />
+        return null
     }
 
     const renderSearch = () => {
@@ -47,10 +55,10 @@ export default function RootLayout() {
                 <Menu.Item key="insightOutsourcing">Insight outsourcing</Menu.Item>
                 <Menu.Item key="test">Test</Menu.Item>
                 <Menu.Item key="houseFinance">HousingFinance</Menu.Item>
+                <Menu.Item key="storyTellerBusiness">StoryTellerBusiness</Menu.Item>
             </Menu>
         </div>
     }
-
 
     const renderLeftContainer = () => {
         return <div className="RootLayout-left-container" >
@@ -73,3 +81,7 @@ export default function RootLayout() {
         {renderRightContainer()}
     </div>
 }
+
+
+
+export default withRouter(RootLayout)
