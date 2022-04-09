@@ -1,5 +1,5 @@
-import request from '../helpers/request';
-import { AccountUrls } from '../helpers/urls';
+import request from 'helpers/request';
+import { AccountUrls } from 'helpers/urls';
 
 const AccountService = {
     postAuthToken(data: any) {

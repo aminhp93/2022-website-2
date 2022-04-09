@@ -8,7 +8,7 @@ import Test from 'pages/Test'
 // import SlateEditor from '../SlateExamples/markdown-preview'
 // import SlateEditor from '../SlateExamples/_using_version'
 import SlateEditor from 'pages/SlateExamples/richtext'
-import InsightOutsourcing from './InsightOutsourcing'
+import InsightOutsourcing from 'pages/InsightOutsourcing'
 
 export default function RootLayout() {
     const [keyMenu, setKeyMenu] = useState("stock");

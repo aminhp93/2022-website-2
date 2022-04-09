@@ -3,10 +3,16 @@ import axios from "axios";
 import moment from "moment";
 import { Input, Table, Button, DatePicker, Select, Dropdown, Menu, notification, Spin } from "antd";
 import { mean, maxBy, minBy, meanBy, keyBy, orderBy, range, chunk, cloneDeep, get } from "lodash";
-import StockTestBreak_GraphsTab from "./StockTestBreak_GraphsTab"
-import { analyseData, findSellDate, singleColumns, combinedColumns, findBuyDate, testVariableColumns } from "./StockTestBreak.helpers"
-import StockService from '../../../services/stock'
-import React from "react";
+import StockTestBreak_GraphsTab from "pages/Stock/StockTestBreak/StockTestBreak_GraphsTab"
+import {
+    analyseData,
+    findSellDate,
+    singleColumns,
+    combinedColumns,
+    findBuyDate,
+    testVariableColumns
+} from "pages/Stock/StockTestBreak/StockTestBreak.helpers"
+import StockService from 'services/stock'
 import MDEditor from '@uiw/react-md-editor';
 
 const { RangePicker } = DatePicker;

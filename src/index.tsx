@@ -3,15 +3,16 @@ import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom'
 
-import './styles/index.less';
+import 'styles/index.less';
 
-import store from './store/store';
+import store from 'store/store';
 
 import { Switch, Route, Link } from "react-router-dom";
-import Nhi from './pages/Nhi/Nhi'
-
-import Stock from '@pages/Stock/Stock'
-import RootLayout from '@pages/RootLayout'
+import Nhi from 'pages/Nhi/Nhi'
+import Stock from 'pages/Stock/Stock'
+import Test from 'pages/Test'
+import Note from 'pages/Note'
+import RootLayout from 'pages/RootLayout'
 
 ReactDOM.render(
   <React.StrictMode>
@@ -34,6 +35,12 @@ function App() {
           </Route>
           <Route path="/stock">
             <Stock />
+          </Route>
+          <Route path="/test">
+            <Test />
+          </Route>
+          <Route path="/note">
+            <Note />
           </Route>
           <Route path="/">
             <RootLayout />

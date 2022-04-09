@@ -4,7 +4,7 @@ import { MoreOutlined } from '@ant-design/icons';
 
 import StockHistoryTrade from "pages/Stock/StockHistoryTrade";
 import StockTools from "pages/Stock/StockTools";
-import StockTestBreak from "./StockTestBreak/StockTestBreak";
+import StockTestBreak from "pages/Stock/StockTestBreak/StockTestBreak";
 import StockMarketOverview from "pages/Stock/StockMarketOverview";
 import StockEvent from "pages/Stock/StockEvent";
 import StockNews from "pages/Stock/StockNews";

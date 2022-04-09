@@ -2,8 +2,8 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 
-import { ThunkActionType } from '../store/store';
-import AccountService from '../services/account';
+import { ThunkActionType } from 'store/store';
+import AccountService from 'services/account';
 
 const accountSlice = createSlice({
     name: 'account',
@@ -13,10 +13,10 @@ const accountSlice = createSlice({
 
 export default accountSlice.reducer;
 
-export const postAuthToken = (): ThunkActionType => async () => {
+export const postAuthToken = ({ username, password }): ThunkActionType => async () => {
     const data = {
-        password: "Miamikki521",
-        username: "aminhp93"
+        password,
+        username
     }
     const res = await AccountService.postAuthToken(data)
     return res
