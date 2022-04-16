@@ -4,7 +4,7 @@ import moment from "moment";
 import { List, Button, Input } from 'antd';
 import parse from 'html-react-parser';
 
-import StockService from 'services/stock'
+import { StockService } from 'services'
 
 export default function StockNews() {
     const [list, setList] = useState([]);

@@ -1,94 +1,16 @@
-import { Table } from 'antd';
-import { times, keyBy, sumBy } from 'lodash';
+import { useState } from 'react';
+import { Table, Button } from 'antd';
+import { times, keyBy } from 'lodash';
+import { mapListDataHouseFinance, listDataHouseFinance } from 'utils';
 
-interface IHouseFinance {
-    ten: string,
-    tongGiaTri: number,
-    laiVay: number,
-    tiLeVay: number,
-    thoiGianVay: number,
-    thoiGianBan: number,
-    tiLeBan: number,
-    laiPhatTraTruoc: number,
-    tienTraBanDau?: number,
-    tienTraHangThang?: number,
-    tienBan?: number,
-    tienGocDaTra?: number,
-    tongGocConlai?: number,
-    tienLaiDaTra?: number,
-    tongTienVay?: number,
-    tongTienDaTra?: number,
-    tienConPhaiTra?: number,
-    tongThu?: number,
-    tongTra?: number,
-    laiLo?: number,
-}
 
 export default function HouseFinance() {
-
-    const calculate = (data: any) => {
-        data.map((i: IHouseFinance) => {
-            const tienGoc = i.tongGiaTri / i.thoiGianVay;
-            let giaTriConlai = i.tongGiaTri
-            const listTienTra: any = []
-            times(i.thoiGianVay).map((j: any, index: number) => {
-                if (index !== 0) {
-                    giaTriConlai = giaTriConlai - tienGoc
-                }
-                const tienLai = giaTriConlai * i.laiVay / 12
-
-                listTienTra.push({
-                    thang: index + 1,
-                    tienGoc,
-                    tienLai
-                })
-            })
-
-            console.log(47, listTienTra)
-            i.tienTraBanDau = 1
-            i.tienTraHangThang = 1
-            i.tienBan = i.tongGiaTri * i.tiLeBan
-            i.tienGocDaTra = i.thoiGianBan * tienGoc
-            i.tongGocConlai = i.tongGiaTri - i.thoiGianBan * tienGoc
-            i.tienLaiDaTra = sumBy(listTienTra.filter((j: any) => j.thang < i.thoiGianBan + 1), 'tienLai')
-            i.tongTienDaTra = i.tienGocDaTra + i.tienLaiDaTra
-            i.tienConPhaiTra = i.tongGocConlai * (1 + i.laiPhatTraTruoc)
-            i.tongTra = i.tongTienDaTra + i.tienConPhaiTra
-            i.tongThu = i.tienBan
-            i.laiLo = i.tongThu - i.tongTra
-            return i
-        })
-        return data
-    }
-
-    const listData2: IHouseFinance[] = [
-        {
-            ten: "nha",
-            tongGiaTri: 4000,
-            laiVay: 0.1,
-            tiLeVay: 1,
-            thoiGianVay: 240,
-            thoiGianBan: 12,
-            tiLeBan: 1.1,
-            laiPhatTraTruoc: 0.02
-        },
-        {
-            ten: "oto",
-            tongGiaTri: 700,
-            laiVay: 0.1,
-            tiLeVay: 0.5,
-            thoiGianVay: 240,
-            thoiGianBan: 60,
-            tiLeBan: 1.5,
-            laiPhatTraTruoc: 0.02
-        }
-    ]
-
-    const calculatedListdata2 = calculate(listData2)
+    const [showListIienTra, setShowListIienTra] = useState(false);
+    const mappedData = mapListDataHouseFinance(listDataHouseFinance)
 
     let dataSource: any = []
-    let objListData2: any = keyBy(calculatedListdata2, 'ten')
-    Object.keys(calculatedListdata2[0]).map((i: any) => {
+    let objListData2: any = keyBy(mappedData, 'ten')
+    Object.keys(mappedData[0]).map((i: any) => {
         if (i !== 'ten') {
             let item: any = {
                 ten: i
@@ -100,7 +22,7 @@ export default function HouseFinance() {
         }
     })
 
-    const data = calculatedListdata2[0]
+    const data = mappedData[0]
 
     const listTienTra: any = []
     const tienGoc = data.tongGiaTri / data.thoiGianVay;
@@ -118,55 +40,93 @@ export default function HouseFinance() {
         })
     })
 
-    // const columns = [
-    //     {
-    //         title: 'thang',
-    //         dataIndex: 'thang',
-    //         key: 'thang',
-    //     },
-    //     {
-    //         title: 'tienGoc',
-    //         dataIndex: 'tienGoc',
-    //         key: 'tienGoc',
-    //     },
-    //     {
-    //         title: 'tienLai',
-    //         dataIndex: 'tienLai',
-    //         key: 'tienLai',
-    //     },
-    // ];
-
     const columns: any = []
 
     Object.keys(dataSource[0]).map((i: any) => {
+        console.log(i)
+        if (i === "nha") {
+            columns.push({
+                title: i,
+                render: (data) => {
+                    if (data.ten === "laiVay") {
+                        return <div>{data.nha * 100}%</div>
+                    } else if (data.ten === "tiLeVay") {
+                        return <div>{data.nha * 100}%</div>
+                    } else if (data.ten === "thoiGianVay") {
+                        return <div>{data.nha} thang</div>
+                    } else if (data.ten === "thoiGianBan") {
+                        return <div>{data.nha} thang</div>
+                    } else if (data.ten === "tiLeBan") {
+                        return <div>{Number(data.nha * 100).toFixed(0)}%</div>
+                    } else if (data.ten === "laiPhatTraTruoc") {
+                        return <div>{data.nha * 100}%</div>
+                        // } else if (data.ten === "tienTraBanDau") {
+                        //     return <div>{data.nha * 100}%</div>
+                        // } else if (data.ten === "tienTraHangThang") {
+                        //     return <div>{data.nha * 100}%</div>
+                    } else {
+                        return <div>{data.nha}</div>
+                    }
+                }
+            })
+        } else if (i === "oto") {
+            columns.push({
+                title: i,
+                render: (data) => {
+                    if (data.ten === "laiVay") {
+                        return <div>{data.oto * 100}%</div>
+                    } else if (data.ten === "tiLeVay") {
+                        return <div>{data.oto * 100}%</div>
+                    } else if (data.ten === "thoiGianVay") {
+                        return <div>{data.oto} thang</div>
+                    } else if (data.ten === "thoiGianBan") {
+                        return <div>{data.oto} thang</div>
+                    } else if (data.ten === "tiLeBan") {
+                        return <div>{Number(data.oto * 100).toFixed(0)}%</div>
+                    } else if (data.ten === "laiPhatTraTruoc") {
+                        return <div>{data.oto * 100}%</div>
+                    } else {
+                        return <div>{data.oto}</div>
+                    }
+                }
+            })
+        } else {
+            columns.push({
+                title: i,
+                dataIndex: i,
+                key: i
+            })
+        }
 
-        columns.push({
-            title: i,
-            dataIndex: i,
-            key: i
-        })
+
     })
-    console.log(columns)
 
-    let tienPhaiTraConLai = 0;
-    let tongTienDaTra = 0;
+    const columns2 = [
+        {
+            title: 'thang',
+            dataIndex: 'thang',
+            key: 'thang',
+        },
+        {
+            title: 'tienGoc',
+            dataIndex: 'tienGoc',
+            key: 'tienGoc',
+        },
+        {
+            title: 'tienLai',
+            dataIndex: 'tienLai',
+            key: 'tienLai',
+        },
+    ];
 
-    listTienTra.map((i: any) => {
-        if (i.thang > 60) return;
-        tongTienDaTra += i.tienGoc + i.tienLai
-    })
-    tienPhaiTraConLai = data.tongGiaTri - 60 * tienGoc
-    console.log(dataSource)
     return <div>
-        HouseFinance
-        {/* <div style={{ height: "500px", overflow: "auto" }}>
-            <Table dataSource={listTienTra} columns={columns} pagination={false} />
-        </div> */}
-        <div>
-            Sau 60 thang so tien phai tra:
-            <div>So tien phai tra con lai: {tienPhaiTraConLai} </div>
-            <div>Tong tien da tra: {tongTienDaTra}</div>
-        </div>
+        <Button onClick={() => setShowListIienTra(!showListIienTra)} type={showListIienTra ? "primary" : null} >List tien tra</Button>
+        {
+            showListIienTra && <div style={{ height: "500px", overflow: "auto" }}>
+                <Table dataSource={listTienTra} columns={columns2} pagination={false} />
+            </div>
+        }
+
         <div style={{ overflow: "auto" }}>
             <Table size={'small'} dataSource={dataSource} columns={columns} pagination={false} />
         </div>

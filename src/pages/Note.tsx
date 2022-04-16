@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button, notification, Spin, Input, Table } from 'antd';
 import axios from 'axios';
 import MDEditor from '@uiw/react-md-editor';
-import { getColumns } from 'helpers/utils'
+import { getColumnsFromListData } from 'utils'
 
 function getId(key: string) {
     if (key === "todos") {
@@ -33,7 +33,7 @@ export default function Note({ title, management }: IProps) {
     const [titleCreateNote, setTitleCreateNote] = useState(null);
     const [listNotes, setListNotes] = useState([]);
 
-    const columns = getColumns(listNotes)
+    const columns = getColumnsFromListData(listNotes)
 
     const getStockNote = async () => {
         setLoading(true)
@@ -164,8 +164,8 @@ export default function Note({ title, management }: IProps) {
     }
 
     useEffect(() => {
-        // getStockNote();
-        getListNotes()
+        getStockNote();
+        management && getListNotes()
     }, [])
 
     if (loading) return <Spin />
@@ -187,6 +187,7 @@ export default function Note({ title, management }: IProps) {
                     <div style={{ overflow: "auto" }}>
                         <Table size={'small'} dataSource={listNotes} columns={columns} pagination={false} />
                     </div>
+                    {renderNote()}
                 </>
                 : renderNote()
         }

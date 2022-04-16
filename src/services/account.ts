@@ -1,7 +1,6 @@
-import request from 'helpers/request';
-import { AccountUrls } from 'helpers/urls';
+import request, { AccountUrls } from 'urls';
 
-const AccountService = {
+export const AccountService = {
     postAuthToken(data: any) {
         return request({
             method: 'POST',
@@ -53,5 +52,3 @@ const AccountService = {
     },
 
 };
-
-export default AccountService;

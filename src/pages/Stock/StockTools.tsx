@@ -8,8 +8,8 @@ import {
     MIN_TOTAL_VOLUME,
     MIN_TOTAL_VALUE,
     MIN_MEDIUM_TOTOL_VALUE,
-} from "helpers/utils";
-import StockService from 'services/stock'
+} from "utils";
+import { StockService } from 'services'
 
 
 interface IProps {

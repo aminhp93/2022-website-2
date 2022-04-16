@@ -2,7 +2,7 @@ import axios from 'axios'
 import { useEffect, useState } from "react"
 import { Table } from 'antd';
 import InViewMonitor from 'react-inview-monitor';
-import { getColumns } from 'helpers/utils'
+import { getColumnsFromListData } from 'utils'
 
 export default function Test() {
 
@@ -32,7 +32,7 @@ export default function Test() {
         })
     }
 
-    const columns = getColumns(data)
+    const columns = getColumnsFromListData(data)
 
 
     useEffect(() => {

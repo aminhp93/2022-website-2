@@ -4,7 +4,7 @@ import { notification, Table, Button } from "antd";
 import axios from "axios";
 import { CloseOutlined } from '@ant-design/icons'
 
-import StockService from 'services/stock'
+import { StockService } from 'services'
 
 
 export default function StockMarketOverview() {

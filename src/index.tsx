@@ -5,7 +5,7 @@ import { HashRouter } from 'react-router-dom'
 
 import 'styles/index.less';
 
-import store from 'store/store';
+import store from 'store';
 
 import { Switch, Route, Link, Redirect } from "react-router-dom";
 import Nhi from 'pages/Nhi/Nhi'
@@ -71,7 +71,7 @@ function RootLayout() {
     if (keyMenu === "stock") {
       return <Stock />
     } else if (keyMenu === "note") {
-      return <Note management />
+      return <Note management title="todos" />
     } else if (keyMenu === "insightOutsourcing") {
       return <InsightOutsourcing />
     } else if (keyMenu === 'houseFinance') {

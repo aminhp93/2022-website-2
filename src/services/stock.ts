@@ -1,7 +1,7 @@
 import axios from 'axios';
 import moment from "moment";
 
-const StockService = {
+export const StockService = {
     getHistoricalQuotes(symbol: string, startDate?: string, endDate?: string, platform?: string) {
         // symbol = "FPT"
         // startDate = "2021-01-01"
@@ -87,4 +87,4 @@ const StockService = {
 
 }
 
-export default StockService;
+

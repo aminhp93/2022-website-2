@@ -12,7 +12,7 @@ import {
     findBuyDate,
     testVariableColumns
 } from "pages/Stock/StockTestBreak/StockTestBreak.helpers"
-import StockService from 'services/stock'
+import { StockService } from 'services'
 import MDEditor from '@uiw/react-md-editor';
 
 const { RangePicker } = DatePicker;

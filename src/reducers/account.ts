@@ -2,8 +2,8 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 
-import { ThunkActionType } from 'store/store';
-import AccountService from 'services/account';
+import { ThunkActionType } from 'store';
+import { AccountService } from 'services';
 
 const accountSlice = createSlice({
     name: 'account',
