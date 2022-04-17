@@ -1,7 +1,4 @@
-
-
 import { createSlice } from '@reduxjs/toolkit';
-
 import { ThunkActionType } from 'store';
 import { AccountService } from 'services';
 

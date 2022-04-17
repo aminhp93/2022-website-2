@@ -1,11 +1,10 @@
-import { useState } from 'react';
-import { Table, Button } from 'antd';
-import { times, keyBy } from 'lodash';
+import { Table } from 'antd';
+import { keyBy } from 'lodash';
 import { mapListDataHouseFinance, listDataHouseFinance } from 'utils';
+import HouseFinance_ListTienTra from 'pages/HouseFinance_ListTienTra'
 
 
 export default function HouseFinance() {
-    const [showListIienTra, setShowListIienTra] = useState(false);
     const mappedData = mapListDataHouseFinance(listDataHouseFinance)
 
     let dataSource: any = []
@@ -22,28 +21,9 @@ export default function HouseFinance() {
         }
     })
 
-    const data = mappedData[0]
-
-    const listTienTra: any = []
-    const tienGoc = data.tongGiaTri / data.thoiGianVay;
-    let giaTriConlai = data.tongGiaTri
-    times(data.thoiGianVay).map((i: any, index: number) => {
-        if (index !== 0) {
-            giaTriConlai = giaTriConlai - tienGoc
-        }
-
-        const tienLai = giaTriConlai * data.laiVay / 12
-        listTienTra.push({
-            thang: index + 1,
-            tienGoc,
-            tienLai
-        })
-    })
-
     const columns: any = []
 
     Object.keys(dataSource[0]).map((i: any) => {
-        console.log(i)
         if (i === "nha") {
             columns.push({
                 title: i,
@@ -62,8 +42,8 @@ export default function HouseFinance() {
                         return <div>{data.nha * 100}%</div>
                         // } else if (data.ten === "tienTraBanDau") {
                         //     return <div>{data.nha * 100}%</div>
-                        // } else if (data.ten === "tienTraHangThang") {
-                        //     return <div>{data.nha * 100}%</div>
+                    } else if (data.ten === "tienTraHangThang") {
+                        return <div><HouseFinance_ListTienTra data={mappedData[0]} /></div>
                     } else {
                         return <div>{data.nha}</div>
                     }
@@ -85,6 +65,8 @@ export default function HouseFinance() {
                         return <div>{Number(data.oto * 100).toFixed(0)}%</div>
                     } else if (data.ten === "laiPhatTraTruoc") {
                         return <div>{data.oto * 100}%</div>
+                    } else if (data.ten === "tienTraHangThang") {
+                        return <div><HouseFinance_ListTienTra data={mappedData[1]} /></div>
                     } else {
                         return <div>{data.oto}</div>
                     }
@@ -97,39 +79,10 @@ export default function HouseFinance() {
                 key: i
             })
         }
-
-
     })
+    console.log(dataSource, columns)
 
-    const columns2 = [
-        {
-            title: 'thang',
-            dataIndex: 'thang',
-            key: 'thang',
-        },
-        {
-            title: 'tienGoc',
-            dataIndex: 'tienGoc',
-            key: 'tienGoc',
-        },
-        {
-            title: 'tienLai',
-            dataIndex: 'tienLai',
-            key: 'tienLai',
-        },
-    ];
-
-    return <div>
-        <Button onClick={() => setShowListIienTra(!showListIienTra)} type={showListIienTra ? "primary" : null} >List tien tra</Button>
-        {
-            showListIienTra && <div style={{ height: "500px", overflow: "auto" }}>
-                <Table dataSource={listTienTra} columns={columns2} pagination={false} />
-            </div>
-        }
-
-        <div style={{ overflow: "auto" }}>
-            <Table size={'small'} dataSource={dataSource} columns={columns} pagination={false} />
-        </div>
-
+    return <div style={{ overflow: "auto" }}>
+        <Table size={'small'} dataSource={dataSource} columns={columns} pagination={false} />
     </div>
 }

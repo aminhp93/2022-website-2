@@ -4,7 +4,6 @@ import { MoreOutlined } from '@ant-design/icons';
 
 import StockHistoryTrade from "pages/Stock/StockHistoryTrade";
 import StockTools from "pages/Stock/StockTools";
-import StockTestBreak from "pages/Stock/StockTestBreak/StockTestBreak";
 import StockMarketOverview from "pages/Stock/StockMarketOverview";
 import StockEvent from "pages/Stock/StockEvent";
 import StockNews from "pages/Stock/StockNews";
@@ -23,8 +22,6 @@ export default function Stock() {
             setModal("StockTools")
         } else if (e.key === "stockHistoryTrade") {
             setModal("StockHistoryTrade")
-        } else if (e.key === "testBreak") {
-            setModal("StockTestBreak")
         }
     }
 
@@ -80,10 +77,9 @@ export default function Stock() {
             <Button type={showStockAnalysis ? "primary" : null} onClick={() => setShowStockAnalysis(!showStockAnalysis)}>StockAnalysis</Button>
         </div>
         {
-            modal && <Modal className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>
+            modal && <Modal centered className="custom-modal" visible={true} onCancel={() => setModal(null)} footer={null}>
                 {modal === "StockHistoryTrade" && <StockHistoryTrade />}
                 {modal === "StockTools" && <StockTools />}
-                {modal === "StockTestBreak" && <StockTestBreak />}
             </Modal>
         }
     </div>
