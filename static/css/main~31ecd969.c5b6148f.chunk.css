@@ -1,2 +1,0 @@
-.jigsaw-puzzle{position:relative}.jigsaw-puzzle__piece{position:absolute;border:1px solid #cecece;cursor:pointer;z-index:1;-webkit-user-select:none;-ms-user-select:none;user-select:none}.jigsaw-puzzle__piece.jigsaw-puzzle__piece--solved{border-color:#000;z-index:0}.jigsaw-puzzle__piece.jigsaw-puzzle__piece--dragging{z-index:5;box-shadow:1px 1px 5px 0 rgba(0,0,0,.5686274509803921)}
-/*# sourceMappingURL=main~31ecd969.c5b6148f.chunk.css.map */
