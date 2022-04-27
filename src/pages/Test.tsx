@@ -13,6 +13,12 @@ export default function Test() {
 
     const fetch = () => {
         axios({
+
+            method: "GET",
+            // url: 'https://graph.instagram.com/me/media?fields=id,caption&access_token=IGQVJXR1djNU91NTRzU1N2T1puU1JLZA2FZAUkxjR0RfQkVvd0pvNjhsMnNianlsaU1fTkJJNmRYaDZAQcFl4YUxsVUhLWWRDVVB1clBodlNfQzlNalQyU2tVVURhSDJ2SHBjQ25wcGxjeVFtc1QtX1loeG1xZAGtpTkxIWlkw'
+            url: 'https://graph.instagram.com/me/media?fields=id,caption&access_token=IGQVJXR1djNU91NTRzU1N2T1puU1JLZA2FZAUkxjR0RfQkVvd0pvNjhsMnNianlsaU1fTkJJNmRYaDZAQcFl4YUxsVUhLWWRDVVB1clBodlNfQzlNalQyU2tVVURhSDJ2SHBjQ25wcGxjeVFtc1QtX1loeG1xZAGtpTkxIWlkw'
+        })
+        axios({
             method: 'GET',
             headers: {
                 'Accept': 'application/vnd.github.v3+json',

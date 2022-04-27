@@ -59,7 +59,7 @@ function App() {
 
 
 function RootLayout() {
-  const [keyMenu, setKeyMenu] = useState("note");
+  const [keyMenu, setKeyMenu] = useState("storyTellerBusiness");
 
   const handleChangeMenu = (e: any) => {
     setKeyMenu(e.key)
