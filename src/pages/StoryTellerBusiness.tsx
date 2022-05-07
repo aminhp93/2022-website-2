@@ -1,11 +1,11 @@
-import { Table, Menu, Dropdown } from 'antd';
+import { Table, Menu, Dropdown, Button, notification, Spin } from 'antd';
 import axios from 'axios';
 import Note from 'pages/Note';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { DownOutlined } from '@ant-design/icons';
-import { groupBy, meanBy, orderBy, get } from 'lodash';
+import { groupBy, meanBy } from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 const CHART_TYPE = {
@@ -18,35 +18,55 @@ const CHART_METRIC = {
     commentCount: "Comment count"
 }
 
+// TOTAL = COUNT_REQUEST * 50
+const COUNT_REQUEST = 8
+
 interface IProps {
 
 }
 
 
 function StoryTellerBusiness({ }: IProps & RouteComponentProps) {
+    const [showAnalytic, setShowAnalytic] = useState(false);
+
+    const list = [
+        {
+            id: '259242146',
+            name: 'liti'
+        },
+        {
+            id: '8485609156',
+            name: 'room bloom'
+        },
+        {
+            id: '3545908675',
+            name: 'lach cach'
+        }
+    ]
 
     return <div>
         <div>StoryTellerBusiness</div>
         <div style={{ overflow: "auto" }}>
             <Note title="storyTellerBusiness" />
         </div>
-        {['259242146', '8485609156'].map(i => {
-            return <StoryTellerBusinessChart id={i} />
+        <Button onClick={() => setShowAnalytic(!showAnalytic)}>Run analytic</Button>
+        {showAnalytic && list.map(i => {
+            return <StoryTellerBusinessChart data={i} />
         })}
-
     </div>
 }
 
 export default withRouter(StoryTellerBusiness)
 
 interface IStoryTellerBusinessChartProps {
-    id: string;
+    data: any;
 }
 
-function StoryTellerBusinessChart({ id }: IStoryTellerBusinessChartProps) {
+function StoryTellerBusinessChart({ data }: IStoryTellerBusinessChartProps) {
     const [listSearch, setListSearch] = useState([]);
     const [chartType, setChartType] = useState('barChart');
     const [chartMetric, setChartMetric] = useState('likeCount');
+    const [loading, setLoading] = useState(false);
 
     const getListPhoto = (end_cursor: string) => {
         return axios({
@@ -54,53 +74,60 @@ function StoryTellerBusinessChart({ id }: IStoryTellerBusinessChartProps) {
             url: `http://localhost:3001/get-list-photo`,
             params: {
                 end_cursor,
-                id
+                id: data.id
             }
         })
     }
 
     const getALlListPhoto = async () => {
-        let resultAll = []
-        let res
-        let result
-        let end_cursor = 'first'
-        let count = 0
-        while (end_cursor && count < 2) {
-            res = await getListPhoto(end_cursor);
-            if (res) {
+        try {
+            setLoading(true)
 
-                let parsedData = (JSON.parse(res.data.message)).data.user.edge_owner_to_timeline_media.edges
-                result = parsedData.map(i => {
-                    return i.node
-                })
-                end_cursor = (JSON.parse(res.data.message)).data.user.edge_owner_to_timeline_media.page_info.end_cursor
-                count += 1
-                console.log(end_cursor, result)
+            let resultAll = []
+            let res
+            let result
+            let end_cursor = 'first'
+            let count = 0
+
+            while (end_cursor && count < COUNT_REQUEST) {
+                res = await getListPhoto(end_cursor);
+                if (res) {
+
+                    let parsedData = (JSON.parse(res.data.message)).data.user.edge_owner_to_timeline_media.edges
+                    result = parsedData.map(i => {
+                        return i.node
+                    })
+                    end_cursor = (JSON.parse(res.data.message)).data.user.edge_owner_to_timeline_media.page_info.end_cursor
+                    count += 1
+                    console.log(end_cursor, result)
+                }
+                resultAll = [...resultAll, ...result]
             }
-            resultAll = [...resultAll, ...result]
-        }
 
-        console.log(resultAll)
-        const mappedResult = [];
-        resultAll.map(i => {
-            const newItem: any = {}
-            newItem.id = i.id
-            newItem.likeCount = i.edge_media_preview_like.count
-            newItem.commentCount = i.edge_media_to_comment.count
-            newItem.postedTime = i.taken_at_timestamp
-            newItem.mappedPostedTime = moment.unix(i.taken_at_timestamp).format()
-            newItem.shortcode = i.shortcode
-            mappedResult.push(newItem)
-        })
-        console.log(mappedResult)
-        setListSearch(mappedResult)
+            console.log(resultAll)
+            const mappedResult = [];
+            resultAll.map(i => {
+                const newItem: any = {}
+                newItem.id = i.id
+                newItem.likeCount = i.edge_media_preview_like.count
+                newItem.commentCount = i.edge_media_to_comment.count
+                newItem.postedTime = i.taken_at_timestamp
+                newItem.mappedPostedTime = moment.unix(i.taken_at_timestamp).format()
+                newItem.shortcode = i.shortcode
+                mappedResult.push(newItem)
+            })
+            console.log(mappedResult)
+            setListSearch(mappedResult)
+            setLoading(false)
+        } catch (e) {
+            notification.error({ message: "Error" })
+            setLoading(false)
+        }
     }
 
     useEffect(() => {
         getALlListPhoto();
-        // getListPhoto('')
     }, [])
-
 
     const columns = [
         {
@@ -190,7 +217,10 @@ function StoryTellerBusinessChart({ id }: IStoryTellerBusinessChartProps) {
             return <Menu.Item key={i}>{CHART_METRIC[i]}</Menu.Item>
         })}
     </Menu>
+
+    if (loading) return <Spin />
     return <div style={{ marginTop: "20px", background: "white", padding: "20px", borderRadius: "10px" }}>
+        <div>{data.name}</div>
         <div style={{ height: "50px", display: "flex", justifyContent: "space-between" }} className="CompensationBenchmark-dropdown">
             <div style={{ fontSize: "16px", fontWeight: 600 }}>Data Visualization</div>
             <div style={{ display: "flex" }}>

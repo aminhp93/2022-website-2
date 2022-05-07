@@ -1,9 +1,9 @@
 import Note from 'pages/Note'
 
 export default function InsightOutsourcing() {
-    return <div>InsightOutsourcing
+    return <div className="InsightOutsourcing">InsightOutsourcing
 
-        <div style={{ height: "300px", overflow: "auto" }}>
+        <div className="InsightOutsourcing-note">
             <Note title="insightOutsourcing" />
         </div>
     </div>
