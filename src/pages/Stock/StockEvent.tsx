@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Timeline, Modal, notification, Input, DatePicker } from 'antd';
-import MDEditor from '@uiw/react-md-editor';
 import axios from "axios";
 import { Spin, Button } from "antd";
 import moment from 'moment';
@@ -80,11 +79,11 @@ export default function StockEvent() {
                         <div>
                             <Input onChange={handleUpdateTitle} />
                             <DatePicker onChange={handleUpdateDate} defaultValue={moment()} />
-                            <MDEditor
+                            {/* <MDEditor
                                 height={500}
                                 value={tempEvent.content}
                                 onChange={handleUpdateContentEvent}
-                            />
+                            /> */}
                         </div>
                     </div>
                 </Modal>
@@ -195,11 +194,11 @@ function StockEventItem({ data, cb }: StockEventItemProps) {
                                 <Input defaultValue={tempEvent.title} onChange={handleUpdateTitle} />
                                 <DatePicker onChange={handleUpdateDate} defaultValue={moment(tempEvent.time)} />
 
-                                <MDEditor
+                                {/* <MDEditor
                                     height={500}
                                     value={tempEvent.content}
                                     onChange={handleUpdateContentEvent}
-                                />
+                                /> */}
                             </div>
                         </div>
                         : (!canDelete && <div>
@@ -235,7 +234,7 @@ function StockEventItem({ data, cb }: StockEventItemProps) {
                     ? null
                     : <div>
                         <div>{event.time} - {event.title}</div>
-                        <MDEditor.Markdown source={event.content} />
+                        {/* <MDEditor.Markdown source={event.content} /> */}
                     </div>
             }
         </Modal>}

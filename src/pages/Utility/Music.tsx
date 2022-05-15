@@ -4,7 +4,7 @@ import fs from "fs";
 import { Upload, message, Button } from "antd";
 import { UploadOutlined } from '@ant-design/icons';
 import React from "react";
-import MDEditor from '@uiw/react-md-editor';
+// import MDEditor from '@uiw/react-md-editor';
 
 export default function Music() {
     const test = async () => {
@@ -45,7 +45,7 @@ export default function Music() {
         test()
     }, [])
     return <div>
-        <MDEditor.Markdown source={`
+        {/* <MDEditor.Markdown source={`
                 \n - Đang yêu:
                 \n   - [Đúng người đúng thời điểm](https://www.youtube.com/watch?v=2MZ_oQOGC24)
                 \n   - [Tây Vương Nữ Quốc](https://www.youtube.com/watch?v=J9uBBbPPhdE) 
@@ -54,7 +54,7 @@ export default function Music() {
 
                 \n - Gọi thức dậy:
                 \n   - [Europe's Skies - Alexander Rybak](https://www.youtube.com/watch?v=daqfr6DJsGc)
-            `} />
+            `} /> */}
 
 
         <Upload {...props}>
