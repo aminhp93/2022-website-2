@@ -12,26 +12,18 @@ export const getColumnsFromListData = (data: any) => {
     const columns: any = []
 
     data && data.length > 0 && Object.keys(data[0]).map((i: any) => {
-        if (i === 'post') {
-            columns.push({
-                title: i,
-                dataIndex: i,
-                key: i,
-                render: (key) => {
-                    const div = document.createElement('div')
-                    div.innerText = key.title
-                    return div
+        columns.push({
+            title: i,
+            dataIndex: i,
+            key: i,
+            render: (item) => {
+                if (typeof (item) === 'string' || typeof (item) === 'number') {
+                    return item
                 }
-            })
-        } else {
-            columns.push({
-                title: i,
-                dataIndex: i,
-                key: i
-            })
-        }
+                return JSON.stringify(item)
+            }
+        })
     })
 
     return columns
-
 }

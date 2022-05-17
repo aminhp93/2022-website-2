@@ -157,8 +157,11 @@ const headers2 = {
 };
 
 app.get('/grab/', (req, res) => {
+    const cateId = req.query.cateId
+    const cuisineId = req.query.cuisineId
+    const page = req.query.page
     axios({
-        url: 'https://www.foody.vn/__get/Place/HomeListPlace?t=1652605520528&page=1&lat=21.033333&lon=105.85&count=12&districtId=&cateId=&cuisineId=&isReputation=&type=1',
+        url: `https://www.foody.vn/__get/Place/HomeListPlace?t=1652605520528&page=${page}&lat=21.033333&lon=105.85&count=50&districtId=&cateId=${cateId}&cuisineId=${cuisineId}&isReputation=&type=1`,
         method: "GET",
         headers: headers2
     }).then(res2 => {

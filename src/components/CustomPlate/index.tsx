@@ -54,14 +54,29 @@ import {
     getPluginType,
     MARK_BOLD,
     MARK_ITALIC,
-    MARK_UNDERLINE
+    MARK_UNDERLINE,
+    BalloonToolbar,
+    HeadingToolbar
 } from '@udecode/plate';
 import { FormatBold } from '@styled-icons/material/FormatBold';
 import { FormatItalic } from '@styled-icons/material/FormatItalic';
 import { FormatUnderlined } from '@styled-icons/material/FormatUnderlined';
 
 import { CONFIG } from './config/config';
-import { BalloonToolbar } from '@udecode/plate-ui-toolbar';
+import {
+    BasicElementToolbarButtons,
+    ListToolbarButtons,
+    IndentToolbarButtons,
+    BasicMarkToolbarButtons,
+    // ColorPickerToolbarDropdown,
+    // ColorPickerToolbarDropdown,
+    // AlignToolbarButtons,
+    // LineHeightToolbarDropdown,
+    // LinkToolbarButton,
+    // ImageToolbarButton,
+    // MediaEmbedToolbarButton,
+
+} from './config/components/Toolbars'
 
 export const withStyledPlaceHolders = (components: any) =>
     withPlaceholders(components, [
@@ -69,11 +84,6 @@ export const withStyledPlaceHolders = (components: any) =>
             key: ELEMENT_PARAGRAPH,
             placeholder: 'Type a paragraph',
             hideOnBlur: true,
-        },
-        {
-            key: ELEMENT_H1,
-            placeholder: 'Untitled',
-            hideOnBlur: false,
         },
     ]);
 
@@ -129,7 +139,7 @@ export default function CustomPlate(props: IProps) {
     };
 
     let components = createPlateUI();
-    // components = withStyledPlaceHolders(components);
+    components = withStyledPlaceHolders(components);
 
     const plugins: any = createPlugins([
         createParagraphPlugin(),
@@ -183,10 +193,33 @@ export default function CustomPlate(props: IProps) {
     return <div className="CustomPlate">
         <Plate
             editableProps={CONFIG.editableProps}
-            // onChange={onChange}
             plugins={plugins}
             {...props}
         >
+            <HeadingToolbar>
+                <BasicElementToolbarButtons />
+                <ListToolbarButtons />
+                <IndentToolbarButtons />
+                <BasicMarkToolbarButtons />
+                {/* <ColorPickerToolbarDropdown
+          pluginKey={MARK_COLOR}
+          icon={<FormatColorText />}
+          selectedIcon={<Check />}
+          tooltip={{ content: 'Text color' }}
+        />
+        <ColorPickerToolbarDropdown
+          pluginKey={MARK_BG_COLOR}
+          icon={<FontDownload />}
+          selectedIcon={<Check />}
+          tooltip={{ content: 'Highlight color' }}
+        />
+        <AlignToolbarButtons />
+        <LineHeightToolbarDropdown icon={<LineWeight />} />
+        <LinkToolbarButton icon={<Link />} />
+        <ImageToolbarButton icon={<Image />} />
+        <MediaEmbedToolbarButton icon={<OndemandVideo />} />
+        <TableToolbarButtons /> */}
+            </HeadingToolbar>
             <BallonToolbarMarks />
             <MentionCombobox items={CONFIG.mentionItems} />
         </Plate>
