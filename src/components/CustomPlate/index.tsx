@@ -1,5 +1,3 @@
-
-import { useEffect, useState } from "react"
 import {
     Plate,
     ELEMENT_PARAGRAPH,
@@ -50,11 +48,20 @@ import {
     createPlugins,
     createPlateUI,
     withPlaceholders,
-    MentionCombobox
-} from '@udecode/plate'
+    MentionCombobox,
+    usePlateEditorRef,
+    MarkToolbarButton,
+    getPluginType,
+    MARK_BOLD,
+    MARK_ITALIC,
+    MARK_UNDERLINE
+} from '@udecode/plate';
+import { FormatBold } from '@styled-icons/material/FormatBold';
+import { FormatItalic } from '@styled-icons/material/FormatItalic';
+import { FormatUnderlined } from '@styled-icons/material/FormatUnderlined';
 
 import { CONFIG } from './config/config';
-import { v4 as uuidv4 } from 'uuid';
+import { BalloonToolbar } from '@udecode/plate-ui-toolbar';
 
 export const withStyledPlaceHolders = (components: any) =>
     withPlaceholders(components, [
@@ -78,6 +85,48 @@ interface IProps {
 }
 
 export default function CustomPlate(props: IProps) {
+
+    const BallonToolbarMarks = () => {
+        const editor = usePlateEditorRef();
+
+        const arrow = false;
+        const theme = 'dark';
+        const popperOptions: any = {
+            placement: 'top'
+        };
+        const tooltip: any = {
+            arrow: true,
+            delay: 0,
+            duration: [200, 0],
+            hideOnClick: false,
+            offset: [0, 17],
+            placement: 'top',
+        };
+
+        return (
+            <BalloonToolbar
+                popperOptions={popperOptions}
+                theme={theme}
+                arrow={arrow}
+            >
+                <MarkToolbarButton
+                    type={getPluginType(editor, MARK_BOLD)}
+                    icon={<FormatBold />}
+                    tooltip={{ content: 'Bold (⌘B)', ...tooltip }}
+                />
+                <MarkToolbarButton
+                    type={getPluginType(editor, MARK_ITALIC)}
+                    icon={<FormatItalic />}
+                    tooltip={{ content: 'Italic (⌘I)', ...tooltip }}
+                />
+                <MarkToolbarButton
+                    type={getPluginType(editor, MARK_UNDERLINE)}
+                    icon={<FormatUnderlined />}
+                    tooltip={{ content: 'Underline (⌘U)', ...tooltip }}
+                />
+            </BalloonToolbar>
+        );
+    };
 
     let components = createPlateUI();
     // components = withStyledPlaceHolders(components);
@@ -138,7 +187,7 @@ export default function CustomPlate(props: IProps) {
             plugins={plugins}
             {...props}
         >
-            {/* <BallonToolbarMarks /> */}
+            <BallonToolbarMarks />
             <MentionCombobox items={CONFIG.mentionItems} />
         </Plate>
     </div >

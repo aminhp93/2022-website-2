@@ -137,3 +137,35 @@ app.get('/get-detail/', (req, res) => {
         console.log(e)
     })
 })
+
+const headers2 = {
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'vi-VN,vi;q=0.9,fr;q=0.8,en-US;q=0.7,en;q=0.6',
+    'Cache-Control': 'no-cache',
+    'Connection': 'keep-alive',
+    'Pragma': 'no-cache',
+    'Referer': 'https://www.foody.vn/ha-noi',
+    'Sec-Fetch-Dest': 'empty',
+    'Sec-Fetch-Mode': 'cors',
+    'Sec-Fetch-Site': 'same-origin',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36',
+    'X-Requested-With': 'XMLHttpRequest',
+    'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="101", "Google Chrome";v="101"',
+    'sec-ch-ua-mobile': '?0',
+    'sec-ch-ua-platform': '"macOS"',
+    'Cookie': 'flg=vn; __ondemand_sessionid=fhzdmhl3whhwv5byxicbmfn5; floc=218; gcat=food; _ga=GA1.2.1671173894.1652605514; _gid=GA1.2.1682090996.1652605514; _gat=1; _gat_ads=1; _fbp=fb.1.1652605513652.1927131242; __utma=257500956.1671173894.1652605514.1652605514.1652605514.1; __utmc=257500956; __utmz=257500956.1652605514.1.1.utmcsr=google|utmccn=(organic)|utmcmd=organic|utmctr=(not%20provided); __utmt_UA-33292184-1=1; __utmb=257500956.1.10.1652605514; fbm_395614663835338=base_domain=.foody.vn; fbsr_395614663835338=05ewQLU8-94JeixLioqAcp-HrFqtuNSk_PrTnpjtT_8.eyJ1c2VyX2lkIjoiMTY1OTg0NDc2NDAzODA1NyIsImNvZGUiOiJBUUN4Y3VTLVJoeW5tTG9hN1hDczFMYWtpS3NveVY3XzljZEpHSmRWakhPY2NCXzlHYTc5cWd3V0t6c3lYcDhLNkRfY1Q2Y0tGLWZ0cmtmZFVaZ0ZtODA3LXFiZVlZTkRzeGhoX0tUaDRXWWdfZi00czBlTzFnX1ZNR2laQUkwczFMWThmbVFHZk1hYWZYQ2oyclQ0eEcwVDhwSE5PeWVSR2EtLUtaYVNESm9DZG15eTZBWDBHYm8wM3c3YTNrQWZydUYzTEdWYkdfSTIwcUVmRmdVODYxOGxrdW5NdURrN29wbnppajIwN2V6aVdjOFEtVXVjbnpNaVgyTDN6NHBISUZ4UHFPMnBUZW1MQTVqQW1LZFVVSTFvRU5UdjQwM2lxZjF2YnhkZndrSGdtWVczbzBZUU9nNVdRd1FFa01Sd0k2ZzVoYkcxZXl1WmFuX3dNSTk4SlM0TSIsIm9hdXRoX3Rva2VuIjoiRUFBRm56emVCZnNvQkFBV1EyWkJKY1pCRHpCZ0JQczQxUTZJdktQUVhZOEZsOVFHcWwyMU40ZFV0RXBTUzNtS1laQmx4Y1FDV0F6WU1WSHdudGs1Um1yNk00VDVJSVIyTHpSWkJKbkZrYVNXdVpBcVdNc1RpTVpBWEJMMWZPNGF4VkVkUmJScXpnSU1SMzJIWTNQS3lhemhiUHVMRlpDSDUwSU9UOWk0Z2dDbEM3djVFN0FjNEhqRyIsImFsZ29yaXRobSI6IkhNQUMtU0hBMjU2IiwiaXNzdWVkX2F0IjoxNjUyNjA1NTE0fQ'
+};
+
+app.get('/grab/', (req, res) => {
+    axios({
+        url: 'https://www.foody.vn/__get/Place/HomeListPlace?t=1652605520528&page=1&lat=21.033333&lon=105.85&count=12&districtId=&cateId=&cuisineId=&isReputation=&type=1',
+        method: "GET",
+        headers: headers2
+    }).then(res2 => {
+        console.log(res2, res2.data)
+        res.status(200).json({ message: JSON.stringify(res2.data) });
+    }).catch(e => {
+        console.log(e)
+        res.status(400).json({ message: JSON.stringify(e) });
+    })
+})

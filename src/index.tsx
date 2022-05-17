@@ -15,9 +15,6 @@ import Stock from 'pages/Stock/Stock'
 import Note from 'pages/Note'
 import HouseFinance from 'pages/HouseFinance'
 import Test from 'pages/Test'
-// import SlateEditor from '../SlateExamples/markdown-preview'
-// import SlateEditor from '../SlateExamples/_using_version'
-import SlateEditor from 'pages/SlateExamples/richtext'
 import InsightOutsourcing from 'pages/InsightOutsourcing'
 import StoryTellerBusiness from 'pages/StoryTellerBusiness';
 
