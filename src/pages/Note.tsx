@@ -131,7 +131,7 @@ export default function Note({ title, management }: IProps) {
     const renderNote = () => {
         return <div style={{ height: "100%" }}>
             <div style={{ height: "50px" }}>
-                <Button type="primary" danger onClick={handleUpdate} style={{ position: "fixed", top: "20px", right: "20px" }}>
+                <Button type="primary" danger onClick={handleUpdate} style={{ position: "fixed", top: "20px", right: "20px", zIndex: 1 }}>
                     Update
                 </Button>
             </div>
