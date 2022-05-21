@@ -1,4 +1,4 @@
-import { Table, Menu, Dropdown, Button, notification, Spin } from 'antd';
+import { Table, Menu, Dropdown, Button, notification, Spin, InputNumber } from 'antd';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
@@ -6,6 +6,7 @@ import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Resp
 import { DownOutlined } from '@ant-design/icons';
 import { groupBy, meanBy } from 'lodash';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import Note from 'pages/Note';
 
 const CHART_TYPE = {
     barChart: "Bar Chart",
@@ -18,7 +19,7 @@ const CHART_METRIC = {
 }
 
 // TOTAL = COUNT_REQUEST * 50
-const COUNT_REQUEST = 8
+const COUNT_REQUEST = 2
 
 interface IProps {
 
@@ -27,28 +28,49 @@ interface IProps {
 
 function StoryTellerBusiness({ }: IProps & RouteComponentProps) {
     const [showAnalytic, setShowAnalytic] = useState(false);
+    const [countRequest, setCountRequest] = useState(COUNT_REQUEST)
 
     const list = [
-        {
-            id: '259242146',
-            name: 'liti'
-        },
+        // {
+        //     id: '259242146',
+        //     name: 'liti',
+        //     instagram: 'https://www.instagram.com/litiflorist/'
+        // },
         {
             id: '8485609156',
-            name: 'room bloom'
+            name: 'room bloom',
+            instagram: 'https://www.instagram.com/roomsinbloom.vn/'
         },
         {
             id: '3545908675',
-            name: 'lach cach'
-        }
+            name: 'lach cach',
+            instagram: 'https://www.instagram.com/tiemhoalachcach/'
+        },
+        // {
+        //     id: '3300347871',
+        //     name: 'fancy florist',
+        //     instagram: 'https://www.instagram.com/fancy.florist/'
+        // },
     ]
 
-    return <div>
-        <div>StoryTellerBusiness</div>
-        <Button onClick={() => setShowAnalytic(!showAnalytic)}>Run analytic</Button>
-        {showAnalytic && list.map(i => {
-            return <StoryTellerBusinessChart data={i} />
-        })}
+    return <div className="StoryTellerBusiness" style={{ display: "flex" }}>
+        <div style={{ flex: 1 }}>
+            <div>StoryTellerBusiness</div>
+            <div>
+                Count Request: <InputNumber min={1} max={10} defaultValue={countRequest} onChange={(value) => setCountRequest(value)} />
+            </div>
+            <Button onClick={() => setShowAnalytic(!showAnalytic)}>Run analytic</Button>
+            <div>
+                {`Instagram: so sánh số lượng tương tác của like/comment trong vòng ${countRequest * 50} bài post gần nhất`}
+            </div>
+            {showAnalytic && list.map(i => {
+                return <StoryTellerBusinessChart data={i} countRequest={countRequest} />
+            })}
+        </div>
+        <div style={{ flex: 1 }}>
+            <Note title="storyTellerBusiness" />
+        </div>
+
     </div>
 }
 
@@ -56,9 +78,10 @@ export default withRouter(StoryTellerBusiness)
 
 interface IStoryTellerBusinessChartProps {
     data: any;
+    countRequest: number;
 }
 
-function StoryTellerBusinessChart({ data }: IStoryTellerBusinessChartProps) {
+function StoryTellerBusinessChart({ data, countRequest }: IStoryTellerBusinessChartProps) {
     const [listSearch, setListSearch] = useState([]);
     const [chartType, setChartType] = useState('barChart');
     const [chartMetric, setChartMetric] = useState('likeCount');
@@ -85,7 +108,7 @@ function StoryTellerBusinessChart({ data }: IStoryTellerBusinessChartProps) {
             let end_cursor = 'first'
             let count = 0
 
-            while (end_cursor && count < COUNT_REQUEST) {
+            while (end_cursor && count < countRequest) {
                 res = await getListPhoto(end_cursor);
                 if (res) {
 
@@ -181,7 +204,7 @@ function StoryTellerBusinessChart({ data }: IStoryTellerBusinessChartProps) {
         })
         // result = orderBy(result, [chartMetric], ['asc'])
         console.log(result)
-        return <div style={{ height: "300px" }}>
+        return <div style={{ height: "200px" }}>
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart width={150} height={40} data={result} onClick={(e, data) => {
                     console.log(e, data)
@@ -196,6 +219,7 @@ function StoryTellerBusinessChart({ data }: IStoryTellerBusinessChartProps) {
             </ResponsiveContainer>
         </div>
     }
+
     const menu = <Menu onClick={(e) => {
         e.domEvent.preventDefault()
         setChartType(e.key)
@@ -215,10 +239,9 @@ function StoryTellerBusinessChart({ data }: IStoryTellerBusinessChartProps) {
     </Menu>
 
     if (loading) return <Spin />
-    return <div style={{ marginTop: "20px", background: "white", padding: "20px", borderRadius: "10px" }}>
-        <div>{data.name}</div>
+    return <div style={{ background: "white", borderRadius: "10px" }}>
+        <div>{data.name} - <a href={data.instagram} target="_blank" rel="noreferrer">{data.instagram}</a></div>
         <div style={{ height: "50px", display: "flex", justifyContent: "space-between" }} className="CompensationBenchmark-dropdown">
-            <div style={{ fontSize: "16px", fontWeight: 600 }}>Data Visualization</div>
             <div style={{ display: "flex" }}>
                 <Dropdown overlay={menuProperty} trigger={['click']} placement="bottomRight" >
                     <div style={{ display: "flex", alignItems: "center", marginRight: "20px", cursor: "pointer" }}><DownOutlined style={{ fontSize: '16px', marginRight: "6px" }} /> {CHART_METRIC[chartMetric]}</div>

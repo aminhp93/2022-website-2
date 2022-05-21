@@ -1,7 +1,9 @@
-import { Table } from 'antd';
+import { Table, Divider } from 'antd';
 import { keyBy } from 'lodash';
 import { mapListDataHouseFinance, listDataHouseFinance } from 'utils';
 import HouseFinance_ListTienTra from 'pages/HouseFinance_ListTienTra'
+import CustomPlate from 'components/CustomPlate'
+import { v4 as uuidv4 } from 'uuid';
 
 
 export default function HouseFinance() {
@@ -80,9 +82,19 @@ export default function HouseFinance() {
             })
         }
     })
-    console.log(dataSource, columns)
+    console.log(dataSource, columns, mappedData[0])
 
     return <div style={{ overflow: "auto" }}>
+        <div>Tinh tien tra</div>
+        <div>Tien vay {mappedData[0].tongGiaTri * mappedData[0].tiLeVay}</div>
+        <div>Lai vay {mappedData[0].laiVay}</div>
+        <div>Thoi gian vay {mappedData[0].thoiGianVay}</div>
+        <HouseFinance_ListTienTra data={mappedData[0]} />
+
+        <Divider />
+        <div>Tinh lai tra hang thang</div>
+
+
         <Table size={'small'} dataSource={dataSource} columns={columns} pagination={false} />
     </div>
 }

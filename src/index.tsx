@@ -88,8 +88,8 @@ function RootLayout() {
       <Menu mode="inline" onClick={handleChangeMenu} selectedKeys={[keyMenu]}>
         <Menu.Item key="note">Note</Menu.Item>
         <Menu.Item key="stock">Stock</Menu.Item>
-        <Menu.Item key="houseFinance">HousingFinance</Menu.Item>
-        <Menu.Item key="storyTellerBusiness">StoryTellerBusiness</Menu.Item>
+        <Menu.Item key="houseFinance">Finance</Menu.Item>
+        <Menu.Item key="storyTellerBusiness">Business</Menu.Item>
         <Menu.Item key="test">Test</Menu.Item>
       </Menu>
     </div>
