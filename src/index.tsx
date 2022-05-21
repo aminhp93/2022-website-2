@@ -12,10 +12,9 @@ import Nhi from 'pages/Nhi/Nhi'
 import { useState } from "react";
 import { Menu } from "antd";
 import Stock from 'pages/Stock/Stock'
-import Note from 'pages/Note'
+import NoteContainer from 'pages/NoteContainer'
 import HouseFinance from 'pages/HouseFinance'
 import Test from 'pages/Test'
-import InsightOutsourcing from 'pages/InsightOutsourcing'
 import StoryTellerBusiness from 'pages/StoryTellerBusiness';
 
 ReactDOM.render(
@@ -44,7 +43,7 @@ function App() {
             <Test />
           </Route>
           <Route path="/note">
-            <Note />
+            <NoteContainer />
           </Route>
           <Route path="/" component={RootLayout} />
           <Redirect from="/" to='/' />
@@ -68,9 +67,7 @@ function RootLayout() {
     if (keyMenu === "stock") {
       return <Stock />
     } else if (keyMenu === "note") {
-      return <Note management title="todos" />
-    } else if (keyMenu === "insightOutsourcing") {
-      return <InsightOutsourcing />
+      return <NoteContainer />
     } else if (keyMenu === 'houseFinance') {
       return <HouseFinance />
     } else if (keyMenu === 'test') {
@@ -89,20 +86,19 @@ function RootLayout() {
   const renderListMenu = () => {
     return <div className="RootLayout-list-menu">
       <Menu mode="inline" onClick={handleChangeMenu} selectedKeys={[keyMenu]}>
+        <Menu.Item key="note">Note</Menu.Item>
         <Menu.Item key="stock">Stock</Menu.Item>
-        <Menu.Item key="note">Note management</Menu.Item>
-        <Menu.Item key="insightOutsourcing">Insight outsourcing</Menu.Item>
-        <Menu.Item key="test">Test</Menu.Item>
         <Menu.Item key="houseFinance">HousingFinance</Menu.Item>
         <Menu.Item key="storyTellerBusiness">StoryTellerBusiness</Menu.Item>
+        <Menu.Item key="test">Test</Menu.Item>
       </Menu>
     </div>
   }
 
   const renderLeftContainer = () => {
     return <div className="RootLayout-left-container" >
-      {renderSearch()}
       {renderListMenu()}
+      {renderSearch()}
     </div>
   }
 

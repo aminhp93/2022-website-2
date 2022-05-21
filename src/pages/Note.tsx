@@ -131,7 +131,7 @@ export default function Note({ title, management }: IProps) {
     const renderNote = () => {
         return <div style={{ height: "100%" }}>
             <div style={{ height: "50px" }}>
-                <Button type="primary" danger onClick={handleUpdate}>
+                <Button type="primary" danger onClick={handleUpdate} style={{ position: "fixed", top: "20px", right: "20px" }}>
                     Update
                 </Button>
             </div>
@@ -146,9 +146,12 @@ export default function Note({ title, management }: IProps) {
     }
 
     useEffect(() => {
-        getStockNote();
-        management && getListNotes()
-    }, [])
+        if (management) {
+            getListNotes()
+        } else {
+            getStockNote();
+        }
+    }, [management])
 
     if (loading) return <Spin />
 
@@ -169,7 +172,6 @@ export default function Note({ title, management }: IProps) {
                     <div style={{ overflow: "auto" }}>
                         <Table size={'small'} dataSource={listNotes} columns={columns} pagination={false} />
                     </div>
-                    {renderNote()}
                 </>
                 : renderNote()
         }

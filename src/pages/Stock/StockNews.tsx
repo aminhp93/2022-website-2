@@ -59,11 +59,12 @@ export default function StockNews() {
     }
 
     useEffect(() => {
-        setInterval(() => {
+        const interval = setInterval(() => {
             fetch();
         }, 1000 * 60)
         fetch();
 
+        return clearInterval(interval)
     }, [])
 
     const filterList = list.filter(i => i.symbol && i.symbol.toLowerCase().includes(searchText.toLowerCase()))

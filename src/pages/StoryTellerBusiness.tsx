@@ -1,6 +1,5 @@
 import { Table, Menu, Dropdown, Button, notification, Spin } from 'antd';
 import axios from 'axios';
-import Note from 'pages/Note';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -46,9 +45,6 @@ function StoryTellerBusiness({ }: IProps & RouteComponentProps) {
 
     return <div>
         <div>StoryTellerBusiness</div>
-        <div style={{ overflow: "auto" }}>
-            <Note title="storyTellerBusiness" />
-        </div>
         <Button onClick={() => setShowAnalytic(!showAnalytic)}>Run analytic</Button>
         {showAnalytic && list.map(i => {
             return <StoryTellerBusinessChart data={i} />
