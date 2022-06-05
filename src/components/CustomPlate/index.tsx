@@ -79,15 +79,6 @@ import {
 
 } from './config/components/Toolbars'
 
-export const withStyledPlaceHolders = (components: any) =>
-    withPlaceholders(components, [
-        {
-            key: ELEMENT_PARAGRAPH,
-            placeholder: 'Type a paragraph',
-            hideOnBlur: true,
-        },
-    ]);
-
 interface IProps {
     id?: any;
     onChange?: any;
@@ -193,13 +184,11 @@ export default function CustomPlate(props: IProps) {
     };
 
     let components = createPlateUI();
-    components = withStyledPlaceHolders(components);
 
     const plugins: any = createPlugins([
         createParagraphPlugin(),
         createBlockquotePlugin(),
         createTodoListPlugin(),
-        createHeadingPlugin(),
         createImagePlugin({
             options: {
                 uploadImage: cbUploadImage
@@ -211,7 +200,6 @@ export default function CustomPlate(props: IProps) {
         createListPlugin(),
         createTablePlugin(),
         createMediaEmbedPlugin(),
-        // createExcalidrawPlugin(),
         createCodeBlockPlugin(),
         createAlignPlugin(CONFIG.align),
         createBoldPlugin(),
@@ -259,24 +247,6 @@ export default function CustomPlate(props: IProps) {
                 <ListToolbarButtons />
                 <IndentToolbarButtons />
                 <BasicMarkToolbarButtons />
-                {/* <ColorPickerToolbarDropdown
-          pluginKey={MARK_COLOR}
-          icon={<FormatColorText />}
-          selectedIcon={<Check />}
-          tooltip={{ content: 'Text color' }}
-        />
-        <ColorPickerToolbarDropdown
-          pluginKey={MARK_BG_COLOR}
-          icon={<FontDownload />}
-          selectedIcon={<Check />}
-          tooltip={{ content: 'Highlight color' }}
-        />
-        <AlignToolbarButtons />
-        <LineHeightToolbarDropdown icon={<LineWeight />} />
-        <LinkToolbarButton icon={<Link />} />
-        <ImageToolbarButton icon={<Image />} />
-        <MediaEmbedToolbarButton icon={<OndemandVideo />} />
-        <TableToolbarButtons /> */}
             </HeadingToolbar>
             <BallonToolbarMarks />
             <MentionCombobox items={CONFIG.mentionItems} />

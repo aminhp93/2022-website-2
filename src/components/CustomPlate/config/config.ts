@@ -66,7 +66,7 @@ export const CONFIG: Config = {
     // autoFocus: process.env.NODE_ENV !== 'production',
     autoFocus: false,
     spellCheck: false,
-    placeholder: 'Type…',
+    placeholder: 'Type 123',
     style: {
       padding: '15px',
     },
@@ -201,7 +201,7 @@ export const CONFIG: Config = {
   mentionItems: MENTIONABLES,
   forceLayout: {
     options: {
-      rules: [{ path: [0], strictType: ELEMENT_H1 }],
+      // rules: [{ path: [0], strictType: ELEMENT_H1 }],
     },
   },
 };

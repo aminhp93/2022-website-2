@@ -82,7 +82,7 @@ export const BasicElementToolbarButtons = () => {
         type={getPluginType(editor, ELEMENT_H1)}
         icon={<LooksOne />}
       />
-      <BlockToolbarButton
+      {/* <BlockToolbarButton
         type={getPluginType(editor, ELEMENT_H2)}
         icon={<LooksTwo />}
       />
@@ -101,7 +101,7 @@ export const BasicElementToolbarButtons = () => {
       <BlockToolbarButton
         type={getPluginType(editor, ELEMENT_H6)}
         icon={<Looks6 />}
-      />
+      /> */}
       <BlockToolbarButton
         type={getPluginType(editor, ELEMENT_BLOCKQUOTE)}
         icon={<FormatQuote />}
