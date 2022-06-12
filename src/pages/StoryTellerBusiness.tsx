@@ -68,7 +68,7 @@ function StoryTellerBusiness({ }: IProps & RouteComponentProps) {
             })}
         </div>
         <div style={{ flex: 1 }}>
-            <Note title="storyTellerBusiness" />
+            <Note id={6} />
         </div>
 
     </div>

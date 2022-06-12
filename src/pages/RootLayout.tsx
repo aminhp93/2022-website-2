@@ -29,7 +29,7 @@ function RootLayout({ history }: IProps & RouteComponentProps) {
         if (keyMenu === "stock") {
             return <Stock />
         } else if (keyMenu === "todos") {
-            return <Note title="todos" />
+            return <Note id={3} />
         } else if (keyMenu === "insightOutsourcing") {
             return <InsightOutsourcing />
         } else if (keyMenu === 'houseFinance') {

@@ -5,49 +5,40 @@ import { getColumnsFromListData } from 'utils';
 import CustomPlate from 'components/CustomPlate'
 import { v4 as uuidv4 } from 'uuid';
 
-
-function getId(key: string) {
-    if (key === "todos") {
-        return "3"
-    } else if (key === "stock") {
-        return "1"
-    } else if (key === "insightOutsourcing") {
-        return "4"
-    } else if (key === "storyTellerBusiness") {
-        return "5"
-    } else {
-        return null
-    }
-}
-
 interface IProps {
-    title?: string;
+    id?: number;
     management?: boolean;
 }
 
-export default function Note({ title, management }: IProps) {
+export default function Note({ id, management }: IProps) {
     const [plateId, setPlateId] = useState(uuidv4())
-    const id = getId(title)
     const [note, setNote] = useState([
         {
             children: [
-                { text: 'hello' }
-            ],
-            type: 'h1'
-        },
-        {
-            children: [
-                { text: 'paragrahph' }
+                { text: '' }
             ],
             type: 'p'
         }
-    ]);
+    ])
+    const [noteObj, setNoteObj] = useState({} as any)
     const [loading, setLoading] = useState(false);
     const [confirmCreateNote, setConfirmCreateNote] = useState(false);
     const [titleCreateNote, setTitleCreateNote] = useState(null);
     const [listNotes, setListNotes] = useState([]);
 
-    const columns = getColumnsFromListData(listNotes)
+    // const columns = getColumnsFromListData(listNotes)
+    const columns = [
+        {
+            title: 'id',
+            dataIndex: 'id',
+            key: 'id',
+        },
+        {
+            title: 'title',
+            dataIndex: 'title',
+            key: 'title',
+        }
+    ]
 
     const getStockNote = async () => {
         setLoading(true)
@@ -59,8 +50,10 @@ export default function Note({ title, management }: IProps) {
             method: "GET"
         })
         setLoading(false)
+
         if (res && res.data && res.data.content) {
             setNote(JSON.parse(res.data.content))
+            setNoteObj(res.data)
             setPlateId(uuidv4())
         }
     }
@@ -73,7 +66,8 @@ export default function Note({ title, management }: IProps) {
                     'Content-type': 'application/json; charset=UTF-8',
                 },
                 data: {
-                    title: titleCreateNote
+                    title: titleCreateNote,
+                    content: JSON.stringify(note)
                 },
                 method: "POST"
             })
@@ -105,7 +99,7 @@ export default function Note({ title, management }: IProps) {
         await axios({
             url: `https://testapi.io/api/aminhp93/resource/note/${id}`,
             data: {
-                title,
+                title: noteObj.title,
                 content: JSON.stringify(note)
             },
             headers: {

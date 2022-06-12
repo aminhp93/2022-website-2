@@ -189,6 +189,7 @@ export default function CustomPlate(props: IProps) {
         createParagraphPlugin(),
         createBlockquotePlugin(),
         createTodoListPlugin(),
+        createHeadingPlugin(),
         createImagePlugin({
             options: {
                 uploadImage: cbUploadImage
@@ -234,7 +235,6 @@ export default function CustomPlate(props: IProps) {
     ], {
         components,
     });
-
 
     return <div className="CustomPlate">
         <Plate

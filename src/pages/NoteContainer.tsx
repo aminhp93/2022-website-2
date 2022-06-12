@@ -12,7 +12,7 @@ export default function NoteContainer() {
         {
             showManageNote
                 ? <Note management />
-                : <Note title="todos" />
+                : <Note id={3} />
         }
 
     </div>
