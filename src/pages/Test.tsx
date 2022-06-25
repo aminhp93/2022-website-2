@@ -75,15 +75,15 @@ export default function Test() {
     }
 
     useEffect(() => {
-        fetch()
+        // fetch()
     }, [])
 
     return <div>Test
-        <div>Total: {total}</div>
+        {/* <div>Total: {total}</div>
         <div>
             <div style={{ overflow: "auto" }}>
                 <Table size={'small'} dataSource={list} columns={columns} pagination={false} />
             </div>
-        </div>
+        </div> */}
     </div >
 }

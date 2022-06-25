@@ -1,8 +1,40 @@
 .CustomPlate {
-    border: 1px solid @black;
-    div[role="textbox"] {
-        overflow: auto;
-        height: 400px !important;
-    }
+  position: relative;
+  border: 1px solid @black;
+  display: flex;
+  flex-direction: row-reverse;
 
+  div[role='textbox'] {
+    overflow: auto;
+    height: 400px !important;
+    padding-right: 40px !important;
+  }
+
+  .slate-HeadingToolbar {
+    padding: 0;
+    width: 50px;
+  }
+}
+
+.CustomPlate-ToolbarContainer {
+  z-index: 1;
+  display: flex;
+  position: absolute;
+  height: 100%;
+}
+
+.CustomPlate-ToolbarContainer-btn {
+  cursor: pointer;
+  position: absolute;
+  right: 30px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.CustomPlate-ToolbarContainer.hide {
+  .CustomPlate-ToolbarContainer-btn {
+    right: 0;
+  }
 }
