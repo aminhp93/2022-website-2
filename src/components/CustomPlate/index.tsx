@@ -113,7 +113,7 @@ function b64toBlob(b64Data, contentType?, sliceSize?) {
 }
 
 export default function CustomPlate(props: IProps) {
-  const [showToolbar, setShowToolbar] = useState(true);
+  const [showToolbar, setShowToolbar] = useState(false);
 
   const cbUploadImage = async (data) => {
     // Split the base64 string in data and contentType
