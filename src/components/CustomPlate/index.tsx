@@ -46,7 +46,7 @@ import {
   createDeserializeMdPlugin,
   createDeserializeCsvPlugin,
   createDeserializeDocxPlugin,
-  createJuicePlugin,
+  // createJuicePlugin,
   createPlugins,
   createPlateUI,
   withPlaceholders,
@@ -59,10 +59,12 @@ import {
   MARK_UNDERLINE,
   BalloonToolbar,
   HeadingToolbar,
+  MediaEmbedToolbarButton,
 } from '@udecode/plate';
 import { FormatBold } from '@styled-icons/material/FormatBold';
 import { FormatItalic } from '@styled-icons/material/FormatItalic';
 import { FormatUnderlined } from '@styled-icons/material/FormatUnderlined';
+import { OndemandVideo } from '@styled-icons/material/OndemandVideo';
 
 import { CONFIG } from './config/config';
 import {
@@ -233,7 +235,7 @@ export default function CustomPlate(props: IProps) {
       createDeserializeMdPlugin(),
       createDeserializeCsvPlugin(),
       createDeserializeDocxPlugin(),
-      createJuicePlugin(),
+      // createJuicePlugin(),
     ],
     {
       components,
@@ -269,6 +271,7 @@ export default function CustomPlate(props: IProps) {
                 <ListToolbarButtons />
                 <IndentToolbarButtons />
                 <BasicMarkToolbarButtons />
+                <MediaEmbedToolbarButton icon={<OndemandVideo />} />
               </HeadingToolbar>
               <BallonToolbarMarks />
               <MentionCombobox items={CONFIG.mentionItems} />

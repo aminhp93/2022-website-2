@@ -8,10 +8,10 @@ import 'styles/index.less';
 import store from 'store';
 
 import { Switch, Route, Link, Redirect } from 'react-router-dom';
-import Nhi from 'pages/Nhi/Nhi';
+import Nhi from 'pages/Nhi';
 import { useState } from 'react';
 import { Menu } from 'antd';
-import Stock from 'pages/Stock/Stock';
+import Stock from 'pages/Stock';
 import NoteContainer from 'pages/NoteContainer';
 import HouseFinance from 'pages/HouseFinance';
 import Test from 'pages/Test';
